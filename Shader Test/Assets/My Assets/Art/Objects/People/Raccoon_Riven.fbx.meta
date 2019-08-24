@@ -1,0 +1,214 @@
+fileFormatVersion: 2
+guid: 3f55ad85eedd6ed43899b6abb3667f3c
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: arm_stretch.l
+    100002: arm_stretch.r
+    100004: BaseRiven
+    100006: c_neck_01.x
+    100008: c_skull_01.x
+    100010: c_skull_02.x
+    100012: c_skull_03.x
+    100014: c_tail_00.x
+    100016: c_tail_01.x
+    100018: c_tail_02.x
+    100020: c_tail_03.x
+    100022: foot.l
+    100024: foot.r
+    100026: forearm_stretch.l
+    100028: forearm_stretch.r
+    100030: hand.l
+    100032: hand.r
+    100034: head.x
+    100036: leg_stretch.l
+    100038: leg_stretch.r
+    100040: neck.x
+    100042: //RootNode
+    100044: root
+    100046: root.x
+    100048: shoulder.l
+    100050: shoulder.r
+    100052: spine_01.x
+    100054: spine_02.x
+    100056: thigh_stretch.l
+    100058: thigh_stretch.r
+    100060: toes_01.l
+    100062: toes_01.r
+    400000: arm_stretch.l
+    400002: arm_stretch.r
+    400004: BaseRiven
+    400006: c_neck_01.x
+    400008: c_skull_01.x
+    400010: c_skull_02.x
+    400012: c_skull_03.x
+    400014: c_tail_00.x
+    400016: c_tail_01.x
+    400018: c_tail_02.x
+    400020: c_tail_03.x
+    400022: foot.l
+    400024: foot.r
+    400026: forearm_stretch.l
+    400028: forearm_stretch.r
+    400030: hand.l
+    400032: hand.r
+    400034: head.x
+    400036: leg_stretch.l
+    400038: leg_stretch.r
+    400040: neck.x
+    400042: //RootNode
+    400044: root
+    400046: root.x
+    400048: shoulder.l
+    400050: shoulder.r
+    400052: spine_01.x
+    400054: spine_02.x
+    400056: thigh_stretch.l
+    400058: thigh_stretch.r
+    400060: toes_01.l
+    400062: toes_01.r
+    4300000: BaseRiven
+    9500000: //RootNode
+    13700000: BaseRiven
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body
+    second: {fileID: 2100000, guid: faa58c20f17edf04b8dd351f7f16abb4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eyes and Tummy
+    second: {fileID: 2100000, guid: c585069a87984c74d82561023cbe6231, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Irises
+    second: {fileID: 2100000, guid: 201946b8b1100954b890339b749412a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mask and Arms
+    second: {fileID: 2100000, guid: 28495a95f43275b48b3f231752b73135, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 335e48d40c29c04489e04d5e23946c17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.001
+    second: {fileID: 2100000, guid: 497170b274fe15d40ad666c11f328bfa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.002
+    second: {fileID: 2100000, guid: 5b7532aebc3305643adfa04d5e2762c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.009
+    second: {fileID: 2100000, guid: 781a3b291d109184ab940d08f69b5d6f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Nose and Ears
+    second: {fileID: 2100000, guid: e31523de424f0764d9a813db5dfad58f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Riven'sShirt
+    second: {fileID: 2100000, guid: 2849759778a38ea48bcd37a0f1af0085, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RivenHair
+    second: {fileID: 2100000, guid: 40e19a68e802ed44499500c708a7eff3, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
