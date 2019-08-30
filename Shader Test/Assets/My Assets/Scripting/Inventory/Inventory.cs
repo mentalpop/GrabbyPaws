@@ -38,10 +38,7 @@ public class Inventory : MonoBehaviour {
 
         items.Add(item);
 
-        if (OnItemChangedCallback != null)
-        {
-            OnItemChangedCallback.Invoke();
-        }
+        OnItemChangedCallback?.Invoke();
         return true;
     }
 
@@ -49,34 +46,24 @@ public class Inventory : MonoBehaviour {
     {
 
         items.Remove(item);
-
-        if (OnItemChangedCallback != null)
-        {
-
-            OnItemChangedCallback.Invoke();
-        }
+        
+        OnItemChangedCallback?.Invoke();
         
     }
 
 
     public int ReturnValues()
     {
-       
+
+        ThieveControl controller = FindObjectOfType<ThieveControl>();
         int myValue = 0;
-        for(int i = 0; i < items.Count; i++)
+
+        foreach (var item in items)
         {
-            myValue += items[i].value;
-            
-
+            myValue += item.value;
+            controller.collectedItems.Add(item);
         }
-
-        int b = items.Count;
-
-        for(var i = 0; i < b; i++)
-        {
-            FindObjectOfType<ThieveControl>().collectedItems.Add(items[0]);
-            items.Remove(items[0]);
-        }
+        items.Clear();
         return myValue;
     }
 
