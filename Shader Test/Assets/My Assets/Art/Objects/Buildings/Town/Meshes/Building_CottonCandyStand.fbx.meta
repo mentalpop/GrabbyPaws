@@ -7,32 +7,21 @@ ModelImporter:
     100002: Cube.016
     100004: Cylinder.055
     100006: Cylinder.056
-    100008: Cylinder.057
     400000: //RootNode
     400002: Cube.016
     400004: Cylinder.055
     400006: Cylinder.056
-    400008: Cylinder.057
     2100000: Palette Specials
-    2100002: Glass
     2300000: Cube.016
     2300002: Cylinder.055
     2300004: Cylinder.056
-    2300006: Cylinder.057
     3300000: Cube.016
     3300002: Cylinder.055
     3300004: Cylinder.056
-    3300006: Cylinder.057
     4300000: Cube.016
     4300002: Cylinder.055
     4300004: Cylinder.056
-    4300006: Cylinder.057
   externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Glass
-    second: {fileID: 2100000, guid: a99dd48dffabfda468f4abd754683584, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
