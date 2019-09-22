@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/My Assets/Scenes/INT_TownOffice.unity
+- path: Assets/My Assets/Scenes/HouseLevel.unity
   isLoaded: 1
   isActive: 1
