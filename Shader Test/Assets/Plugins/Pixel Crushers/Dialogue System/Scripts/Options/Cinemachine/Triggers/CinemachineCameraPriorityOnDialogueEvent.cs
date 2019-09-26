@@ -1,10 +1,10 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PixelCrushers.DialogueSystem
 {
 
-    [AddComponentMenu("")] // Use wrapper. Cinemachine.CinemachineFreeLook freeLookCam;
+#if USE_CINEMACHINE
+    [AddComponentMenu("")] // Use wrapper.
     public class CinemachineCameraPriorityOnDialogueEvent : ActOnDialogueEvent
     {
 
@@ -29,4 +29,16 @@ namespace PixelCrushers.DialogueSystem
             virtualCamera.Priority = onEnd;
         }
     }
+
+#else
+
+    [AddComponentMenu("")] // Use wrapper.
+    public class CinemachineCameraPriorityOnDialogueEvent : ActOnDialogueEvent
+    {
+        public override void TryStartActions(Transform actor) { }
+        public override void TryEndActions(Transform actor) { }
+    }
+
+#endif
+
 }

@@ -1,5 +1,4 @@
-﻿#if TMP_PRESENT
-// Copyright (c) Pixel Crushers. All rights reserved.
+﻿// Copyright (c) Pixel Crushers. All rights reserved.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +7,8 @@ using UnityEngine.Events;
 
 namespace PixelCrushers.DialogueSystem
 {
+
+#if TMP_PRESENT
 
     /// <summary>
     /// This is a typewriter effect for TextMesh Pro.
@@ -410,5 +411,18 @@ namespace PixelCrushers.DialogueSystem
 
     }
 
-}
+#else
+
+    [AddComponentMenu("")] // Use wrapper.
+    public class TextMeshProTypewriterEffect : AbstractTypewriterEffect
+    {
+        public override bool isPlaying { get { return false; } }
+        public override void Awake() { }
+        public override void Start() { }
+        public override void StartTyping(string text, int fromIndex = 0) { }
+        public override void Stop() { }
+        public override void StopTyping() { }
+    }
+
 #endif
+}

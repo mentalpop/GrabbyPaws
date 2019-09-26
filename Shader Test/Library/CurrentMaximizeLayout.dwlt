@@ -21,10 +21,10 @@ MonoBehaviour:
     y: 30
     width: 1536
     height: 731
-  m_MinSize: {x: 739, y: 474}
-  m_MaxSize: {x: 24004, y: 14048}
+  m_MinSize: {x: 743, y: 498}
+  m_MaxSize: {x: 24008, y: 14048}
   vertical: 0
-  controlID: 11798
+  controlID: 2951
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -48,8 +48,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 22
-    width: 850
-    height: 259
+    width: 897
+    height: 433
   m_PersistentViewDataDictionary: {fileID: 0}
   m_MaximizeOnPlay: 1
   m_Gizmos: 0
@@ -61,10 +61,10 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -215.2
-    m_HBaseRangeMax: 215.2
-    m_VBaseRangeMin: -121
-    m_VBaseRangeMax: 121
+    m_HBaseRangeMin: -369.6
+    m_HBaseRangeMax: 369.6
+    m_VBaseRangeMin: -208
+    m_VBaseRangeMax: 208
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -82,25 +82,25 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 17
-      width: 850
-      height: 242
+      width: 897
+      height: 416
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 425, y: 121}
+    m_Translation: {x: 448.5, y: 208}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -425
-      y: -121
-      width: 850
-      height: 242
+      x: -448.5
+      y: -208
+      width: 897
+      height: 416
     m_MinimalGUI: 1
   m_defaultScale: 1
   m_TargetTexture: {fileID: 0}
   m_CurrentColorSpace: 1
-  m_LastWindowPixelSize: {x: 1062.5, y: 323.75}
+  m_LastWindowPixelSize: {x: 1121.25, y: 541.25}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 00000000000000000000
@@ -124,12 +124,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1140
+    width: 1191
     height: 731
-  m_MinSize: {x: 462, y: 474}
-  m_MaxSize: {x: 20002, y: 14048}
+  m_MinSize: {x: 466, y: 498}
+  m_MaxSize: {x: 20006, y: 14048}
   vertical: 0
-  controlID: 11747
+  controlID: 2952
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -149,12 +149,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 852
+    width: 899
     height: 731
   m_MinSize: {x: 232, y: 398}
   m_MaxSize: {x: 10002, y: 14048}
   vertical: 1
-  controlID: 11668
+  controlID: 2934
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -172,8 +172,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 852
-    height: 412
+    width: 899
+    height: 457
   m_MinSize: {x: 102, y: 124}
   m_MaxSize: {x: 4002, y: 4024}
   m_ActualView: {fileID: 2}
@@ -199,15 +199,14 @@ MonoBehaviour:
   m_MaxSize: {x: 4000, y: 4000}
   m_TitleContent:
     m_Text: Scene
-    m_Image: {fileID: 2318424515335265636, guid: 0000000000000000d000000000000000,
-      type: 0}
+    m_Image: {fileID: 0}
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
     x: 0
     y: 73.6
-    width: 850
-    height: 392
+    width: 897
+    height: 437
   m_PersistentViewDataDictionary: {fileID: 0}
   m_WindowGUID: 95955f6a978295349987049071517d06
   m_SceneLighting: 1
@@ -215,9 +214,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -33.377712, y: 60.868725, z: -42.336872}
+    m_Target: {x: -1393.8047, y: -726.56616, z: -449.75684}
     speed: 2
-    m_Value: {x: -33.377712, y: 60.868725, z: -42.336872}
+    m_Value: {x: -1393.8047, y: -726.56616, z: -449.75684}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -245,13 +244,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.034389798, y: -0.33623752, z: 0.012289537, w: -0.9410689}
+    m_Target: {x: -0.14980872, y: 0.7656247, z: -0.19269663, w: -0.59518427}
     speed: 2
-    m_Value: {x: -0.034389798, y: -0.33623752, z: 0.012289537, w: -0.9410689}
+    m_Value: {x: -0.14980872, y: 0.7656247, z: -0.19269663, w: -0.59518427}
   m_Size:
-    m_Target: 0.62680876
+    m_Target: 1777.2028
     speed: 2
-    m_Value: 0.62680876
+    m_Value: 1777.2028
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -284,10 +283,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: -1556
-    y: 73
-    width: 1225
-    height: 653
+    x: 0
+    y: 73.6
+    width: 848
+    height: 437
   m_PersistentViewDataDictionary: {fileID: 0}
 --- !u!114 &8
 MonoBehaviour:
@@ -305,9 +304,9 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 412
-    width: 852
-    height: 319
+    y: 457
+    width: 899
+    height: 274
   m_MinSize: {x: 232, y: 274}
   m_MaxSize: {x: 10002, y: 10024}
   m_ActualView: {fileID: 10}
@@ -316,7 +315,7 @@ MonoBehaviour:
   - {fileID: 10}
   - {fileID: 11}
   m_Selected: 1
-  m_LastSelected: 2
+  m_LastSelected: 0
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -339,9 +338,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 569.60004
-    width: 850
-    height: 215
+    y: 530.4
+    width: 897
+    height: 254
   m_PersistentViewDataDictionary: {fileID: 0}
 --- !u!114 &10
 MonoBehaviour:
@@ -365,9 +364,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 485.6
-    width: 850
-    height: 299
+    y: 530.4
+    width: 897
+    height: 254
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SearchFilter:
     m_NameFilter: 
@@ -381,20 +380,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/My Assets/Art/Objects/Lights
+    - Assets/My Assets/Scenes
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/My Assets/Art/Objects/Lights
+  - Assets/My Assets/Scenes
   m_LastFoldersGridSize: 96
   m_LastProjectPath: D:\Games\2019\GrabbyPaws\Shader Test
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 534}
-    m_SelectedIDs: f41a0500
-    m_LastClickedID: 334580
-    m_ExpandedIDs: 000000006047010018480100284801008648010044490100ae490100d6490100a84a0100ce4b0100464c0100dc4c0100d64d0100464e0100744f0100d44f01001a500100fe50010070510100ea520100b25401000a5601009e580100fc590100fc5b01006e5c0100605e01001a610100cc61010096620100f663010014640100fa6601002e67010000ca9a3b
+    scrollPos: {x: 0, y: 1219}
+    m_SelectedIDs: fc220000
+    m_LastClickedID: 8956
+    m_ExpandedIDs: 0000000098170000aa18000030190000221a0000681a0000ac1a0000e21a0000ca1b0000181d0000ba1d000076200000f620000052220000022300004e2300009e240000a024000056250000602700008a290000582b0000a82e0000863000009a330000a2350000fa350000b4380000c8390000fa3b0000dc3d00000a3e0000c241000002420000f4b10000f6b10000f8b10000fab10000fcb10000feb100004ed9000008da0000a8da0000dcda000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -422,7 +421,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 13514}
     m_SelectedIDs: 78440100
     m_LastClickedID: 83064
-    m_ExpandedIDs: 000000006047010018480100284801008648010044490100ae490100d6490100a84a0100ce4b0100464c0100dc4c0100d64d0100464e0100744f0100d44f01001a500100fe50010070510100ea520100b25401000a5601009e580100fc590100fc5b01006e5c0100605e01001a610100cc61010096620100f663010014640100fa6601002e67010000ca9a3b
+    m_ExpandedIDs: 0000000098170000aa18000030190000221a0000681a0000ac1a0000e21a0000ca1b0000181d0000ba1d000076200000f620000052220000022300004e2300009e240000a024000056250000602700008a290000582b0000a82e0000863000009a330000a2350000fa350000b4380000c8390000fa3b0000dc3d00000a3e0000c241000002420000f4b10000f6b10000f8b10000fab10000fcb10000feb100004ed9000008da0000a8da0000dcda000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -447,9 +446,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 2e3d0400
-    m_LastClickedInstanceID: 277806
-    m_HadKeyboardFocusLastEvent: 1
+    m_SelectedInstanceIDs: 9a2f0000
+    m_LastClickedInstanceID: 12186
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: 7e340000d82700000c2d0000f22b0000922f0000662901006c8800002e630000944e000050450000f039000068410000be78000084480000122800005c2800001ea20400004818009670180000000000684d1b00ce4b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -498,21 +497,21 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 485.6
-    width: 850
-    height: 299
+    y: 530.4
+    width: 897
+    height: 254
   m_PersistentViewDataDictionary: {fileID: 0}
   actorFoldouts:
     propertiesKeys: 
     propertiesValues: 
-    fieldsKeys: ffffffff
-    fieldsValues: 00
+    fieldsKeys: 
+    fieldsValues: 
   actorFilter: 
   actorListSelectedIndex: -1
   actorTexturesFoldout: 0
   actorSpritesFoldout: 0
   showNodeEditor: 1
-  currentConversationID: 14
+  currentConversationID: 33
   globalSearchText: 
   globalReplaceText: 
   globalSearchSpecificConversation: 0
@@ -525,7 +524,7 @@ MonoBehaviour:
     merge: 0
     export: 0
     localization: 0
-    editorSettings: 1
+    editorSettings: 0
   databaseToMerge: {fileID: 0}
   conflictingIDRule: 0
   mergeProperties: 1
@@ -544,7 +543,7 @@ MonoBehaviour:
   isSearchBarOpen: 0
   searchString: 
   searchCaseSensitive: 0
-  currentEntryID: 43
+  currentEntryID: 21
   itemFoldouts:
     propertiesKeys: 
     propertiesValues: 
@@ -554,6 +553,7 @@ MonoBehaviour:
   itemListSelectedIndex: -1
   localizationLanguages:
     languages: []
+    importMainTextIndex: -1
     outputFolder: 
   locationFoldouts:
     propertiesKeys: 
@@ -579,404 +579,26 @@ MonoBehaviour:
     variables: 0
   useReorderableListForVariables: 1
   variableFoldouts:
-    propertiesKeys: 110000001200000013000000
-    propertiesValues: 010101
+    propertiesKeys: 
+    propertiesValues: 
     fieldsKeys: 
     fieldsValues: 
   variableFilter: 
-  watches:
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 0
-    variable:
-      id: 1
-      fields:
-      - title: Name
-        value: Alert
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: 
-        type: 0
-        typeString: CustomFieldType_Text
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 1
-    variable:
-      id: 4
-      fields:
-      - title: Name
-        value: askLaundryJuice
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: Player's seen an advertisement for Laundry Juice
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 2
-    variable:
-      id: 18
-      fields:
-      - title: Name
-        value: chatAuContraireCareerChange
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 3
-    variable:
-      id: 19
-      fields:
-      - title: Name
-        value: chatAuContrairePond
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 4
-    variable:
-      id: 20
-      fields:
-      - title: Name
-        value: chatAuContrairePondKid
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 5
-    variable:
-      id: 8
-      fields:
-      - title: Name
-        value: ContraireWistful
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 6
-    variable:
-      id: 16
-      fields:
-      - title: Name
-        value: cottonCandyGiven
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: 0
-        type: 1
-        typeString: CustomFieldType_Number
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 9
-    variable:
-      id: 17
-      fields:
-      - title: Name
-        value: haveCottonCandy
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 11
-    variable:
-      id: 9
-      fields:
-      - title: Name
-        value: heardRiven01
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 12
-    variable:
-      id: 12
-      fields:
-      - title: Name
-        value: insightTomatoBuns
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: 0
-        type: 1
-        typeString: CustomFieldType_Number
-      - title: Description
-        value: Insight into Tomato Buns
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 13
-    variable:
-      id: 11
-      fields:
-      - title: Name
-        value: metAuContraire
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: Player's met Au Contraire
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 14
-    variable:
-      id: 10
-      fields:
-      - title: Name
-        value: metAuContraireMissionGiven
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: Player's met Au Contraire and learned her nature
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 15
-    variable:
-      id: 13
-      fields:
-      - title: Name
-        value: metTomatoBunsMissionGiven
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 16
-    variable:
-      id: 14
-      fields:
-      - title: Name
-        value: metTomatoBunsMissionHidden
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: 
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 1
-    expression: 
-    expressionValue: 
-    variableIndex: 18
-    variable:
-      id: 6
-      fields:
-      - title: Name
-        value: needsTheJuice
-        type: 0
-        typeString: 
-      - title: Initial Value
-        value: False
-        type: 2
-        typeString: CustomFieldType_Boolean
-      - title: Description
-        value: Player's gotta have the juice!!!!
-        type: 0
-        typeString: 
-    questIndex: -1
-    questEntryNumber: 0
-    questEntryTexts: []
-    questState: 0
-  - type: 2
-    expression: 
-    expressionValue: 
-    variableIndex: -1
-    variable:
-      id: 0
-      fields: []
-    questIndex: 0
-    questEntryNumber: 0
-    questEntryTexts:
-    - (Main State)
-    - '[var=cottonCandyGiven]/5 given'
-    questState: 1
-  - type: 2
-    expression: 
-    expressionValue: 
-    variableIndex: -1
-    variable:
-      id: 0
-      fields: []
-    questIndex: 1
-    questEntryNumber: 0
-    questEntryTexts:
-    - (Main State)
-    questState: 1
-  - type: 2
-    expression: 
-    expressionValue: 
-    variableIndex: -1
-    variable:
-      id: 0
-      fields: []
-    questIndex: 2
-    questEntryNumber: 0
-    questEntryTexts:
-    - (Main State)
-    questState: 1
-  autoUpdateWatches: 1
+  watches: []
+  autoUpdateWatches: 0
   watchUpdateFrequency: 1
-  nextWatchUpdateTime: 21928.561505881473
+  nextWatchUpdateTime: 2544.3591981
   watchableVariableNames:
+  - Actor
+  - ActorIndex
   - Alert
   - askLaundryJuice
   - chatAuContraireCareerChange
   - chatAuContrairePond
   - chatAuContrairePondKid
   - ContraireWistful
+  - Conversant
+  - ConversantIndex
   - cottonCandyGiven
   - duckHopeful
   - GreetingGiven
@@ -992,6 +614,7 @@ MonoBehaviour:
   - needsTheJuice
   - Suspicion
   watchableQuestNames:
+  - Find Apple Smelty
   - Get this Kid some Cotton Candy
   - Meet Au Contraire at the Cafe
   - This Space is Left Intentionally Blank
@@ -1007,10 +630,10 @@ MonoBehaviour:
   addNewNodesToRight: 0
   autoArrangeOnCreate: 0
   zoomLocked: 0
-  _zoom: 0.51999986
+  _zoom: 0.73000026
   canvasRectWidthMultiplier: 1
   canvasScrollView: {x: 100000, y: 100000}
-  canvasScrollPosition: {x: 0, y: 0}
+  canvasScrollPosition: {x: 0, y: 714.1312}
   conversationTitles:
   - Dialogue Test Raccoon
   - Riven_Intro_01
@@ -1037,6 +660,13 @@ MonoBehaviour:
   - Twilight/Town/Shortcake and CawCaw
   - Twilight/Quest/BagTrials/Evicted Pair
   - Twilight/Quest/BagTrials/Lost Bag
+  - Twilight/Fader/Fader_Intro
+  - Twilight/Fader/MissingPersons Delilah
+  - Twilight/Fader/MissingPersons Nightshade
+  - Twilight/Fader/Fader_Evvie
+  - Twilight/Fader/Fader_PoolTable
+  - Twilight/Fader/Fader_Jewels
+  - Twilight/BusStation/Basil
   conversationIndex: -1
   snapToGridAmount: 0
   confirmDelete: 1
@@ -1058,14 +688,14 @@ MonoBehaviour:
   - {fileID: 17}
   m_Position:
     serializedVersion: 2
-    x: 852
+    x: 899
     y: 0
-    width: 288
+    width: 292
     height: 731
-  m_MinSize: {x: 230, y: 474}
-  m_MaxSize: {x: 10000, y: 14024}
+  m_MinSize: {x: 234, y: 498}
+  m_MaxSize: {x: 10004, y: 14048}
   vertical: 1
-  controlID: 11748
+  controlID: 2953
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1083,10 +713,10 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 288
-    height: 457
-  m_MinSize: {x: 204, y: 224}
-  m_MaxSize: {x: 4004, y: 4024}
+    width: 292
+    height: 451
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -1115,17 +745,17 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 852
+    x: 899.2
     y: 73.6
-    width: 284
-    height: 437
+    width: 288
+    height: 431
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 316}
+      scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: 6ad4faff72d4faff060cfcff240cfcff7812fcff08e7fdff6ceafdff74eafdff96eafdff80f7fdff4a22feff26a1feffbe1c0200561f0200c4220200982402001620040018210400e2280400de2f04001435040028370400763a04002e3d04006a470400fc4e040058510400
+      m_ExpandedIDs: d2bafeffbafbfffff2490000b64d00005e7200004a7500004e75000006760000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1177,26 +807,8 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_ViewTransforms:
     m_KeySerializationHelper:
-    - {fileID: 110700000, guid: 62b8011547f389344ba48f87b2ada51c, type: 2}
     - {fileID: 110700000, guid: 4bc1c98388436114985c53e71b479be3, type: 2}
-    - {fileID: 110700000, guid: 1c072b8381d780743a547dcff149603c, type: 2}
     m_ValueSerializationHelper:
-    - e00: 0.64872265
-      e01: 0
-      e02: 0
-      e03: 77.277374
-      e10: 0
-      e11: 0.64872265
-      e12: 0
-      e13: 251.09763
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
     - e00: 0.1
       e01: 0
       e02: 0
@@ -1205,22 +817,6 @@ MonoBehaviour:
       e11: 0.1
       e12: 0
       e13: 222.36734
-      e20: 0
-      e21: 0
-      e22: 1
-      e23: 0
-      e30: 0
-      e31: 0
-      e32: 0
-      e33: 1
-    - e00: 0.6280919
-      e01: 0
-      e02: 0
-      e03: 97.90814
-      e10: 0
-      e11: 0.6280919
-      e12: 0
-      e13: 231.40901
       e20: 0
       e21: 0
       e22: 1
@@ -1274,7 +870,7 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 282378
+  m_LastSelectedObjectID: 277806
 --- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1291,11 +887,11 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 457
-    width: 288
-    height: 274
-  m_MinSize: {x: 230, y: 250}
-  m_MaxSize: {x: 10000, y: 10000}
+    y: 451
+    width: 292
+    height: 280
+  m_MinSize: {x: 234, y: 274}
+  m_MaxSize: {x: 10004, y: 10024}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -1322,10 +918,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 852
-    y: 530.4
-    width: 284
-    height: 254
+    x: 899.2
+    y: 524
+    width: 288
+    height: 260
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SearchFilter:
     m_NameFilter: 
@@ -1339,20 +935,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/My Assets/Art/Objects/Lights
+    - Assets/My Assets/Scenes
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/My Assets/Art/Objects/Lights
+  - Assets/My Assets/Scenes
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Games\2019\GrabbyPaws\Shader Test
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 579}
-    m_SelectedIDs: f41a0500
-    m_LastClickedID: 334580
-    m_ExpandedIDs: 000000006047010018480100284801008648010044490100ae490100d6490100a84a0100ce4b0100464c0100dc4c0100d64d0100464e0100744f0100d44f01001a500100fe50010070510100ea520100b25401000a5601009e580100fc590100fc5b01006e5c0100605e01001a610100cc61010096620100f663010014640100fa6601002e67010000ca9a3b
+    scrollPos: {x: 0, y: 1213}
+    m_SelectedIDs: fc220000
+    m_LastClickedID: 8956
+    m_ExpandedIDs: 0000000098170000aa18000030190000221a0000681a0000ac1a0000e21a0000ca1b0000181d0000ba1d000076200000f620000052220000022300004e2300009e240000a024000056250000602700008a290000582b0000a82e0000863000009a330000a2350000fa350000b4380000c8390000fa3b0000dc3d00000a3e0000c241000002420000f4b10000f6b10000f8b10000fab10000fcb10000feb100004ed9000008da0000a8da0000dcda000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1380,7 +976,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000006047010018480100284801008648010044490100ae490100d6490100a84a0100ce4b0100464c0100dc4c0100d64d0100464e0100744f0100d44f01001a500100fe50010070510100ea520100b25401000a5601009e580100fc590100fc5b01006e5c0100605e01001a610100cc61010096620100f663010014640100fa6601002e67010000ca9a3b
+    m_ExpandedIDs: 0000000098170000aa18000030190000221a0000681a0000ac1a0000e21a0000ca1b0000181d0000ba1d000076200000f620000052220000022300004e2300009e240000a024000056250000602700008a290000582b0000a82e0000863000009a330000a2350000fa350000b4380000c8390000fa3b0000dc3d00000a3e0000c241000002420000f4b10000f6b10000f8b10000fab10000fcb10000feb100004ed9000008da0000a8da0000dcda000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1405,8 +1001,8 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 2e3d0400
-    m_LastClickedInstanceID: 277806
+    m_SelectedInstanceIDs: 9a2f0000
+    m_LastClickedInstanceID: 12186
     m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: 0048180000000000ce4b0000
     m_RenameOverlay:
@@ -1434,7 +1030,7 @@ MonoBehaviour:
     m_NewAssetIndexInList: -1
     m_ScrollPosition: {x: 0, y: 0}
     m_GridSize: 64
-  m_DirectoriesAreaWidth: 110
+  m_DirectoriesAreaWidth: 56
 --- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1450,9 +1046,9 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1140
+    x: 1191
     y: 0
-    width: 396
+    width: 345
     height: 731
   m_MinSize: {x: 277, y: 74}
   m_MaxSize: {x: 4002, y: 4024}
@@ -1462,7 +1058,7 @@ MonoBehaviour:
   - {fileID: 21}
   - {fileID: 22}
   m_Selected: 0
-  m_LastSelected: 1
+  m_LastSelected: 2
 --- !u!114 &20
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1484,9 +1080,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1140
+    x: 1191.2001
     y: 73.6
-    width: 394
+    width: 343
     height: 711
   m_PersistentViewDataDictionary: {fileID: 0}
   m_ObjectsLockedBeforeSerialization: []
@@ -1494,7 +1090,7 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewResizer:
-    m_CachedPref: 320
+    m_CachedPref: -320
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}
@@ -1545,9 +1141,9 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1334
+    x: 1423
     y: 73
-    width: 584
+    width: 495
     height: 927
   m_PersistentViewDataDictionary: {fileID: 0}
   m_PosLeft: {x: 0, y: 0}
