@@ -4,26 +4,27 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Cube.372
-    100004: Cube.376
-    100006: Cube.377
+    100002: Cube.400
+    100004: Cube.402
     400000: //RootNode
-    400002: Cube.372
-    400004: Cube.376
-    400006: Cube.377
+    400002: Cube.400
+    400004: Cube.402
     2100000: Palette Specials
     2100002: Palette Reds
     2100004: BusinessWindow Light
-    2300000: Cube.372
-    2300002: Cube.376
-    2300004: Cube.377
-    3300000: Cube.372
-    3300002: Cube.376
-    3300004: Cube.377
-    4300000: Cube.372
-    4300002: Cube.376
-    4300004: Cube.377
+    2100006: Blue Light.002
+    2300000: Cube.400
+    2300002: Cube.402
+    3300000: Cube.400
+    3300002: Cube.402
+    4300000: Cube.400
+    4300002: Cube.402
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blue Light.002
+    second: {fileID: 2100000, guid: fadff4d48aa1a814aa8e5d69459e0a7e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

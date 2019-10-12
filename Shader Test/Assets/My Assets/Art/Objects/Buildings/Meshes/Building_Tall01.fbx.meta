@@ -4,36 +4,36 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: Cube.390
-    100004: Cube.392
-    100006: Cube.393
+    100002: Cube.411
+    100004: Cube.412
+    100006: Cube.413
     400000: //RootNode
-    400002: Cube.390
-    400004: Cube.392
-    400006: Cube.393
+    400002: Cube.411
+    400004: Cube.412
+    400006: Cube.413
     2100000: Palette Specials
-    2100002: Palette Reds
-    2100004: BusinessWindow Light
-    2300000: Cube.390
-    2300002: Cube.392
-    2300004: Cube.393
-    3300000: Cube.390
-    3300002: Cube.392
-    3300004: Cube.393
-    4300000: Cube.390
-    4300002: Cube.392
-    4300004: Cube.393
+    2100002: BusinessWindow Light
+    2100004: Blue Light
+    2300000: Cube.411
+    2300002: Cube.412
+    2300004: Cube.413
+    3300000: Cube.411
+    3300002: Cube.412
+    3300004: Cube.413
+    4300000: Cube.411
+    4300002: Cube.412
+    4300004: Cube.413
   externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blue Light
+    second: {fileID: 2100000, guid: fadff4d48aa1a814aa8e5d69459e0a7e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: BusinessWindow Light
     second: {fileID: 2100000, guid: fe458bc2d03476043ac613ec4e739673, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Palette Reds
-    second: {fileID: 2100000, guid: 5ec6c00fff0b69c4db2ad83be706ded3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
