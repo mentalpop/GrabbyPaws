@@ -5,10 +5,7 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: Palette Reds
-    2100002: Material
-    2100004: Palette Stones
-    2100006: Palette Browns
+    2100000: Palette Specials
     2300000: //RootNode
     3300000: //RootNode
     4300000: Mailbox
@@ -16,18 +13,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Palette Browns
-    second: {fileID: 2100000, guid: 69eda57f18a233d4dab7dcb573cb6a1f, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Palette Reds
-    second: {fileID: 2100000, guid: 5ec6c00fff0b69c4db2ad83be706ded3, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Palette Stones
-    second: {fileID: 2100000, guid: 25b9c614ed097924ba1f406d3717b098, type: 2}
+      name: Palette Specials
+    second: {fileID: 2100000, guid: f60a13aa23802ed4c985475e01e4c03c, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
