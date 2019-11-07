@@ -5,8 +5,7 @@ ModelImporter:
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: Palette Specials
-    2100002: Signs02
+    2100000: Signs03
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cube.510
@@ -14,13 +13,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Palette Specials
-    second: {fileID: 2100000, guid: f60a13aa23802ed4c985475e01e4c03c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Signs02
-    second: {fileID: 2100000, guid: 452cd383fce9ef840bc4bd9950d9a596, type: 2}
+      name: Signs03
+    second: {fileID: 2100000, guid: d5d3d7b4d753fee45b100ab81ed8c1bf, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

@@ -7,21 +7,42 @@ ModelImporter:
     100002: Cube.554
     100004: Cube.574
     100006: Cube.575
+    100008: Cube.594
+    100010: Cube.596
+    100012: Cube.600
+    100014: Cube.601
     400000: //RootNode
     400002: Cube.554
     400004: Cube.574
     400006: Cube.575
+    400008: Cube.594
+    400010: Cube.596
+    400012: Cube.600
+    400014: Cube.601
     2100000: Palette Specials
     2100002: BusinessWindow Light
+    2100004: Palette Specials.003
     2300000: Cube.554
     2300002: Cube.574
     2300004: Cube.575
+    2300006: Cube.594
+    2300008: Cube.596
+    2300010: Cube.600
+    2300012: Cube.601
     3300000: Cube.554
     3300002: Cube.574
     3300004: Cube.575
+    3300006: Cube.594
+    3300008: Cube.596
+    3300010: Cube.600
+    3300012: Cube.601
     4300000: Cube.554
-    4300002: Cube.574
-    4300004: Cube.575
+    4300002: Cube.594
+    4300004: Cube.596
+    4300006: Cube.601
+    4300008: Cube.600
+    4300010: Cube.574
+    4300012: Cube.575
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -32,6 +53,11 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Palette Specials
+    second: {fileID: 2100000, guid: f60a13aa23802ed4c985475e01e4c03c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Palette Specials.003
     second: {fileID: 2100000, guid: f60a13aa23802ed4c985475e01e4c03c, type: 2}
   materials:
     importMaterials: 1
