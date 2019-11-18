@@ -6,8 +6,8 @@ ModelImporter:
     100000: //RootNode
     400000: //RootNode
     2100000: Palette Specials
-    2100002: Palette Browns.001
-    2100004: Palette Specials.001
+    2100002: Palette Browns
+    2100004: Signs04
     2300000: //RootNode
     3300000: //RootNode
     4300000: CubeHome.004
@@ -15,7 +15,7 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Palette Browns.001
+      name: Palette Browns
     second: {fileID: 2100000, guid: 69eda57f18a233d4dab7dcb573cb6a1f, type: 2}
   - first:
       type: UnityEngine:Material
@@ -25,8 +25,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Palette Specials.001
-    second: {fileID: 2100000, guid: f60a13aa23802ed4c985475e01e4c03c, type: 2}
+      name: Signs04
+    second: {fileID: 2100000, guid: 22c6b8d8f926bdf4291e3f5ed6be4278, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

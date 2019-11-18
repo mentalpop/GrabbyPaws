@@ -6,7 +6,7 @@ ModelImporter:
     100000: //RootNode
     400000: //RootNode
     2100000: Palette Specials
-    2100002: Signs
+    2100002: Signs04
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cube.472
@@ -19,8 +19,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Signs
-    second: {fileID: 2100000, guid: f2a75a40319ed5e488655c56dff5fcf6, type: 2}
+      name: Signs04
+    second: {fileID: 2100000, guid: 22c6b8d8f926bdf4291e3f5ed6be4278, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
