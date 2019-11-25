@@ -9,7 +9,8 @@ ModelImporter:
     2100002: Material.002
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Mountains
+    4300000: Mountains.002
+    2186277476908879412: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
