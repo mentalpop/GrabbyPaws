@@ -7,26 +7,21 @@ ModelImporter:
     100002: Cube.647
     100004: Cube.649
     100006: Cube.650
-    100008: Cube.651
     400000: //RootNode
     400002: Cube.647
     400004: Cube.649
     400006: Cube.650
-    400008: Cube.651
     2100000: Palette Specials
     2100002: BusinessWindow Light
     2300000: Cube.647
     2300002: Cube.649
     2300004: Cube.650
-    2300006: Cube.651
     3300000: Cube.647
     3300002: Cube.649
     3300004: Cube.650
-    3300006: Cube.651
     4300000: Cube.647
     4300002: Cube.649
     4300004: Cube.650
-    4300006: Cube.651
   externalObjects:
   - first:
       type: UnityEngine:Material
