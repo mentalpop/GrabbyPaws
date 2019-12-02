@@ -12,7 +12,7 @@ public class Targetting : MonoBehaviour
     public float radius;
     public float depth;
     public float angle;
-    //private Physics physics;
+    private Physics physics;
 
     void Start() {
         targets = new List<Transform>();
