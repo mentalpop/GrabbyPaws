@@ -39,47 +39,26 @@ public class Targetting : MonoBehaviour
             });
     }
 
-    private void SelectTarget(bool increaseIndex) {
+    private void SelectTarget() {
         if(selectedTarget == null) {
             SortTargetsByDistance();
             selectedTarget = targets[0];
         } else {
             int index = targets.IndexOf(selectedTarget);
-
-            /*
-            if (increaseIndex)
-                index++;
-            else
-                index--;
-            index = Mathf.Clamp(index, 0, targets.Count - 1);
-            //*/
-
-            //*
-            if(index < targets.Count - 1)
+            if (index < targets.Count - 1)
             {
                 index++;
             }
-            else
-            {
+            else {
                 index = 0;
-
             }
-            //*/
             selectedTarget = targets[index];
         }
     }
 
     void Update() {
         if(Input.GetButtonDown("ChangeFocus")) {
-            SelectTarget(true);
+            SelectTarget();
         }
-
-        /*
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f )  {// forward
-            SelectTarget(true);
-        } else if (Input.GetAxis("Mouse ScrollWheel") < 0f )  {// backwards
-            SelectTarget(false);
-        }
-        //*/
     }
 }

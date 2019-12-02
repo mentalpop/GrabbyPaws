@@ -128,6 +128,12 @@ public class Sense : MonoBehaviour
             IncreaseIndex();
         }
 
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f )  {// forward
+            IncreaseIndex();
+        } else if (Input.GetAxis("Mouse ScrollWheel") < 0f )  {// backwards
+            DecreaseIndex();
+        }
+
 		if (Input.GetButtonDown("Yeet"))
         {
             StartCoroutine(DropInventory(inventory.items.Count));
