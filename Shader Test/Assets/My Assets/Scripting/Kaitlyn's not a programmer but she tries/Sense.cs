@@ -123,7 +123,7 @@ public class Sense : MonoBehaviour
             index = 0;
         }
 
-        if (Input.GetButtonDown("UIHorizontal"))
+        if (Input.GetButtonDown("ChangeFocus"))
         {
             IncreaseIndex();
         }
