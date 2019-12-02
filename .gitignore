@@ -6,6 +6,7 @@ Shader Test/TestIgnoreFolder/
 Shader Test/[Ll]ibrary/
 Shader Test/[Tt]emp/
 Shader Test/[Oo]bj/
+Shader Test/obj/
 Shader Test/[Bb]uild/
 Shader Test/[Bb]uilds/
 Shader Test/[Ll]ogs/
@@ -46,6 +47,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.cache
 
 # Unity3D generated meta files
 *.pidb.meta

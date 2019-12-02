@@ -12,11 +12,9 @@ public class Targetting : MonoBehaviour
     public float radius;
     public float depth;
     public float angle;
-    private Physics physics;
+    //private Physics physics;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         targets = new List<Transform>();
         selectedTarget = null;
         myTransform = transform;
@@ -24,37 +22,37 @@ public class Targetting : MonoBehaviour
         AddAllTargets();
     }
 
-    public void AddAllTargets()
-    {
+    public void AddAllTargets() {
         GameObject[] go = GameObject.FindGameObjectsWithTag("Targets");
 
         foreach (GameObject target in go)
             AddTarget(target.transform);
     }
 
-    public void AddTarget(Transform target)
-    {
+    public void AddTarget(Transform target) {
         targets.Add(target);
     }
 
-    private void SortTargetsByDistance()
-    {
+    private void SortTargetsByDistance() {
         targets.Sort(delegate (Transform t1, Transform t2) {
             return Vector3.Distance(t1.position, myTransform.position).CompareTo(Vector3.Distance(t2.position, myTransform.position));
             });
     }
-    private void SelectTarget()
-    {
-        if(selectedTarget == null)
-        {
+
+    private void SelectTarget(bool increaseIndex) {
+        if(selectedTarget == null) {
             SortTargetsByDistance();
             selectedTarget = targets[0];
-        }
-
-        else
-        {
+        } else {
             int index = targets.IndexOf(selectedTarget);
 
+            if (increaseIndex)
+                index++;
+            else
+                index--;
+            index = Mathf.Clamp(index, 0, targets.Count - 1);
+
+            /*
             if(index < targets.Count - 1)
             {
                 index++;
@@ -64,20 +62,20 @@ public class Targetting : MonoBehaviour
                 index = 0;
 
             }
+            //*/
             selectedTarget = targets[index];
         }
-       
     }
 
- 
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(Input.GetButtonDown("UIHorizontal"))
-        {
-            SelectTarget();
+    void Update() {
+        if(Input.GetButtonDown("ChangeFocus")) {
+            SelectTarget(true);
         }
 
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f )  {// forward
+            SelectTarget(true);
+        } else if (Input.GetAxis("Mouse ScrollWheel") < 0f )  {// backwards
+            SelectTarget(false);
+        }
     }
 }
