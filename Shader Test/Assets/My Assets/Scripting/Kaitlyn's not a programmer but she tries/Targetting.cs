@@ -46,13 +46,15 @@ public class Targetting : MonoBehaviour
         } else {
             int index = targets.IndexOf(selectedTarget);
 
+            /*
             if (increaseIndex)
                 index++;
             else
                 index--;
             index = Mathf.Clamp(index, 0, targets.Count - 1);
+            //*/
 
-            /*
+            //*
             if(index < targets.Count - 1)
             {
                 index++;
@@ -72,10 +74,12 @@ public class Targetting : MonoBehaviour
             SelectTarget(true);
         }
 
+        /*
         if (Input.GetAxis("Mouse ScrollWheel") > 0f )  {// forward
             SelectTarget(true);
         } else if (Input.GetAxis("Mouse ScrollWheel") < 0f )  {// backwards
             SelectTarget(false);
         }
+        //*/
     }
 }
