@@ -107,7 +107,7 @@ public class Sense : MonoBehaviour
         index--;
         if(index < 0)
         {
-            index = targets.Count;
+            index = targets.Count - 1;
         }
     }
 
@@ -128,9 +128,11 @@ public class Sense : MonoBehaviour
             IncreaseIndex();
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f )  {// forward
+        if (Input.mouseScrollDelta.y > 0f )  {// forward
+            //Debug.Log("mouseScrollDelta.y" + ": " + Input.mouseScrollDelta.y);
             IncreaseIndex();
-        } else if (Input.GetAxis("Mouse ScrollWheel") < 0f )  {// backwards
+        } else if (Input.mouseScrollDelta.y<  0f )  {// backwards
+            //Debug.Log("mouseScrollDelta.y" + ": " + Input.mouseScrollDelta.y);
             DecreaseIndex();
         }
 
