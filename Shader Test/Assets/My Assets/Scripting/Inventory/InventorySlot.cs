@@ -17,6 +17,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         item = _item;
         //* Going to use this later; 
         model = Instantiate(item.model, cube);
+        Debug.Log("model" + ": " + model);
         model.transform.localPosition = new Vector3(item.itemPositionOffset.x, item.itemPositionOffset.y, 0);
         model.layer = 5;
         model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
