@@ -33,24 +33,20 @@ public class Sense : MonoBehaviour
     }
 
 
+    /*
     IEnumerator DropInventory(int count)
     {
 
         for(int _i = 0; _i < count; _i++)
         {
-            Debug.Log(inventory.items[0].name);
-            if (inventory.items[0].physicalItem != null) {
-                GameObject g = Instantiate(inventory.items[0].physicalItem, gameObject.transform);
-                g.transform.parent = null;
-                g.transform.position = gameObject.transform.position;
-            }
-            inventory.Remove(inventory.items[0]);
+            
 
             yield return new WaitForSeconds(0.2f);
 
         }
         
     }
+    //*/
 
 
     public void AddAllTargets()
@@ -136,10 +132,12 @@ public class Sense : MonoBehaviour
             DecreaseIndex();
         }
 
-		if (Input.GetButtonDown("Yeet"))
+		/*
+        if (Input.GetButtonDown("Yeet"))
         {
             StartCoroutine(DropInventory(inventory.items.Count));
         }
+        //*/
 
       
     }

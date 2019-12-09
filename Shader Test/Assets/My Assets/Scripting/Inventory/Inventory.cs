@@ -1,40 +1,41 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pixelplacement;
 
-public class Inventory : MonoBehaviour {
+public class Inventory : Singleton<Inventory> {
+
 
     public List<Item> items = new List<Item>();
 
+    /*
     #region Singleton
     public static Inventory instance;
 
-    private void Awake()
-    {
-        if(instance != null)
-        {
+    private void Awake() {
+        if(instance != null) {
             Debug.LogWarning("More than one inventory in scene");
             return;
         }
         instance = this;
     }
     #endregion
+    //*/
 
     public delegate void OnItemChanged();
-    [SerializeField]
+    //[SerializeField]
     public OnItemChanged OnItemChangedCallback;
-
-
-    public int space = 9;
-
     
+    private void OnEnable() {
+        RegisterSingleton (this);
+    }
 
-    public bool Add(Item item)
-    {
-        if(items.Count >= space)
-        {
+    public bool Add(Item item) {
+        /* No space limit, so don't return false
+        if (items.Count >= space) {
             return false;
         }
+        //*/
 
         items.Add(item);
 
@@ -42,8 +43,7 @@ public class Inventory : MonoBehaviour {
         return true;
     }
 
-    public void Remove(Item item)
-    {
+    public void Remove(Item item) {
 
         items.Remove(item);
         
@@ -51,9 +51,24 @@ public class Inventory : MonoBehaviour {
         
     }
 
+    public GameObject Drop(Item _toDrop, Vector3 dropPosition) {
+        GameObject toDrop = null;
+//Drop an item from the Inventory
+        foreach (var item in items) { //Ensure the item exists in the inventory
+            if (item == _toDrop) {
+                if (item.physicalItem != null) {
+                    toDrop = Instantiate(item.physicalItem, dropPosition, Quaternion.identity);
+                }
+                Remove(item);
+                break;
+            }
+        }
+        return toDrop;
+    }
 
-    public int ReturnValues()
-    {
+
+    /* This is a disaster, removing it
+    public int ReturnValues() {
 
         ThieveControl controller = FindObjectOfType<ThieveControl>();
         int myValue = 0;
@@ -66,13 +81,12 @@ public class Inventory : MonoBehaviour {
         items.Clear();
         return myValue;
     }
+    //*/
 
 
-    public float ReturnWeights()
-    {
+    public float ReturnWeights() {
         float weight = 0;
-        for(int i = 0; i < items.Count; i++)
-        {
+        for(int i = 0; i < items.Count; i++) {
             weight += items[i].weight;
         }
         return weight;

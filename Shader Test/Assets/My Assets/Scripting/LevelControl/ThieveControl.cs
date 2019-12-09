@@ -92,7 +92,7 @@ public class ThieveControl : MonoBehaviour
 
         currWeight = Inventory.instance.ReturnWeights();
         playerMotor.weightCoef = Mathf.Clamp(1.0f - (currWeight / weightTotal), 0, 1.0f);
-        amtText.text = Inventory.instance.items.Count.ToString() + "/" + Inventory.instance.space;
+        amtText.text = Inventory.instance.items.Count.ToString() + "/" + Inventory.instance.items.Count;//.space;
 
  
 

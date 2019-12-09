@@ -27,7 +27,7 @@ public class GetValue : MonoBehaviour
             if (Input.GetButtonDown("Steal"))
             {
                 Debug.Log("Hey");
-                t.totalValue += i.ReturnValues();
+                t.totalValue += 1;//i.ReturnValues(); //Getting rid of this
                 FindObjectOfType<InventoryUI>().UpdateUI();
             }
         }

@@ -59,11 +59,11 @@ public class InventoryUI : MonoBehaviour {
         {
             if(i < inventory.items.Count)
             {
-                slots[i].AddItem(inventory.items[i]);
+                //slots[i].AddItem(inventory.items[i]);
             }
             else
             {
-                slots[i].ClearSlot();
+                //slots[i].ClearSlot();
                 //Debug.Log("Updating UI");
             }
         }
