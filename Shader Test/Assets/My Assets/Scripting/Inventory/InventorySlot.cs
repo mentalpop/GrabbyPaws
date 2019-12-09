@@ -4,27 +4,26 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
     
-    public Transform slotCenter;
+    public Transform cube;
     //public Image icon;
     //public Button removeButton;
 
     //public ToolTip tip;
     //public GameObject modelTransform;
-    //private GameObject model = null;
+    private GameObject model;// = null;
     private Item item;
 
     public void Unpack(Item _item) {
         item = _item;
-        /* Going to use this later; 
-        if (model == null) {
-            model = Instantiate(item.model, modelTransform.transform);
-            model.transform.localPosition = new Vector3(item.itemXOffset, item.itemYOffset, 0);
-            model.layer = 5;
-            model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
-            if (model.GetComponent<Rigidbody>() != null) {
-                model.GetComponent<Rigidbody>().useGravity = false;
-            }
-        }
+        //* Going to use this later; 
+        model = Instantiate(item.model, cube);
+        model.transform.localPosition = new Vector3(item.itemPositionOffset.x, item.itemPositionOffset.y, 0);
+        model.layer = 5;
+        model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
+        /*
+        if (model.GetComponent<Rigidbody>() != null) {
+            model.GetComponent<Rigidbody>().useGravity = false;
+            //*/
         //*/
     }
 
