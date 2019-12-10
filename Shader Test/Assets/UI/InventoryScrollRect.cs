@@ -7,6 +7,7 @@ public class InventoryScrollRect : MonoBehaviour
     public GameObject slotPrefab;
     public Transform contentTransform;
     public ScrollResize scrollResize;
+    public InventoryDisplay inventoryDisplay;
     public BottomCapAdjust bottomCapAdjust;
 
     private bool myBool;
@@ -22,10 +23,12 @@ public class InventoryScrollRect : MonoBehaviour
         }
         foreach (var item in items) {
     //Instantiate each item
-            GameObject gameObject = Instantiate(slotPrefab, contentTransform, false);
-            slots.Add(gameObject);
-            InventorySlot slot = gameObject.GetComponent<InventorySlot>();
-            slot.Unpack(item);
+            if (item.category == inventoryDisplay.inventoryDisplayType) {
+                GameObject gameObject = Instantiate(slotPrefab, contentTransform, false);
+                slots.Add(gameObject);
+                InventorySlot slot = gameObject.GetComponent<InventorySlot>();
+                slot.Unpack(item);
+            }
         }
         scrollResize.RectResize(slots.Count);
         bottomCapAdjust.UpdateHeight(scrollResize.myRect.rect.height);

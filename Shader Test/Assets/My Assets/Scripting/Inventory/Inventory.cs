@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 
-public class Inventory : Singleton<Inventory> {
-
-
+public class Inventory : Singleton<Inventory>
+{
     public List<Item> items = new List<Item>();
+    public Vector3 dropPosition;
 
     /*
     #region Singleton
@@ -22,9 +22,8 @@ public class Inventory : Singleton<Inventory> {
     #endregion
     //*/
 
-    public delegate void OnItemChanged();
-    //[SerializeField]
-    public OnItemChanged OnItemChangedCallback;
+    public delegate void InventoryEvent();
+    public InventoryEvent OnItemChanged;
     
     private void OnEnable() {
         RegisterSingleton (this);
@@ -39,7 +38,7 @@ public class Inventory : Singleton<Inventory> {
 
         items.Add(item);
 
-        OnItemChangedCallback?.Invoke();
+        OnItemChanged?.Invoke();
         return true;
     }
 
@@ -47,11 +46,11 @@ public class Inventory : Singleton<Inventory> {
 
         items.Remove(item);
         
-        OnItemChangedCallback?.Invoke();
+        OnItemChanged?.Invoke();
         
     }
 
-    public GameObject Drop(Item _toDrop, Vector3 dropPosition) {
+    public GameObject Drop(Item _toDrop) {
         GameObject toDrop = null;
 //Drop an item from the Inventory
         foreach (var item in items) { //Ensure the item exists in the inventory

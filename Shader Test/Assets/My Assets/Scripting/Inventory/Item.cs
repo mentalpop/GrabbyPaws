@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 
-public enum CatrgoryItem { Junk, Scrap, Key}
+public enum CategoryItem { Trash, Scrap, Key}
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class Item : ScriptableObject {
 
     new public string name = "New Item";
-    public CatrgoryItem category;
+    public CategoryItem category;
     public Sprite icon = null;
     //public bool isDefaultItem = false;
     public float value = 1f;
@@ -17,6 +17,8 @@ public class Item : ScriptableObject {
     public Vector3 itemRotationOffset; //Euler angles for the rotation of the model
     public float itemScale = 2f;
     public bool consumable = false;
+    public bool cursed = false;
+    public bool negativeValue = false;
 
     [TextArea(3,10)]
     public string description = "Item Description";

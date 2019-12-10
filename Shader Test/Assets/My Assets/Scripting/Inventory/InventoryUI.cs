@@ -17,7 +17,7 @@ public class InventoryUI : MonoBehaviour {
     // Use this for initialization
     void Start () {
         inventory = Inventory.instance;
-        inventory.OnItemChangedCallback += UpdateUI;
+        inventory.OnItemChanged += UpdateUI;
         inventoryUI.SetActive(false);
         Debug.Log("Hello 2");
 

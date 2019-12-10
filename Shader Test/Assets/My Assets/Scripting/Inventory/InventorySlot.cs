@@ -17,7 +17,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         item = _item;
         //* Going to use this later; 
         model = Instantiate(item.model, cube);
-        Debug.Log("cube transform: " + cube);
+        //Debug.Log("cube transform: " + cube);
         model.transform.localPosition = new Vector3(item.itemPositionOffset.x, item.itemPositionOffset.y, 0);
         model.layer = 5;
         model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
@@ -102,7 +102,12 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.button == PointerEventData.InputButton.Right) {
-             Debug.Log ("Toss item: " + item.name);
+            if (item.cursed) {
+                Debug.Log("Can't drop cursed item: " + item.name);
+            } else {
+                Inventory.instance.Drop(item);
+                Debug.Log("Dropping: " + item.name);
+            }
         }
     }
 }
