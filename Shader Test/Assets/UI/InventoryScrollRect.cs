@@ -7,6 +7,7 @@ public class InventoryScrollRect : MonoBehaviour
     public GameObject slotPrefab;
     public Transform contentTransform;
     public ScrollResize scrollResize;
+    public BottomCapAdjust bottomCapAdjust;
 
     private bool myBool;
     private List<GameObject> slots = new List<GameObject>();
@@ -27,6 +28,7 @@ public class InventoryScrollRect : MonoBehaviour
             slot.Unpack(item);
         }
         scrollResize.RectResize(slots.Count);
+        bottomCapAdjust.UpdateHeight(scrollResize.myRect.rect.height);
     }
 
     /*
