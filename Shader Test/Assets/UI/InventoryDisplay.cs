@@ -12,10 +12,6 @@ public class InventoryDisplay : MonoBehaviour
 
     [HideInInspector] public CategoryItem inventoryDisplayType;
 
-    //private List<TabSortItem> tabSortItems = new List<TabSortItem>();
-
-    private bool myBool;
-
     private void OnEnable() {
         inventoryTabMenu.OnTabSelected += SetActiveTab;
         inventory.OnItemChanged += UpdateDisplay;

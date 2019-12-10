@@ -33,10 +33,4 @@ public class InventoryScrollRect : MonoBehaviour
         scrollResize.RectResize(slots.Count);
         bottomCapAdjust.UpdateHeight(scrollResize.myRect.rect.height);
     }
-
-    /*
-    void Update() {
-
-    }
-    //*/
 }

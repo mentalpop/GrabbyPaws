@@ -14,6 +14,7 @@ public class UI : Singleton<UI>
     public CurrencyDisplay currencyDisplay;
 
     private bool doShowCurrencyDisplay = false;
+    private Coroutine currencyDisplayRoutine;
 
     private void OnEnable() {
         RegisterSingleton (this);
@@ -29,26 +30,29 @@ public class UI : Singleton<UI>
 
     }
     //*/
-    private void ShowCurrencyDisplay() {
+    private void ShowHideCurrencyDisplay() {
         currencyDisplay.gameObject.SetActive(doShowCurrencyDisplay || InventoryDisplay.activeSelf);
     }
 
     private void ShowInventoryDisplay() {
     //Show / Hide the HUD
         InventoryDisplay.SetActive(!InventoryDisplay.activeSelf);
-        ShowCurrencyDisplay();
+        ShowHideCurrencyDisplay();
     }
     private void OnCurrencyChanged() {
         doShowCurrencyDisplay = true;
         currencyDisplay.UpdateCashDisplay();
-        ShowCurrencyDisplay();
-        StartCoroutine(DelayHideCurrencyDisplay());
+        ShowHideCurrencyDisplay();
+        if (currencyDisplayRoutine != null)
+            StopCoroutine(currencyDisplayRoutine); //Stop before starting another
+        currencyDisplayRoutine = StartCoroutine(DelayHideCurrencyDisplay());
     }
 
     IEnumerator DelayHideCurrencyDisplay() {
         yield return new WaitForSeconds(timeShowCurrency);
         doShowCurrencyDisplay = false;
-        ShowCurrencyDisplay();
+        ShowHideCurrencyDisplay();
+        currencyDisplayRoutine = null;
     }
 
     void Update() {

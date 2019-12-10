@@ -41,8 +41,6 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     /*
     public void Awake()
     {
-  
-
         tip = FindObjectOfType<ToolTip>();
     }
     //*/
@@ -88,19 +86,18 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         //Inventory.instance.Remove(item);
     }
     //*/
-
-
+        
+    /*
     public void UseItem()
     {
-        /*
         if(item != null && !tip.gameObject.activeSelf)
         {
             tip.ToggleMe(item, transform, this);
             tip.gameObject.SetActive(true);
             Debug.Log("Selected");
         }
-        //*/
     }
+    //*/
 
     public void OnPointerEnter(PointerEventData eventData) {
 //Tooltip Handling
