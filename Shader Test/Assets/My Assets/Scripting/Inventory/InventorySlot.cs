@@ -4,25 +4,33 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
     
+    public float itemSpinSpeed = 72f;
     public Transform cube;
     //public Image icon;
     //public Button removeButton;
 
     //public ToolTip tip;
     //public GameObject modelTransform;
-    private GameObject model;// = null;
+    private GameObject model;
+    private Quaternion initialRotation;
     private Item item;
+    private bool mouseOver = false;
+
+    void Update() {
+        if (mouseOver)
+            model.transform.Rotate(0, Time.deltaTime * itemSpinSpeed, 0);
+    }
 
     public void Unpack(Item _item) {
         item = _item;
         //* Going to use this later; 
         model = Instantiate(item.model, cube);
         //Debug.Log("cube transform: " + cube);
-        model.transform.localPosition = item.itemPositionOffset;// new Vector3(item.itemPositionOffset.x, item.itemPositionOffset.y, 0);
-        model.transform.rotation = Quaternion.Euler(item.itemRotationOffset);
+        model.transform.localPosition = item.positionOffset;
+        initialRotation = Quaternion.Euler(item.rotationOffset);
+        model.transform.rotation = initialRotation;
         model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
-        model.layer = 5;
-        //Debug.Log("item.itemScale" + ": " + item.itemScale);
+        model.layer = 5; //UI
         /*
         if (model.GetComponent<Rigidbody>() != null) {
             model.GetComponent<Rigidbody>().useGravity = false;
@@ -96,19 +104,22 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData) {
 //Tooltip Handling
+        mouseOver = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
 //Tooltip Handling
+        mouseOver = false;
+        model.transform.rotation = initialRotation;
     }
 
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.button == PointerEventData.InputButton.Right) {
-            if (item.cursed) {
-                Debug.Log("Can't drop cursed item: " + item.name);
-            } else {
+            if (item.category == CategoryItem.Trash) {
                 Inventory.instance.Drop(item);
                 Debug.Log("Dropping: " + item.name);
+            } else {
+                Debug.Log("Can't drop item: " + item.name);
             }
         }
     }

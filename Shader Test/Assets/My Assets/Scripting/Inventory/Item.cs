@@ -13,8 +13,8 @@ public class Item : ScriptableObject {
     public GameObject physicalItem;
     public float weight = 0f;
     public GameObject model = null;
-    public Vector3 itemPositionOffset; //Position offset for the model, only x / y are actually used
-    public Vector3 itemRotationOffset; //Euler angles for the rotation of the model
+    public Vector3 positionOffset; //Position offset for the model, only x / y are actually used
+    public Vector3 rotationOffset = new Vector3(22.5f, 0f, 50f); //Euler angles for the rotation of the model
     public float itemScale = 2f;
     public bool consumable = false;
     public bool cursed = false;
