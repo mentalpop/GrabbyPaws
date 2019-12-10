@@ -8,6 +8,8 @@ public class UI : Singleton<UI>
     public Sonos sonosAudio;
     public GameObject HUD;
     public GameObject InventoryDisplay;
+    [Header("Readables")]
+    public Readable book;
     [Header("Currency")]
     public float timeShowCurrency = 3f;
     public Currency currency;
@@ -25,11 +27,15 @@ public class UI : Singleton<UI>
         currency.OnCashChanged -= OnCurrencyChanged;
     }
 
-    /*
-    void Start() {
-
+    public void DisplayReadable(ReadableData rData) {
+        if (rData.isBook) {
+            book.gameObject.SetActive(true);
+            book.Unpack(rData);
+        } else {
+            Debug.Log("Readable PC not yet implemented!");
+        }
     }
-    //*/
+
     private void ShowHideCurrencyDisplay() {
         currencyDisplay.gameObject.SetActive(doShowCurrencyDisplay || InventoryDisplay.activeSelf);
     }
@@ -56,21 +62,6 @@ public class UI : Singleton<UI>
     }
 
     void Update() {
-    //Debug
-        if (Input.GetKeyDown(KeyCode.KeypadPlus)) {
-            Currency.instance.Cash += 10000000m;
-        }
-        if (Input.GetKeyDown(KeyCode.KeypadMinus)) {
-            Currency.instance.Cash -= 100m;
-        }
-        if (Input.GetKeyDown(KeyCode.KeypadMultiply)) {
-            if (Currency.instance.Purchase(500m)) {
-                Debug.Log("Purchase successful!");
-            } else {
-                Debug.Log("Not enough funds!");
-            }
-        }
-
         if (Input.GetButtonDown("Inventory")) {
             ShowInventoryDisplay();
         }

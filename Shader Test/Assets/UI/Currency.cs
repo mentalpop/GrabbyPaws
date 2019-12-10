@@ -18,8 +18,6 @@ public class Currency : Singleton<Currency>
         }
     }
     private decimal _cash;
-
-    //private bool myBool;
     
     public delegate void CurrencyEvent();
     public CurrencyEvent OnCashChanged;
