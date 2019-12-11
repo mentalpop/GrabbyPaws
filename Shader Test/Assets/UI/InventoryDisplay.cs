@@ -27,7 +27,7 @@ public class InventoryDisplay : MonoBehaviour
     }
     public void SetActiveTab(int _activeTab) {
         inventoryDisplayType = (CategoryItem)_activeTab;
-        Debug.Log("inventoryDisplayType" + ": " + inventoryDisplayType);
+        //Debug.Log("inventoryDisplayType" + ": " + inventoryDisplayType);
         UpdateDisplay();
     //Set position in Heirarchy to be one more than the active tab
         inventoryScrollRect.transform.SetAsLastSibling(); //Do this first to put it to the end of the list

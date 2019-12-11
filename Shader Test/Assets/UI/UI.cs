@@ -8,6 +8,7 @@ public class UI : Singleton<UI>
     public Sonos sonosAudio;
     public GameObject HUD;
     public GameObject InventoryDisplay;
+    public LappyMenu lappy;
     [Header("Readables")]
     public Readable book;
     [Header("Currency")]
@@ -39,12 +40,17 @@ public class UI : Singleton<UI>
     private void ShowHideCurrencyDisplay() {
         currencyDisplay.gameObject.SetActive(doShowCurrencyDisplay || InventoryDisplay.activeSelf);
     }
+    private void ShowLappyMenu() {
+    //Show / Hide the HUD
+        lappy.gameObject.SetActive(!lappy.gameObject.activeSelf);
+    }
 
     private void ShowInventoryDisplay() {
     //Show / Hide the HUD
         InventoryDisplay.SetActive(!InventoryDisplay.activeSelf);
         ShowHideCurrencyDisplay();
     }
+
     private void OnCurrencyChanged() {
         doShowCurrencyDisplay = true;
         currencyDisplay.UpdateCashDisplay();
@@ -62,8 +68,12 @@ public class UI : Singleton<UI>
     }
 
     void Update() {
+//Open / Close menus
         if (Input.GetButtonDown("Inventory")) {
             ShowInventoryDisplay();
+        }
+        if (Input.GetButtonDown("Kwit")) {
+            ShowLappyMenu();
         }
     }
 }

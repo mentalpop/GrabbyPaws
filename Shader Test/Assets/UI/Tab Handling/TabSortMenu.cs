@@ -45,24 +45,7 @@ public class TabSortMenu : MonoBehaviour
             TabSortItem tab = tabs[i].GetComponent<TabSortItem>();
             tab.contentActive = i == _activateTabID;
             //bwt.content.SetActive(i == _activateTabID);
-            tab.SetOpacity();
+            //tab.SetOpacity();
         }
-    }
-}
-
-[System.Serializable]
-public class TabData
-{
-    public Sprite icon;
-    public Color bgColor;
-    public string text;
-
-    public TabData(Sprite icon, string text) {
-        this.icon = icon;
-        this.text = text;
-    }
-    public TabData(Sprite icon) {
-        this.icon = icon;
-        text = "";
     }
 }

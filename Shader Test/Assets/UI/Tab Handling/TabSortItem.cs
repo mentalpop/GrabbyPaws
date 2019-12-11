@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-public class TabSortItem : MonoBehaviour, IPointerClickHandler //IPointerEnterHandler, IPointerExitHandler, 
+public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler 
 {
     //public CanvasGroup canvasGroup;
 	public Image myIconImage;
@@ -17,10 +17,13 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler //IPointerEnterHa
     [HideInInspector] public TabSortMenu myParentMenu; 
     [HideInInspector] public int tabID;
 	//private bool mouseOver;
+    private TabData tabData;
 
-	void Start() {
-        //SetOpacity();
+	/*
+    void Start() {
+
 	}
+    //*/
 
     public void InsertSeparator(GameObject separator) {
 //Instantiate a separator as 1 index ahead of yourself
@@ -28,19 +31,20 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler //IPointerEnterHa
         newSeperator.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
     }
 
-    public void UnpackData(TabData tabData, TabSortMenu _TabSortMenu, int _tabID) {
-        myIconImage.sprite = tabData.icon;
-        background.color = tabData.bgColor;
+    public void UnpackData(TabData _tabData, TabSortMenu _TabSortMenu, int _tabID) {
+        tabData = _tabData;
+        myIconImage.sprite = _tabData.icon;
+        background.color = _tabData.bgColor;
         myIconImage.SetNativeSize();
         if (title != null) {
-            title.text = tabData.text;
+            title.text = _tabData.text;
         }
         myParentMenu = _TabSortMenu;
         tabID = _tabID;
     }
-
+    
+    /*
     public void SetOpacity() {
-        /*
         if (mouseOver) {
             canvasGroup.alpha = 1f;
         } else if (!contentActive) {
@@ -55,20 +59,16 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler //IPointerEnterHa
             myHighlightImage.sprite = contentActive ? myParentMenu.spriteActive : null;
             //myHighlightImage.color = contentActive ? new Color(0f, 0f, 0f, 0f) : Color.white;
         }
-        //*/
     }
+    //*/
 
-	/*
     public void OnPointerEnter(PointerEventData evd) {
-		mouseOver = true;
-        //SetOpacity();
+		background.color = tabData.bgColorHighlight;
 	}
 
 	public void OnPointerExit (PointerEventData evd) {
-		mouseOver = false;
-        //SetOpacity();
+		background.color = tabData.bgColor;
 	}
-    //*/
 		
 	public void OnPointerClick (PointerEventData evd) {
 		if (!contentActive) {
