@@ -9,7 +9,7 @@ public class ClickToClose : MonoBehaviour, IPointerClickHandler
     public CloseEvent OnClick;
 
     private void OnEnable() {
-        GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);
+        GetComponent<RectTransform>().sizeDelta = new Vector2(ScreenSpace.Width, ScreenSpace.Height);
     }
 
     public void OnPointerClick (PointerEventData evd) {

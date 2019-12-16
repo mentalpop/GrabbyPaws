@@ -77,3 +77,16 @@ public class UI : Singleton<UI>
         }
     }
 }
+
+public static class ScreenSpace
+{
+    public static float Width = 1920f;
+    public static float Height = 1080f;
+	public static float Convert(float variable) {
+		return variable * Screen.height / Height;
+	}
+
+    public static float Inverse(float variable) {
+		return variable * (Height / Screen.height);
+	}
+}
