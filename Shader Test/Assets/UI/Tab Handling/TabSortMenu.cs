@@ -38,6 +38,7 @@ public class TabSortMenu : MonoBehaviour
     }
         
     public void TabSelect(int _activateTabID) {
+        Debug.Log("_activateTabID: " + _activateTabID);
         OnTabSelected(_activateTabID);
         activeTab = _activateTabID;
 //Iterate through all tabs and disable all but the selected one

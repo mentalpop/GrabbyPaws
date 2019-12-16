@@ -10,6 +10,7 @@ public class UI : Singleton<UI>
     public Sonos sonosAudio;
     public GameObject HUD;
     public LappyMenu lappy;
+    //public FlagRepository flagRepository;
     [Header("Readables")]
     public Readable book;
     [Header("Currency")]
