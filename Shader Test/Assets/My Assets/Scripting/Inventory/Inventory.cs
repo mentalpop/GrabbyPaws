@@ -6,6 +6,7 @@ using Pixelplacement;
 public class Inventory : Singleton<Inventory>
 {
     public List<Item> items = new List<Item>();
+    public ItemMetaList itemMetaList;
     public Vector3 dropPosition;
 
     /*
@@ -27,6 +28,21 @@ public class Inventory : Singleton<Inventory>
     
     private void OnEnable() {
         RegisterSingleton (this);
+    }
+
+    public List<int> Save() {
+        List<int> itemIDs = new List<int>();
+        foreach (var item in items) {
+            itemIDs.Add(itemMetaList.GetIndex(item));
+        }
+        return itemIDs;
+    }
+
+    public void Load(List<int> loadItems) {
+        items.Clear();
+        foreach (var item in loadItems) {
+            items.Add(itemMetaList.GetItem(item));
+        }
     }
 
     public bool Add(Item item) {

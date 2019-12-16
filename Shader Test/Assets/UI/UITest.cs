@@ -7,7 +7,14 @@ public class UITest : MonoBehaviour
     public ReadableData sampleBook;
 
     void Update() {
-//Debug
+//Saving / Loading
+        if (Input.GetKeyDown(KeyCode.S)) { //Save
+            UI.instance.SaveGameData();
+        }
+        if (Input.GetKeyDown(KeyCode.L)) { //Save
+            UI.instance.LoadGameData();
+        }
+//Currency
         if (Input.GetKeyDown(KeyCode.B)) { //B for Book
             UI.instance.DisplayReadable(sampleBook);
         }

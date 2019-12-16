@@ -25,7 +25,30 @@ public class LappyMenu : MonoBehaviour
     }
 
     public void SelectStartMenuItem(int _activeTab) {
-        //UpdateDisplay();
+        switch(_activeTab) {
+            case 0: //Rewind Time
+
+                break;
+            case 1: //Sneak Diary
+
+                break;
+            case 2: //Not Secrets
+
+                break;
+            case 3: //Chat
+
+                break;
+            case 4: //Options
+
+                break;
+            case 5: //Quit to Title
+
+                break;
+            case 6: //Save Game
+                UI.instance.SaveGameData();
+                Debug.Log("Game Saved");
+                break;
+        }
     }
 
     public void Close() {

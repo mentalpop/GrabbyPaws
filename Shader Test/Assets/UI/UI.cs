@@ -5,9 +5,10 @@ using Pixelplacement;
 
 public class UI : Singleton<UI>
 {
+    public static string saveFileName = "grabby.paws";
+
     public Sonos sonosAudio;
     public GameObject HUD;
-    public GameObject InventoryDisplay;
     public LappyMenu lappy;
     [Header("Readables")]
     public Readable book;
@@ -15,6 +16,10 @@ public class UI : Singleton<UI>
     public float timeShowCurrency = 3f;
     public Currency currency;
     public CurrencyDisplay currencyDisplay;
+    //[Header("Settings")]
+    [Header("Inventory")]
+    public GameObject InventoryDisplay;
+    public Inventory inventory;
 
     private bool doShowCurrencyDisplay = false;
     private Coroutine currencyDisplayRoutine;
@@ -75,6 +80,14 @@ public class UI : Singleton<UI>
         if (Input.GetButtonDown("Kwit")) {
             ShowLappyMenu();
         }
+    }
+    //Save / Load
+    public void SaveGameData() {
+        ES3.Save<List<int>>("inventory", inventory.Save());
+    }
+
+    public void LoadGameData() {
+        inventory.Load(ES3.Load<List<int>>("inventory"));
     }
 }
 
