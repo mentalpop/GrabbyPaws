@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 
-public class Inventory : Singleton<Inventory>
+public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 {
     public List<Item> items = new List<Item>();
     public ItemMetaList itemMetaList;
     public Vector3 dropPosition;
+    //public UI uiRef;
 
+    private string saveString = "inventory";
     /*
     #region Singleton
     public static Inventory instance;
@@ -28,17 +30,25 @@ public class Inventory : Singleton<Inventory>
     
     private void OnEnable() {
         RegisterSingleton (this);
+        UI.instance.OnSave += Save;
+        UI.instance.OnLoad += Load;
     }
 
-    public List<int> Save() {
+    private void OnDisable() {
+        UI.instance.OnSave -= Save;
+        UI.instance.OnLoad -= Load;
+    }
+
+    public void Save(int fileIndex) {
         List<int> itemIDs = new List<int>();
         foreach (var item in items) {
             itemIDs.Add(itemMetaList.GetIndex(item));
         }
-        return itemIDs;
+        ES3.Save<List<int>>(saveString, itemIDs);
     }
 
-    public void Load(List<int> loadItems) {
+    public void Load(int fileIndex) {
+        List<int> loadItems = ES3.Load(saveString, new List<int>());
         items.Clear();
         foreach (var item in loadItems) {
             items.Add(itemMetaList.GetItem(item));

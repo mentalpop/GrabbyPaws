@@ -21,13 +21,30 @@ public class Currency : Singleton<Currency>
     
     public delegate void CurrencyEvent();
     public CurrencyEvent OnCashChanged;
-
+    
     private void OnEnable() {
         RegisterSingleton (this);
+        UI.instance.OnSave += Save;
+        UI.instance.OnLoad += Load;
+    }
+
+    private void OnDisable() {
+        UI.instance.OnSave -= Save;
+        UI.instance.OnLoad -= Load;
+    }
+
+    private string saveString = "currency";
+
+    public void Save(int fileIndex) {
+        ES3.Save<decimal>(saveString, _cash);
+    }
+
+    public void Load(int fileIndex) {
+        Cash = ES3.Load(saveString, startingFunds);
     }
 
     private void Start() {
-        Cash += startingFunds;
+        Cash = startingFunds;
     }
 
     public bool Purchase(float cost) {

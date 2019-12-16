@@ -9,10 +9,10 @@ public class UITest : MonoBehaviour
     void Update() {
 //Saving / Loading
         if (Input.GetKeyDown(KeyCode.S)) { //Save
-            UI.instance.SaveGameData();
+            UI.instance.SaveGameData(0);
         }
         if (Input.GetKeyDown(KeyCode.L)) { //Save
-            UI.instance.LoadGameData();
+            UI.instance.LoadGameData(0);
         }
 //Currency
         if (Input.GetKeyDown(KeyCode.B)) { //B for Book

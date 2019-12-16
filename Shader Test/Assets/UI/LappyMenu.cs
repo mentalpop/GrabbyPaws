@@ -45,8 +45,7 @@ public class LappyMenu : MonoBehaviour
 
                 break;
             case 6: //Save Game
-                UI.instance.SaveGameData();
-                Debug.Log("Game Saved");
+                UI.instance.SaveGameData(0);
                 break;
         }
     }

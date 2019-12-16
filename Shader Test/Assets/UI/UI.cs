@@ -21,6 +21,10 @@ public class UI : Singleton<UI>
     public GameObject InventoryDisplay;
     public Inventory inventory;
 
+    public delegate void FileIOEvent(int fileNum);
+    public event FileIOEvent OnSave = delegate { };
+    public event FileIOEvent OnLoad = delegate { };
+
     private bool doShowCurrencyDisplay = false;
     private Coroutine currencyDisplayRoutine;
 
@@ -81,13 +85,15 @@ public class UI : Singleton<UI>
             ShowLappyMenu();
         }
     }
-    //Save / Load
-    public void SaveGameData() {
-        ES3.Save<List<int>>("inventory", inventory.Save());
+//Save / Load
+    public void SaveGameData(int fileNum) {
+        Debug.Log("Game Saved");
+        OnSave?.Invoke(fileNum);
     }
 
-    public void LoadGameData() {
-        inventory.Load(ES3.Load<List<int>>("inventory"));
+    public void LoadGameData(int fileNum) {
+        Debug.Log("Game Loaded");
+        OnLoad?.Invoke(fileNum);
     }
 }
 
