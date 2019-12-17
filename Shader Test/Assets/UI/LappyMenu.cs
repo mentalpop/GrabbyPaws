@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class LappyMenu : MonoBehaviour
 {
+    public SneakDiary sneakDiary;
     //public Inventory inventory;
     public ClickToClose clickToClose;
     
     public TabSortMenu startTabsSortMenu;
     public List<TabData> tabs = new List<TabData>();
+    public ButtonGeneric startButton;
+
+	private void OnClickStart() {
+		startTabsSortMenu.gameObject.SetActive(true);
+	}
 
     private void OnEnable() {
         startTabsSortMenu.OnTabSelected += SelectStartMenuItem;
         clickToClose.OnClick += Close;
+        startButton.OnClick += OnClickStart;
     }
 
     private void OnDisable() {
         startTabsSortMenu.OnTabSelected -= SelectStartMenuItem;
         clickToClose.OnClick -= Close;
+		startButton.OnClick -= OnClickStart;
     }
 
     void Start() {
@@ -25,12 +33,13 @@ public class LappyMenu : MonoBehaviour
     }
 
     public void SelectStartMenuItem(int _activeTab) {
+        startTabsSortMenu.gameObject.SetActive(false);
         switch(_activeTab) {
             case 0: //Rewind Time
 
                 break;
             case 1: //Sneak Diary
-
+                sneakDiary.gameObject.SetActive(true);
                 break;
             case 2: //Not Secrets
 
