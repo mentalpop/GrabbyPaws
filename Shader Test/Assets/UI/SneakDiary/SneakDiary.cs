@@ -5,16 +5,19 @@ using UnityEngine;
 public class SneakDiary : MonoBehaviour
 {
     public ButtonGeneric closeButton;
+    public ClickToClose clickToClose;
 		
 	private void OnEnable() {
-		closeButton.OnClick += OnClick;
+        clickToClose.OnClick += Close;
+		closeButton.OnClick += Close;
 	}
 
 	private void OnDisable() {
-		closeButton.OnClick -= OnClick;
+        clickToClose.OnClick -= Close;
+		closeButton.OnClick -= Close;
 	}
 
-	private void OnClick() {
+	private void Close() {
 		gameObject.SetActive(false);
 	}
 
