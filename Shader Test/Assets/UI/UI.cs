@@ -3,6 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 
+public enum QuestNames {
+    /*
+    q001TwilightCottonCandy,
+    q002TwilightCCandy,
+    q010TwilightCCandy,
+    q004Twilight,
+    //*/
+}
+
+public enum NPCLocations {
+    /*
+    npc001Twilight01Riven,
+    npc001Twilight02Riven,
+    npc001Twilight03Riven,
+    npc001Twilight04Riven,
+    npc001Twilight05Riven,
+    npc002,
+    q010TwilightCCandy,
+    q004Twilight,
+    //*/
+}
+
 public class UI : Singleton<UI>
 {
     public static string saveFileName = "grabby.paws";
