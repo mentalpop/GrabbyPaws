@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
+using PixelCrushers.DialogueSystem;
 
 public class FlagRepository : Singleton<FlagRepository>
 {
@@ -17,8 +18,27 @@ public class FlagRepository : Singleton<FlagRepository>
         foreach (var flag in secretFlags.flags) {
             flags.secretFlags.Add(flag, 0);
         }
+        RegisterLuaFunctions();
     }
-//Get / Set
+
+    #region Lua Functions
+    private void RegisterLuaFunctions() {
+        Lua.RegisterFunction("QuestRead", this, SymbolExtensions.GetMethodInfo(() => QuestRead(string.Empty)));
+        Lua.RegisterFunction("QuestWrite", this, SymbolExtensions.GetMethodInfo(() => QuestWrite(string.Empty, 0)));
+        Lua.RegisterFunction("SecretRead", this, SymbolExtensions.GetMethodInfo(() => SecretRead(string.Empty)));
+        Lua.RegisterFunction("SecretFound", this, SymbolExtensions.GetMethodInfo(() => SecretFound(string.Empty)));
+        Lua.RegisterFunction("SecretWrite", this, SymbolExtensions.GetMethodInfo(() => SecretWrite(string.Empty, 0)));
+    }
+
+    public double QuestRead(string name) { return ReadQuestKey(name); }
+    public void QuestWrite(string name, int value) { WriteQuestKey(name, value); }
+    public double SecretRead(string name) { return ReadSecretKey(name); }
+    public void SecretFound(string name) { SecretKeyFound(name); }
+    public void SecretWrite(string name, int value) { WriteSecretKey(name, value); }
+
+    #endregion
+
+    //Get / Set
     public static int ReadQuestKey(string key) {
         instance.flags.questFlags.TryGetValue(key, out int readValue);
         return readValue;
