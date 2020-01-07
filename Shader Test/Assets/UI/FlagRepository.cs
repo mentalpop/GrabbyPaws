@@ -13,7 +13,7 @@ public class FlagRepository : Singleton<FlagRepository>
     private void Awake() {
     //Initialize each to 0
         foreach (var flag in questFlags.flags) {
-            flags.questFlags.Add(flag, 0);
+            flags.questFlags.Add(flag, false);
         }
         foreach (var flag in secretFlags.flags) {
             flags.secretFlags.Add(flag, 0);
@@ -24,14 +24,14 @@ public class FlagRepository : Singleton<FlagRepository>
     #region Lua Functions
     private void RegisterLuaFunctions() {
         Lua.RegisterFunction("QuestRead", this, SymbolExtensions.GetMethodInfo(() => QuestRead(string.Empty)));
-        Lua.RegisterFunction("QuestWrite", this, SymbolExtensions.GetMethodInfo(() => QuestWrite(string.Empty, 0)));
+        Lua.RegisterFunction("QuestCompelete", this, SymbolExtensions.GetMethodInfo(() => QuestCompelete(string.Empty)));
         Lua.RegisterFunction("SecretRead", this, SymbolExtensions.GetMethodInfo(() => SecretRead(string.Empty)));
         Lua.RegisterFunction("SecretFound", this, SymbolExtensions.GetMethodInfo(() => SecretFound(string.Empty)));
         Lua.RegisterFunction("SecretWrite", this, SymbolExtensions.GetMethodInfo(() => SecretWrite(string.Empty, 0)));
     }
 
-    public double QuestRead(string name) { return ReadQuestKey(name); }
-    public void QuestWrite(string name, int value) { WriteQuestKey(name, value); }
+    public bool QuestRead(string name) { return ReadQuestKey(name); }
+    public void QuestCompelete(string name) { WriteQuestKey(name, true); }
     public double SecretRead(string name) { return ReadSecretKey(name); }
     public void SecretFound(string name) { SecretKeyFound(name); }
     public void SecretWrite(string name, int value) { WriteSecretKey(name, value); }
@@ -39,12 +39,12 @@ public class FlagRepository : Singleton<FlagRepository>
     #endregion
 
     //Get / Set
-    public static int ReadQuestKey(string key) {
-        instance.flags.questFlags.TryGetValue(key, out int readValue);
+    public static bool ReadQuestKey(string key) {
+        instance.flags.questFlags.TryGetValue(key, out bool readValue);
         return readValue;
     }
 
-    public static void WriteQuestKey(string key, int value) {
+    public static void WriteQuestKey(string key, bool value) {
         instance.flags.questFlags[key] = value;
     }
 //Secret Key
@@ -94,6 +94,6 @@ public class FlagRepository : Singleton<FlagRepository>
 
 public class GameFlags
 {
-    public Dictionary<string, int> questFlags = new Dictionary<string, int>();
+    public Dictionary<string, bool> questFlags = new Dictionary<string, bool>();
     public Dictionary<string, int> secretFlags = new Dictionary<string, int>();
 }

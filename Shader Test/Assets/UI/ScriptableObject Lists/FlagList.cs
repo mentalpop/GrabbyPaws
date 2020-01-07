@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ItemMetaList", menuName = "Inventory/ItemMetaList", order = 1)]
-public class ItemMetaList : ScriptableObject
+[CreateAssetMenu(fileName = "FlagList", menuName = "Lists/Flag List", order = 1)]
+public class FlagList : ScriptableObject
 {
-    public List<Item> items = new List<Item>();
+    public List<string> flags = new List<string>();
 
+    /*
     public int GetIndex(Item item) {
         for (int i = 0; i < items.Count; i++) {
             if (item == items[i]) {
@@ -23,4 +24,5 @@ public class ItemMetaList : ScriptableObject
         Debug.LogWarning("Could not find item in list with index: "+index);
         return null;
     }
+    //*/
 }
