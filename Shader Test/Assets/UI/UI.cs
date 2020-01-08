@@ -22,6 +22,11 @@ public enum QuestNames {
     //*/
 }
 
+public enum Secrets {
+    s001Test,
+    s002Test
+}
+
 public enum NPCLocations {
     /*
     npc001Twilight01Riven,

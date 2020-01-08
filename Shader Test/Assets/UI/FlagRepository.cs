@@ -3,20 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 using PixelCrushers.DialogueSystem;
+using System;
 
 public class FlagRepository : Singleton<FlagRepository>
 {
-    public FlagList questFlags;
-    public FlagList secretFlags;
+    //public QuestCompletionFlags questFlags;
+    public SecretFlagList secretFlags;
     public GameFlags flags = new GameFlags();
 
     private void Awake() {
-    //Initialize each to 0
-        foreach (var flag in questFlags.flags) {
-            flags.questFlags.Add(flag, false);
+    //Initialize each to 0 //TODO: Load in these values
+        foreach (QuestNames flag in Enum.GetValues(typeof(QuestNames))) {
+            flags.questFlags.Add(flag.ToString(), false);
         }
-        foreach (var flag in secretFlags.flags) {
-            flags.secretFlags.Add(flag, 0);
+        foreach (var flag in secretFlags.secrets) {
+            flags.secretFlags.Add(flag.secret.ToString(), 0);
         }
         RegisterLuaFunctions();
     }
@@ -59,6 +60,7 @@ public class FlagRepository : Singleton<FlagRepository>
                 instance.flags.secretFlags[key] = 1;
         }
     }
+
     public static void SecretKeyStrike(string key) { //Strike a secret from the list, but only if it has been found
         if (instance.flags.secretFlags.TryGetValue(key, out int readValue)) {
             if (readValue == 1)
@@ -74,6 +76,9 @@ public class FlagRepository : Singleton<FlagRepository>
         RegisterSingleton (this);
         UI.instance.OnSave += Save;
         UI.instance.OnLoad += Load;
+    //Debug
+        SecretKeyFound(Secrets.s001Test.ToString());
+        SecretKeyFound(Secrets.s002Test.ToString());
     }
 
     private void OnDisable() {
