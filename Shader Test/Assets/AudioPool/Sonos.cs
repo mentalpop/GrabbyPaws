@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public enum AudioType { Effect, Music, Voice}
 public class Sonos : MonoBehaviour
 {
+    private string saveString = "volumeLevels";
+    private string saveString2 = "volumeMaster";
     public static float VolumeMaster { get { return _volumeMaster; } set {
             _volumeMaster = value;
             if (instance.OnVolumeChanged != null)
@@ -55,6 +57,34 @@ public class Sonos : MonoBehaviour
         }
     //Subscribe to Scene management event
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnEnable() {
+        UI.instance.OnSave += Save;
+        UI.instance.OnLoad += Load;
+    }
+    private void OnDisable() {
+        UI.instance.OnSave -= Save;
+        UI.instance.OnLoad -= Load;
+    }
+
+    public void Save(int fileIndex) {
+        List<float> volumeLevels = new List<float>();
+        foreach (var volume in _volume) {
+            //Debug.Log("Saving volume: "+volume);
+            volumeLevels.Add(volume);
+        }
+        ES3.Save<List<float>>(saveString, volumeLevels);
+        ES3.Save<float>(saveString2, _volumeMaster);
+    }
+
+    public void Load(int fileIndex) {
+        List<float> volumeLevels = ES3.Load(saveString, new List<float>());
+        for (int i = 0; i < volumeLevels.Count; i++) {
+            //Debug.Log("Loading volume: "+volumeLevels[i]);
+            _volume[i] = volumeLevels[i];
+        }
+        _volumeMaster = ES3.Load<float>(saveString2);
     }
 
     private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1) {

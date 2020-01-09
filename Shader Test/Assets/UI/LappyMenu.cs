@@ -5,6 +5,8 @@ using UnityEngine;
 public class LappyMenu : MonoBehaviour
 {
     public SneakDiary sneakDiary;
+    public NotSecrets notSecrets;
+    public OptionsMenu optionsMenu;
     //public Inventory inventory;
     public ClickToClose clickToClose;
     
@@ -42,13 +44,13 @@ public class LappyMenu : MonoBehaviour
                 sneakDiary.gameObject.SetActive(true);
                 break;
             case 2: //Not Secrets
-
+                notSecrets.gameObject.SetActive(true);
                 break;
             case 3: //Chat
 
                 break;
             case 4: //Options
-
+                optionsMenu.gameObject.SetActive(true);
                 break;
             case 5: //Quit to Title
 

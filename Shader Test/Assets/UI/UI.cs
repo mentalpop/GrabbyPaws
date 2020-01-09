@@ -3,13 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
 
+public enum NightPhases
+{
+    p1Twilight,
+    p2MoonRise,
+    p3Midnight,
+    p4MoonFall,
+    p5Dawn
+}
+
 public enum QuestNames {
-    /*
     q001TwilightCottonCandy,
+    q001TwilightCottonCandyEndFlag
+    /*,
     q002TwilightCCandy,
     q010TwilightCCandy,
     q004Twilight,
     //*/
+}
+
+public enum Secrets {
+    s001Test,
+    s002Test
 }
 
 public enum NPCLocations {

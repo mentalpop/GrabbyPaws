@@ -2,29 +2,50 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
+using PixelCrushers.DialogueSystem;
+using System;
 
 public class FlagRepository : Singleton<FlagRepository>
 {
-    public FlagList questFlags;
-    public FlagList secretFlags;
+    //public QuestCompletionFlags questFlags;
+    public SecretFlagList secretFlags;
     public GameFlags flags = new GameFlags();
 
     private void Awake() {
-    //Initialize each to 0
-        foreach (var flag in questFlags.flags) {
-            flags.questFlags.Add(flag, 0);
+    //Initialize each to 0 //TODO: Load in these values
+        foreach (QuestNames flag in Enum.GetValues(typeof(QuestNames))) {
+            flags.questFlags.Add(flag.ToString(), false);
         }
-        foreach (var flag in secretFlags.flags) {
-            flags.secretFlags.Add(flag, 0);
+        foreach (var flag in secretFlags.secrets) {
+            flags.secretFlags.Add(flag.secret.ToString(), 0);
         }
+        RegisterLuaFunctions();
     }
-//Get / Set
-    public static int ReadQuestKey(string key) {
-        instance.flags.questFlags.TryGetValue(key, out int readValue);
+
+    #region Lua Functions
+    private void RegisterLuaFunctions() {
+        Lua.RegisterFunction("QuestRead", this, SymbolExtensions.GetMethodInfo(() => QuestRead(string.Empty)));
+        Lua.RegisterFunction("QuestCompelete", this, SymbolExtensions.GetMethodInfo(() => QuestCompelete(string.Empty)));
+        Lua.RegisterFunction("SecretRead", this, SymbolExtensions.GetMethodInfo(() => SecretRead(string.Empty)));
+        Lua.RegisterFunction("SecretFound", this, SymbolExtensions.GetMethodInfo(() => SecretFound(string.Empty)));
+        Lua.RegisterFunction("SecretWrite", this, SymbolExtensions.GetMethodInfo(() => SecretWrite(string.Empty, 0)));
+    }
+
+    public bool QuestRead(string name) { return ReadQuestKey(name); }
+    public void QuestCompelete(string name) { WriteQuestKey(name, true); }
+    public double SecretRead(string name) { return ReadSecretKey(name); }
+    public void SecretFound(string name) { SecretKeyFound(name); }
+    public void SecretWrite(string name, int value) { WriteSecretKey(name, value); }
+
+    #endregion
+
+    //Get / Set
+    public static bool ReadQuestKey(string key) {
+        instance.flags.questFlags.TryGetValue(key, out bool readValue);
         return readValue;
     }
 
-    public static void WriteQuestKey(string key, int value) {
+    public static void WriteQuestKey(string key, bool value) {
         instance.flags.questFlags[key] = value;
     }
 //Secret Key
@@ -39,6 +60,7 @@ public class FlagRepository : Singleton<FlagRepository>
                 instance.flags.secretFlags[key] = 1;
         }
     }
+
     public static void SecretKeyStrike(string key) { //Strike a secret from the list, but only if it has been found
         if (instance.flags.secretFlags.TryGetValue(key, out int readValue)) {
             if (readValue == 1)
@@ -54,6 +76,9 @@ public class FlagRepository : Singleton<FlagRepository>
         RegisterSingleton (this);
         UI.instance.OnSave += Save;
         UI.instance.OnLoad += Load;
+    //Debug
+        SecretKeyFound(Secrets.s001Test.ToString());
+        SecretKeyFound(Secrets.s002Test.ToString());
     }
 
     private void OnDisable() {
@@ -74,6 +99,6 @@ public class FlagRepository : Singleton<FlagRepository>
 
 public class GameFlags
 {
-    public Dictionary<string, int> questFlags = new Dictionary<string, int>();
+    public Dictionary<string, bool> questFlags = new Dictionary<string, bool>();
     public Dictionary<string, int> secretFlags = new Dictionary<string, int>();
 }

@@ -7,6 +7,13 @@ public class UITest : MonoBehaviour
     public ReadableData sampleBook;
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.B)) { //B for Book
+            UI.instance.DisplayReadable(sampleBook);
+        }
+        if (Input.GetKeyDown(KeyCode.Keypad0)) {
+            float test = Sonos.GetVolume(AudioType.Music);
+            Debug.Log("AudioType.Music: "+test);
+        }
 //Saving / Loading
         if (Input.GetKeyDown(KeyCode.S)) { //Save
             UI.instance.SaveGameData(0);
@@ -15,9 +22,6 @@ public class UITest : MonoBehaviour
             UI.instance.LoadGameData(0);
         }
 //Currency
-        if (Input.GetKeyDown(KeyCode.B)) { //B for Book
-            UI.instance.DisplayReadable(sampleBook);
-        }
         if (Input.GetKeyDown(KeyCode.KeypadPlus)) { //Add LOTS of funds
             Currency.instance.Cash += 10000000m;
         }
