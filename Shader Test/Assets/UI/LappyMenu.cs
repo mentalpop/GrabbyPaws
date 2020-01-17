@@ -1,12 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LappyMenu : MonoBehaviour
 {
     public SneakDiary sneakDiary;
     public NotSecrets notSecrets;
     public OptionsMenu optionsMenu;
+    public Image lappyBG;
+    public List<Sprite> lappyBGs = new List<Sprite>();
+    [HideInInspector] public int chosenBGIndex = 0;
     //public Inventory inventory;
     public ClickToClose clickToClose;
     
@@ -64,10 +68,9 @@ public class LappyMenu : MonoBehaviour
     public void Close() {
         gameObject.SetActive(false); //For now, just close instantly
     }
-    /*
-    
-    public void UpdateDisplay() {
 
+    public void SetBackground(int _bgIndex) {
+        chosenBGIndex = _bgIndex;
+        lappyBG.sprite = lappyBGs[_bgIndex];
     }
-    //*/
 }

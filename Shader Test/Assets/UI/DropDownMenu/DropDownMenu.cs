@@ -165,6 +165,7 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             mySine.Max();
             if (_newIndex > -1) {
                 chosenIndex = _newIndex;
+                OnChoiceMade(chosenIndex);
                 SetHeader(chosenIndex);
             }
             buttonState.SetActiveState(false);
@@ -172,10 +173,7 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     }
 
     public void SetHeader(int _index) {
-        OnChoiceMade(_index);
 		myTitle.text = optionDataList[_index].text;
-        //myIcon.sprite = null; //REMOVE work-around Unity 2019.3
-        //myIcon.sprite = optionDataList[_index].icon;
     }
 
 	public void OnPointerEnter(PointerEventData evd) {
