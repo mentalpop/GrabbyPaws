@@ -5,7 +5,7 @@ using UnityEngine;
 public class HellaHockster : MonoBehaviour
 {
     public ButtonGeneric closeButton;
-    public ClickToClose clickToClose;
+    public CloseOnDeselect clickToClose;
 	/*
 	
 	public GameObject lineItemPrefab;
@@ -13,12 +13,12 @@ public class HellaHockster : MonoBehaviour
 	//*/
 
 	private void OnEnable() {
-        clickToClose.OnClick += Close;
+        clickToClose.OnDeselected += Close;
 		closeButton.OnClick += Close;
 	}
 
 	private void OnDisable() {
-        clickToClose.OnClick -= Close;
+        clickToClose.OnDeselected -= Close;
 		closeButton.OnClick -= Close;
 	}
 
