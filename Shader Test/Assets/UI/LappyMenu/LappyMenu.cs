@@ -11,7 +11,6 @@ public class LappyMenu : MonoBehaviour
     public Image lappyBG;
     public List<Sprite> lappyBGs = new List<Sprite>();
     [HideInInspector] public int chosenBGIndex = 0;
-    //public Inventory inventory;
     public ClickToClose clickToClose;
     
     public TabSortMenu startTabsSortMenu;
@@ -57,7 +56,7 @@ public class LappyMenu : MonoBehaviour
                 optionsMenu.gameObject.SetActive(true);
                 break;
             case 5: //Quit to Title
-
+                Application.Quit();
                 break;
             case 6: //Save Game
                 UI.instance.SaveGameData(0);
