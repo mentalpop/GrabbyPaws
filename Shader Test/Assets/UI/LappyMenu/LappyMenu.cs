@@ -8,6 +8,7 @@ public class LappyMenu : MonoBehaviour
     public SneakDiary sneakDiary;
     public NotSecrets notSecrets;
     public OptionsMenu optionsMenu;
+    public HellaHockster hellaHuckster;
     public Image lappyBG;
     public List<Sprite> lappyBGs = new List<Sprite>();
     [HideInInspector] public int chosenBGIndex = 0;
@@ -41,7 +42,7 @@ public class LappyMenu : MonoBehaviour
         startTabsSortMenu.gameObject.SetActive(false);
         switch(_activeTab) {
             case 0: //Rewind Time
-
+                hellaHuckster.gameObject.SetActive(true);
                 break;
             case 1: //Sneak Diary
                 sneakDiary.gameObject.SetActive(true);
