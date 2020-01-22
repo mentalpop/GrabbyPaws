@@ -6,7 +6,7 @@ using PixelCrushers.DialogueSystem;
 
 public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 {
-    public List<Item> items = new List<Item>();
+    public List<InventoryItem> items = new List<InventoryItem>();
     public ItemMetaList itemMetaList;
     public Vector3 dropPosition;
     //public UI uiRef;
@@ -51,7 +51,7 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 
     public bool InventoryHas(string name) {
         foreach (var item in items) { //Ensure the item exists in the inventory
-            if (item.name == name) {
+            if (item.item.name == name) {
                 return true;
             }
         }
@@ -61,8 +61,9 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public double InventoryCount(string name) {
         int count = 0;
         foreach (var item in items) { //Count occurrences of the item in the inventory
-            if (item.name == name) {
-                count++;
+            if (item.item.name == name) {
+                count = item.quantity;
+                break;
             }
         }
         return count;
@@ -71,11 +72,14 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public void InventoryAdd(string name, int quantity) {
         foreach (var item in itemMetaList.items) { //Find the Item in the Meta list based on String reference, add X of it to the inventory
             if (item.name == name) {
+                items.Add(new InventoryItem(item, quantity));
+                Debug.Log("Adding to Inventory: " + item.name);
+                /*
                 while (quantity > 0) {
-                    items.Add(item);
-                    Debug.Log("Adding to Inventory: " + item.name);
+                    
                     quantity--;
                 }
+                //*/
                 break;
             }
         }
@@ -85,8 +89,14 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public void InventorySubtract(string name, int quantity) {
         while (quantity > 0) {
             foreach (var item in items) { //Try to remove an item if it exists in the inventory
-                if (item.name == name) {
-                    items.Remove(item);
+                if (item.item.name == name) {
+                    while (quantity > 0) {
+                        if (item.quantity > 0)
+                            Remove(item.item);
+                        else
+                            Debug.LogWarning("Trying to remove more of an item from the Inventory than exists in the inventory");
+                        quantity--;
+                    }
                     break;
                 }
             }
@@ -97,48 +107,82 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 
     public void InventoryRemove(string name) {
 //Remove all occurrences of an item from the inventory, good if you don't want to be specific
-        items.RemoveAll(item => item.name == name); //Remove everything that matches the name
-        /*
         foreach (var item in items) { 
-            if (item.name == name) {
-                items.Add(item);
-                Debug.Log("Removing from Inventory: " + item.name);
+            if (item.item.name == name) {
+                RemoveAll(item.item);
+                break;
             }
         }
-        //*/
+        //items.RemoveAll(item => item.item.name == name); //Remove everything that matches the name
         OnItemChanged?.Invoke();
     }
     
     #endregion
     public void Save(int fileIndex) {
-        List<int> itemIDs = new List<int>();
+        List<IItemID> itemIDs = new List<IItemID>();
         foreach (var item in items) {
-            itemIDs.Add(itemMetaList.GetIndex(item));
+            itemIDs.Add(new IItemID(itemMetaList.GetIndex(item.item), item.quantity));
         }
         ES3.Save<List<int>>(saveString, itemIDs);
     }
 
     public void Load(int fileIndex) {
-        List<int> loadItems = ES3.Load(saveString, new List<int>());
+        List<IItemID> loadItems = ES3.Load(saveString, new List<IItemID>());
         items.Clear();
         foreach (var item in loadItems) {
-            items.Add(itemMetaList.GetItem(item));
+            items.Add(new InventoryItem(itemMetaList.GetItem(item.itemID), item.quantity));
         }
     }
 
     public bool Add(Item item) {
-        /* No space limit, so don't return false
-        if (items.Count >= space) {
-            return false;
+//If you don't specify a quantity, add 1
+        Add(item, 1);
+        return true;
+    }
+
+    public bool Add(Item item, int quantity) {
+//Check if the item is already in the inventory
+        bool foundInInventory = false;
+        foreach (var iItem in items) {
+            if (iItem.item == item) {
+        //Add to it's quantity
+                iItem.quantity += quantity;
+                foundInInventory = true;
+            }
         }
-        //*/
-        items.Add(item);
+        if (!foundInInventory) {
+    //if there are none, add to the list instead
+            items.Add(new InventoryItem(item, quantity));
+        }
         OnItemChanged?.Invoke();
         return true;
     }
 
     public void Remove(Item item) {
-        items.Remove(item);
+//Check if the item is already in the inventory
+        foreach (var iItem in items) {
+            if (iItem.item == item) {
+        //Remove one from it's quantity
+                iItem.quantity -= 1;
+                if (iItem.quantity < 1) {
+            //If you have none left, actually remove the item
+                    items.Remove(iItem);
+                }
+                break;
+            }
+        }
+        OnItemChanged?.Invoke();
+    }
+
+    public void RemoveAll(Item item) {
+//Check if the item is already in the inventory
+        foreach (var iItem in items) {
+            if (iItem.item == item) {
+        //Remove all instances of it
+                items.Remove(iItem);
+                break;
+            }
+        }
         OnItemChanged?.Invoke();
     }
 
@@ -146,11 +190,11 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
         GameObject toDrop = null;
 //Drop an item from the Inventory
         foreach (var item in items) { //Ensure the item exists in the inventory
-            if (item == _toDrop) {
-                if (item.physicalItem != null) {
-                    toDrop = Instantiate(item.physicalItem, dropPosition, Quaternion.identity);
+            if (item.item == _toDrop) {
+                if (item.item.physicalItem != null) {
+                    toDrop = Instantiate(item.item.physicalItem, dropPosition, Quaternion.identity);
                 }
-                Remove(item);
+                Remove(item.item);
                 break;
             }
         }
@@ -177,8 +221,32 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public float ReturnWeights() {
         float weight = 0;
         for(int i = 0; i < items.Count; i++) {
-            weight += items[i].weight;
+            weight += items[i].item.weight * items[i].quantity; //Return item multiplied by weight to account for Quantity
         }
         return weight;
+    }
+}
+
+[System.Serializable]
+public class InventoryItem
+{
+    public Item item;
+    public int quantity;
+
+    public InventoryItem(Item item, int quantity) {
+        this.item = item;
+        this.quantity = quantity;
+    }
+}
+
+[System.Serializable]
+public class IItemID
+{
+    public int itemID;
+    public int quantity;
+
+    public IItemID(int itemID, int quantity) {
+        this.itemID = itemID;
+        this.quantity = quantity;
     }
 }

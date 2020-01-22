@@ -23,10 +23,8 @@ public class Item : ScriptableObject {
     [TextArea(3,10)]
     public string description = "Item Description";
 
-    public virtual void Use()
-    {
-        //Use the item
+    public virtual void Use() {
+//Use the item
         Debug.Log("Using" + name);
     }
-
 }
