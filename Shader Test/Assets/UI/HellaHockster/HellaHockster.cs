@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+//using UnityEngine.UI;
 using UnityEngine;
 
 public class HellaHockster : MonoBehaviour
 {
     public ButtonGeneric closeButton;
     public CloseOnDeselect clickToClose;
+    public ButtonOmni hocksterCallButton;
+	public int availableHocksters = 2;
+	public List<GameObject> hocksterImages = new List<GameObject>();
 	/*
 	
 	public GameObject lineItemPrefab;
@@ -13,17 +17,31 @@ public class HellaHockster : MonoBehaviour
 	//*/
 
 	private void OnEnable() {
-        clickToClose.OnDeselected += Close;
+		hocksterCallButton.OnClick += HocksterCallButton_OnClick;
+		clickToClose.OnDeselected += Close;
 		closeButton.OnClick += Close;
+		UpdateHockstersAvailable();
 	}
 
 	private void OnDisable() {
+		hocksterCallButton.OnClick -= HocksterCallButton_OnClick;
         clickToClose.OnDeselected -= Close;
 		closeButton.OnClick -= Close;
 	}
 
 	private void Close() {
 		gameObject.SetActive(false);
+	}
+
+	private void HocksterCallButton_OnClick(bool _stateActive) {
+		availableHocksters--;
+		UpdateHockstersAvailable();
+	}
+
+	public void UpdateHockstersAvailable() {
+		for (int i = 0; i < hocksterImages.Count; i++) {
+			hocksterImages[i].SetActive(i < availableHocksters);
+		}
 	}
 
 	/*
