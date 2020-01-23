@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pixelplacement;
+using Cinemachine;
 
 public enum NightPhases
 {
@@ -58,6 +59,7 @@ public class UI : Singleton<UI>
     [Header("Inventory")]
     public GameObject InventoryDisplay;
     public Inventory inventory;
+    public CinemachineBrain cBrain;
 
     public delegate void FileIOEvent(int fileNum);
     public event FileIOEvent OnSave = delegate { };
@@ -65,6 +67,8 @@ public class UI : Singleton<UI>
 
     private bool doShowCurrencyDisplay = false;
     private Coroutine currencyDisplayRoutine;
+
+    private List<GameObject> mouseCursorUsers = new List<GameObject>();
 
     private void OnEnable() {
         RegisterSingleton (this);
@@ -87,15 +91,50 @@ public class UI : Singleton<UI>
     private void ShowHideCurrencyDisplay() {
         currencyDisplay.gameObject.SetActive(doShowCurrencyDisplay || InventoryDisplay.activeSelf);
     }
+
     private void ShowLappyMenu() {
     //Show / Hide the HUD
-        lappy.gameObject.SetActive(!lappy.gameObject.activeSelf);
+        bool menuIsActive = !lappy.gameObject.activeSelf;
+        lappy.gameObject.SetActive(menuIsActive);
+        SetMouseState(menuIsActive, lappy.gameObject);
     }
 
     private void ShowInventoryDisplay() {
     //Show / Hide the HUD
-        InventoryDisplay.SetActive(!InventoryDisplay.activeSelf);
+        bool menuIsActive = !InventoryDisplay.activeSelf;
+        InventoryDisplay.SetActive(menuIsActive);
+        SetMouseState(menuIsActive, InventoryDisplay);
         ShowHideCurrencyDisplay();
+    }
+
+    public static void SetMouseState(bool lockMouse, GameObject gameObject) {
+        if (lockMouse) {
+            instance.mouseCursorUsers.Add(gameObject);
+        } else {
+            instance.mouseCursorUsers.Remove(gameObject);
+        }
+        bool suppressCamera = false;
+        if (instance.mouseCursorUsers.Count > 0) {
+            suppressCamera = true;
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        } else {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        if (instance.cBrain != null) {
+            CinemachineFreeLook currentCamera = instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
+            Debug.Log("currentCamera: "+currentCamera);
+            if (currentCamera != null) {
+                if (suppressCamera) {
+                    currentCamera.m_XAxis.m_InputAxisName = "";
+                    currentCamera.m_YAxis.m_InputAxisName = "";
+                } else {
+                    currentCamera.m_XAxis.m_InputAxisName = "Mouse X";
+                    currentCamera.m_YAxis.m_InputAxisName = "Mouse Y";
+                }
+            }
+        }
     }
 
     private void OnCurrencyChanged() {
@@ -119,7 +158,7 @@ public class UI : Singleton<UI>
         if (Input.GetButtonDown("Inventory")) {
             ShowInventoryDisplay();
         }
-        if (Input.GetButtonDown("Kwit")) {
+        if (Input.GetButtonDown("Kwit")) { //
             ShowLappyMenu();
         }
     }

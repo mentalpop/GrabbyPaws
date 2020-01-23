@@ -78,6 +78,7 @@ public class HellaHockster : MonoBehaviour
 			Currency.instance.Cash += TallyValue(hocksterInventory);
 			hocksterRect.ClearLineItems();
 			hocksterInventory.Clear();
+			estimatedValue.text = "0";
 		} else {
 			Debug.Log("No Hocksters available");
 		}
