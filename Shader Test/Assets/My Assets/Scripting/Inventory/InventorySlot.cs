@@ -1,11 +1,13 @@
 ﻿using UnityEngine.EventSystems;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
     
     public float itemSpinSpeed = 72f;
     public Transform cube;
+    public GameObject quantityDisplay;
+    public TextMeshProUGUI quantity;
     //public Image icon;
     //public Button removeButton;
 
@@ -13,7 +15,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     //public GameObject modelTransform;
     private GameObject model;
     private Quaternion initialRotation;
-    private Item item;
+    private InventoryItem iItem;
     private bool mouseOver = false;
 
     void Update() {
@@ -21,15 +23,20 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             model.transform.Rotate(0, Time.deltaTime * itemSpinSpeed, 0);
     }
 
-    public void Unpack(Item _item) {
-        item = _item;
+    public void Unpack(InventoryItem _item) {
+        iItem = _item;
+        if (iItem.quantity > 1) {
+            quantity.text = iItem.quantity.ToString();
+        } else {
+            quantityDisplay.SetActive(false);
+        }
         //* Going to use this later; 
-        model = Instantiate(item.model, cube);
+        model = Instantiate(iItem.item.model, cube);
         //Debug.Log("cube transform: " + cube);
-        model.transform.localPosition = item.positionOffset;
-        initialRotation = Quaternion.Euler(item.rotationOffset);
+        model.transform.localPosition = iItem.item.positionOffset;
+        initialRotation = Quaternion.Euler(iItem.item.rotationOffset);
         model.transform.rotation = initialRotation;
-        model.transform.localScale = new Vector3(item.itemScale, item.itemScale, item.itemScale);
+        model.transform.localScale = new Vector3(iItem.item.itemScale, iItem.item.itemScale, iItem.item.itemScale);
         model.layer = 5; //UI
         /*
         if (model.GetComponent<Rigidbody>() != null) {
@@ -112,11 +119,11 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerClick(PointerEventData eventData) {
         if (eventData.button == PointerEventData.InputButton.Right) {
-            if (item.category == CategoryItem.Trash) {
-                Inventory.instance.Drop(item);
-                Debug.Log("Dropping: " + item.name);
+            if (iItem.item.category == CategoryItem.Trash) {
+                Inventory.instance.Drop(iItem.item);
+                Debug.Log("Dropping: " + iItem.item.name);
             } else {
-                Debug.Log("Can't drop item: " + item.name);
+                Debug.Log("Can't drop item: " + iItem.item.name);
             }
         }
     }

@@ -16,14 +16,7 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	[HideInInspector] public bool contentActive = false;
     [HideInInspector] public TabSortMenu myParentMenu; 
     [HideInInspector] public int tabID;
-	//private bool mouseOver;
     private TabData tabData;
-
-	/*
-    void Start() {
-
-	}
-    //*/
 
     public void InsertSeparator(GameObject separator) {
 //Instantiate a separator as 1 index ahead of yourself
@@ -71,8 +64,9 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	}
 		
 	public void OnPointerClick (PointerEventData evd) {
-		if (!contentActive) {
-            myParentMenu.TabSelect(tabID);
-        }
+		//if (!contentActive) {
+		background.color = tabData.bgColor;
+        myParentMenu.TabSelect(tabID);
+        //}
 	}
 }

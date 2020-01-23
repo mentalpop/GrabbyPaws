@@ -26,7 +26,7 @@ public class InventoryScrollRect : MonoBehaviour
                 GameObject gameObject = Instantiate(slotPrefab, contentTransform, false);
                 slots.Add(gameObject);
                 InventorySlot slot = gameObject.GetComponent<InventorySlot>();
-                slot.Unpack(iItem.item);
+                slot.Unpack(iItem);
             }
         }
         scrollResize.RectResize(slots.Count);

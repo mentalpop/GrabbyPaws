@@ -34,7 +34,7 @@ public class TabSortMenu : MonoBehaviour
             //tab.tabID = i++;
         }
     //Activate the first tab in the list
-        TabSelect(activeTab);
+        //TabSelect(activeTab);
     }
         
     public void TabSelect(int _activateTabID) {
