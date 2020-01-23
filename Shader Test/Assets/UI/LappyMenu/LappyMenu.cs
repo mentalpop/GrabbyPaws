@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LappyMenu : MonoBehaviour
 {
     public SneakDiary sneakDiary;
     public NotSecrets notSecrets;
     public OptionsMenu optionsMenu;
-    //public Inventory inventory;
+    public HellaHockster hellaHuckster;
+    public Image lappyBG;
+    public List<Sprite> lappyBGs = new List<Sprite>();
+    [HideInInspector] public int chosenBGIndex = 0;
     public ClickToClose clickToClose;
     
     public TabSortMenu startTabsSortMenu;
@@ -38,7 +42,7 @@ public class LappyMenu : MonoBehaviour
         startTabsSortMenu.gameObject.SetActive(false);
         switch(_activeTab) {
             case 0: //Rewind Time
-
+                hellaHuckster.gameObject.SetActive(true);
                 break;
             case 1: //Sneak Diary
                 sneakDiary.gameObject.SetActive(true);
@@ -53,7 +57,7 @@ public class LappyMenu : MonoBehaviour
                 optionsMenu.gameObject.SetActive(true);
                 break;
             case 5: //Quit to Title
-
+                Application.Quit();
                 break;
             case 6: //Save Game
                 UI.instance.SaveGameData(0);
@@ -64,10 +68,9 @@ public class LappyMenu : MonoBehaviour
     public void Close() {
         gameObject.SetActive(false); //For now, just close instantly
     }
-    /*
-    
-    public void UpdateDisplay() {
 
+    public void SetBackground(int _bgIndex) {
+        chosenBGIndex = _bgIndex;
+        lappyBG.sprite = lappyBGs[_bgIndex];
     }
-    //*/
 }
