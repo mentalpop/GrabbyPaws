@@ -32,7 +32,8 @@ public class HellaHockster : MonoBehaviour
         //inventory.OnItemChanged += UpdateDisplay;
 		UpdateHockstersAvailable();
 	//Player Funds
-		playerFunds.text = Currency.instance.Cash.ToString();
+		Currency.instance.OnCashChanged += CurrencyCashUpdate;
+		CurrencyCashUpdate();
 	//List setup
 		playerInventory.Clear();
 		hocksterInventory.Clear();
@@ -42,6 +43,10 @@ public class HellaHockster : MonoBehaviour
 		UpdateDisplay();
 	}
 
+	private void CurrencyCashUpdate() {
+		playerFunds.text = Currency.instance.Cash.ToString();
+	}
+
 	private void OnDisable() {
 		hocksterCallButton.OnClick -= HocksterCallButton_OnClick;
         clickToClose.OnDeselected -= Close;
@@ -49,6 +54,7 @@ public class HellaHockster : MonoBehaviour
 		closeButton.OnClick -= Close;
 		dumpTrash.OnClick -= DumpAllTrash;
 		recoverTrash.OnClick -= RecoverAllTrash;
+		Currency.instance.OnCashChanged -= CurrencyCashUpdate;
 	}
 
 	private void Close() {
@@ -56,13 +62,25 @@ public class HellaHockster : MonoBehaviour
 	}
 
 	private void HocksterCallButton_OnClick(bool _stateActive) {
-		availableHocksters--;
-		UpdateHockstersAvailable();
-	//Remove sold items from Inventory
-		
-	//Sell items
-		Currency.instance.Cash += TallyValue(hocksterInventory);
-		hocksterInventory.Clear();
+//SELL ITEMS
+		if (hocksterCallButton.available) {
+			availableHocksters--;
+			UpdateHockstersAvailable();
+			if (availableHocksters < 1) {
+				hocksterCallButton.available = false;
+				hocksterCallButton.UpdateGO();
+			}
+		//Remove sold items from Inventory
+			foreach (var iItem in hocksterInventory) {
+				Inventory.instance.Remove(iItem.item, iItem.quantity);
+			}
+		//Sell items
+			Currency.instance.Cash += TallyValue(hocksterInventory);
+			hocksterRect.ClearLineItems();
+			hocksterInventory.Clear();
+		} else {
+			Debug.Log("No Hocksters available");
+		}
 	}
 
 	public void UpdateHockstersAvailable() {

@@ -159,11 +159,15 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     }
 
     public void Remove(Item item) {
+        Remove(item, 1);
+    }
+
+    public void Remove(Item item, int quantity) {
 //Check if the item is already in the inventory
         foreach (var iItem in items) {
             if (iItem.item == item) {
         //Remove one from it's quantity
-                iItem.quantity -= 1;
+                iItem.quantity -= quantity;
                 if (iItem.quantity < 1) {
             //If you have none left, actually remove the item
                     items.Remove(iItem);

@@ -20,7 +20,7 @@ public class Currency : Singleton<Currency>
     private decimal _cash;
     
     public delegate void CurrencyEvent();
-    public CurrencyEvent OnCashChanged;
+    public CurrencyEvent OnCashChanged = delegate { };
     
     private void OnEnable() {
         RegisterSingleton (this);

@@ -11,12 +11,7 @@ public class HocksterScrollRect : MonoBehaviour
 
     public void Unpack(List<InventoryItem> items, List<InventoryItem> _otherList, HellaHockster _hellaHockster) {
     //Clear the slots first
-        if (lineItems.Count > 0) {
-            foreach (var slot in lineItems) {
-                Destroy(slot);
-            }
-            lineItems.Clear();
-        }
+        ClearLineItems();
         foreach (var iItem in items) {
     //Instantiate each item
             if (iItem.item.category == CategoryItem.Trash) {
@@ -24,6 +19,15 @@ public class HocksterScrollRect : MonoBehaviour
                 lineItems.Add(newGO);
                 newGO.GetComponent<HocksterLineItem>().Unpack(iItem, items, _otherList, _hellaHockster);
             }
+        }
+    }
+
+    public void ClearLineItems() {
+        if (lineItems.Count > 0) {
+            foreach (var slot in lineItems) {
+                Destroy(slot);
+            }
+            lineItems.Clear();
         }
     }
 }
