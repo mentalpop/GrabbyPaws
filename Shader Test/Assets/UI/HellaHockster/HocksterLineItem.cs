@@ -14,10 +14,16 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public GameObject itemTooltip;
 
     private InventoryItem iItem;
+    private List<InventoryItem> myList;
+    private List<InventoryItem> otherList;
+    private HellaHockster hellaHockster;
     private bool mouseOver = false;
 
-    public void Unpack(InventoryItem _item) {
+    public void Unpack(InventoryItem _item, List<InventoryItem> _myList, List<InventoryItem> _otherList, HellaHockster _hellaHockster) {
         iItem = _item;
+        myList = _myList;
+        otherList = _otherList;
+        hellaHockster = _hellaHockster;
         itemName.text = iItem.item.name;
         itemQuantity.text = iItem.quantity.ToString();
     }
@@ -39,10 +45,10 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
 	public void OnPointerClick (PointerEventData evd) {
         if (evd.button == PointerEventData.InputButton.Right) {
     //Move one item at a time
-             Debug.Log ("Right Mouse Button Clicked on: " + name);
+            hellaHockster.MoveItem(myList, otherList, iItem.item, 1);
         } else {
     //Move entiire stack
-            
+            hellaHockster.MoveItem(myList, otherList, iItem.item, iItem.quantity);
         }
 	}
 }

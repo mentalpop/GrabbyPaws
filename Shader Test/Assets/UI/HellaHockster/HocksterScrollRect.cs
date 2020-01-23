@@ -9,7 +9,7 @@ public class HocksterScrollRect : MonoBehaviour
 
     private List<GameObject> lineItems = new List<GameObject>();
 
-    public void Unpack(List<InventoryItem> items) {
+    public void Unpack(List<InventoryItem> items, List<InventoryItem> _otherList, HellaHockster _hellaHockster) {
     //Clear the slots first
         if (lineItems.Count > 0) {
             foreach (var slot in lineItems) {
@@ -22,7 +22,7 @@ public class HocksterScrollRect : MonoBehaviour
             if (iItem.item.category == CategoryItem.Trash) {
                 GameObject newGO = Instantiate(itemPrefab, contentTransform, false);
                 lineItems.Add(newGO);
-                newGO.GetComponent<HocksterLineItem>().Unpack(iItem);
+                newGO.GetComponent<HocksterLineItem>().Unpack(iItem, items, _otherList, _hellaHockster);
             }
         }
     }

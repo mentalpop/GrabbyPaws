@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-//using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class HellaHockster : MonoBehaviour
 {
@@ -14,21 +14,41 @@ public class HellaHockster : MonoBehaviour
 	public int availableHocksters = 2;
 	public List<GameObject> hocksterImages = new List<GameObject>();
 	public HocksterScrollRect inventoryRect;
+	public HocksterScrollRect hocksterRect;
+	public ButtonOmni dumpTrash;
+	public ButtonOmni recoverTrash;
+    public TextMeshProUGUI playerFunds;
+    public TextMeshProUGUI estimatedValue;
+
+	private List<InventoryItem> playerInventory = new List<InventoryItem>();
+	private List<InventoryItem> hocksterInventory = new List<InventoryItem>();
 
 	private void OnEnable() {
 		hocksterCallButton.OnClick += HocksterCallButton_OnClick;
 		clickToClose.OnDeselected += Close;
 		closeButton.OnClick += Close;
-        inventory.OnItemChanged += UpdateDisplay;
+		dumpTrash.OnClick += DumpAllTrash;
+		recoverTrash.OnClick += RecoverAllTrash;
+        //inventory.OnItemChanged += UpdateDisplay;
 		UpdateHockstersAvailable();
+	//Player Funds
+		playerFunds.text = Currency.instance.Cash.ToString();
+	//List setup
+		playerInventory.Clear();
+		hocksterInventory.Clear();
+		foreach (var iItem in inventory.items) {
+			playerInventory.Add(iItem);
+		}
 		UpdateDisplay();
 	}
 
 	private void OnDisable() {
 		hocksterCallButton.OnClick -= HocksterCallButton_OnClick;
         clickToClose.OnDeselected -= Close;
-        inventory.OnItemChanged -= UpdateDisplay;
+        //inventory.OnItemChanged -= UpdateDisplay;
 		closeButton.OnClick -= Close;
+		dumpTrash.OnClick -= DumpAllTrash;
+		recoverTrash.OnClick -= RecoverAllTrash;
 	}
 
 	private void Close() {
@@ -38,6 +58,11 @@ public class HellaHockster : MonoBehaviour
 	private void HocksterCallButton_OnClick(bool _stateActive) {
 		availableHocksters--;
 		UpdateHockstersAvailable();
+	//Remove sold items from Inventory
+		
+	//Sell items
+		Currency.instance.Cash += TallyValue(hocksterInventory);
+		hocksterInventory.Clear();
 	}
 
 	public void UpdateHockstersAvailable() {
@@ -45,31 +70,75 @@ public class HellaHockster : MonoBehaviour
 			hocksterImages[i].SetActive(i < availableHocksters);
 		}
 	}
-
+//Inventory Handling
 	private void UpdateDisplay() {
-		inventoryRect.Unpack(inventory.items);
+		inventoryRect.Unpack(playerInventory, hocksterInventory, this);
+		hocksterRect.Unpack(hocksterInventory, playerInventory, this);
+	//Tally estimated value
+		estimatedValue.text = string.Format("{0:N0}", TallyValue(hocksterInventory));
 	}
 
-	/*
-	public void SpawnSecrets() {
-		foreach(Transform child in lineItemTransform)
-			Destroy(child.gameObject);
-		List<NotSecretLineItem> lineItems = new List<NotSecretLineItem>();
-		foreach (var secret in FlagRepository.instance.secretFlags.secrets) {
-			//Debug.Log("secret.secret.ToString(): "+secret.secret.ToString());
-			if (FlagRepository.ReadSecretKey(secret.secret.ToString()) != 0) { //If the secret has been discovered
-				GameObject newGO = Instantiate(lineItemPrefab, lineItemTransform, false);
-				NotSecretLineItem notSecretLineItem = newGO.GetComponent<NotSecretLineItem>();
-				notSecretLineItem.Unpack(secret);
-				lineItems.Add(notSecretLineItem);
-			}
+	public decimal TallyValue(List<InventoryItem> listSource) {
+		decimal tally = 0m;
+		foreach (var item in listSource) {
+			tally += (decimal)item.item.value * item.quantity;
 		}
-	//Move Stricken items to the bottom of the list
-		foreach (var item in lineItems) {
-			if (item.isStricken) {
-				item.gameObject.transform.SetAsLastSibling();
-			}
-		}
+		return tally;
 	}
-	//*/
+
+	public void MoveItem(List<InventoryItem> listSource, List<InventoryItem> listDest, Item item, int quantity) {
+//Remove an item from this list, move it to the other one
+		Add(item, quantity, listDest);
+		Remove(item, quantity, listSource);
+		UpdateDisplay();
+	}
+
+    private void Add(Item item, int quantity, List<InventoryItem> listDest) {
+//Check if the item is already in the inventory
+        bool foundInDestList = false;
+        foreach (var iItem in listDest) {
+            if (iItem.item == item) {
+        //Add to it's quantity
+                iItem.quantity += quantity;
+                foundInDestList = true;
+            }
+        }
+        if (!foundInDestList) {
+    //if there are none, add to the list instead
+            listDest.Add(new InventoryItem(item, quantity));
+        }
+    }
+
+    private void Remove(Item item, int quantity, List<InventoryItem> listSource) {
+//Check if the item is already in the inventory
+        foreach (var iItem in listSource) {
+            if (iItem.item == item) {
+        //Remove quantity from it's quantity
+                iItem.quantity -= quantity; //Since Add and Remove are always called in tandem, this method trusts that quantity is "reasonable"
+                if (iItem.quantity < 1) {
+            //If you have none left, actually remove the item
+                    listSource.Remove(iItem);
+                }
+                break;
+            }
+        }
+    }
+
+	public void DumpAllTrash(bool _state) {
+//Move ALL items out of list
+		foreach (var item in playerInventory) {
+			Add(item.item, item.quantity, hocksterInventory);
+		}
+		playerInventory.Clear();
+		UpdateDisplay();
+	}
+
+	public void RecoverAllTrash(bool _state) {
+//Move ALL items out of list
+		foreach (var item in hocksterInventory) {
+			Add(item.item, item.quantity, playerInventory);
+		}
+		hocksterInventory.Clear();
+		UpdateDisplay();
+	}
 }
