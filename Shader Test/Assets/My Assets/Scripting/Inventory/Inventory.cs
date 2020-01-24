@@ -11,7 +11,8 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public Vector3 dropPosition;
     //public UI uiRef;
 
-    private string saveString = "inventory";
+    private string saveStringItemIDs = "itemID";
+    private string saveStringItemCount = "itemQuantity";
     /*
     #region Singleton
     public static Inventory instance;
@@ -72,14 +73,9 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public void InventoryAdd(string name, int quantity) {
         foreach (var item in itemMetaList.items) { //Find the Item in the Meta list based on String reference, add X of it to the inventory
             if (item.name == name) {
-                items.Add(new InventoryItem(item, quantity));
+                //items.Add(new InventoryItem(item, quantity));
+                Add(item, quantity);
                 Debug.Log("Adding to Inventory: " + item.name);
-                /*
-                while (quantity > 0) {
-                    
-                    quantity--;
-                }
-                //*/
                 break;
             }
         }
@@ -119,19 +115,28 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     
     #endregion
     public void Save(int fileIndex) {
-        List<IItemID> itemIDs = new List<IItemID>();
+        List<int> itemIDs = new List<int>();
+        List<int> itemCount = new List<int>();
         foreach (var item in items) {
-            itemIDs.Add(new IItemID(itemMetaList.GetIndex(item.item), item.quantity));
+            itemIDs.Add(itemMetaList.GetIndex(item.item));
+            itemCount.Add(item.quantity);
         }
-        ES3.Save<List<int>>(saveString, itemIDs);
+        ES3.Save<List<int>>(saveStringItemIDs, itemIDs);
+        ES3.Save<List<int>>(saveStringItemCount, itemCount);
     }
 
     public void Load(int fileIndex) {
-        List<IItemID> loadItems = ES3.Load(saveString, new List<IItemID>());
+        List<int> loadItems = ES3.Load(saveStringItemIDs, new List<int>());
+        List<int> loadCount = ES3.Load(saveStringItemCount, new List<int>());
         items.Clear();
+        for (int i = 0; i < loadItems.Count; i++) {
+            items.Add(new InventoryItem(itemMetaList.GetItem(loadItems[i]), loadCount[i]));
+        }
+        /*
         foreach (var item in loadItems) {
             items.Add(new InventoryItem(itemMetaList.GetItem(item.itemID), item.quantity));
         }
+        //*/
     }
 
     public bool Add(Item item) {
@@ -243,6 +248,7 @@ public class InventoryItem
     }
 }
 
+/*
 [System.Serializable]
 public class IItemID
 {
@@ -254,3 +260,4 @@ public class IItemID
         this.quantity = quantity;
     }
 }
+//*/

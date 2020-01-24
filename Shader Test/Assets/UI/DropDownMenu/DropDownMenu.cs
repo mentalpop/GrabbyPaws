@@ -24,6 +24,7 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     //public float widthDelta = 3f; //The width desparity between the DDM and its content (due to drop shadow)
     public float elementHeight = 35f;
     public ThreeStateButton buttonState;
+    public VerticalLayoutGroup layoutGroup;
     //public float magicHeightOffset = 17f; //I honestly don't know why this needs to be here, but it has something to do with the offset from the top / bottom of the screen
 
 	private bool isExpanded = false;
@@ -79,6 +80,8 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         originPosition = myRect.anchoredPosition;
         SetDeltaHeight();
         background.SetActive(false);
+    //layoutGroup
+        layoutGroup.padding.top = (int)elementHeight;
 	}
 
     private void SetDeltaHeight() {
