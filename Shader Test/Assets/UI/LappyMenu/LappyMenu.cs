@@ -9,6 +9,7 @@ public class LappyMenu : MonoBehaviour
     public NotSecrets notSecrets;
     public OptionsMenu optionsMenu;
     public HellaHockster hellaHuckster;
+    public WishListWindow wishList;
     public Image lappyBG;
     public List<Sprite> lappyBGs = new List<Sprite>();
     [HideInInspector] public int chosenBGIndex = 0;
@@ -61,6 +62,9 @@ public class LappyMenu : MonoBehaviour
                 break;
             case 6: //Save Game
                 UI.instance.SaveGameData(0);
+                break;
+            case 7: //Wish List
+                wishList.gameObject.SetActive(true);
                 break;
         }
     }

@@ -13,6 +13,7 @@ using System.Collections;
 namespace Pixelplacement
 {
     [RequireComponent (typeof (Initialization))]
+    [DefaultExecutionOrder(-10)]
     public abstract class Singleton<T> : MonoBehaviour 
     {
         //Public Properties:

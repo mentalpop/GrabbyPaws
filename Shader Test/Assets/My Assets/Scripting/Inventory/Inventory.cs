@@ -6,13 +6,16 @@ using PixelCrushers.DialogueSystem;
 
 public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 {
-    public List<InventoryItem> items = new List<InventoryItem>();
     public ItemMetaList itemMetaList;
+    public GadgetList gadgetList;
     public Vector3 dropPosition;
+    public List<InventoryItem> items = new List<InventoryItem>();
     //public UI uiRef;
+    [HideInInspector] public List<bool> gadgetUnlocked = new List<bool>();
 
     private string saveStringItemIDs = "itemID";
     private string saveStringItemCount = "itemQuantity";
+    private string saveStringGadgets = "gadgets";
     /*
     #region Singleton
     public static Inventory instance;
@@ -29,7 +32,14 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 
     public delegate void InventoryEvent();
     public InventoryEvent OnItemChanged;
-    
+
+    private void Awake() {
+//Set all Gadgets as locked initially
+        for (int i = 0; i < gadgetList.gadgets.Count; i++) {
+            gadgetUnlocked.Add(false);
+        }
+    }
+
     private void OnEnable() {
         RegisterSingleton (this);
         UI.instance.OnSave += Save;
@@ -115,6 +125,7 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     
     #endregion
     public void Save(int fileIndex) {
+        ES3.Save<List<bool>>(saveStringGadgets, gadgetUnlocked);
         List<int> itemIDs = new List<int>();
         List<int> itemCount = new List<int>();
         foreach (var item in items) {
@@ -123,9 +134,11 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
         }
         ES3.Save<List<int>>(saveStringItemIDs, itemIDs);
         ES3.Save<List<int>>(saveStringItemCount, itemCount);
+        //List<bool> _gadgetsUnlocked = new List<bool>();
     }
 
     public void Load(int fileIndex) {
+        gadgetUnlocked = ES3.Load(saveStringGadgets, new List<bool>());
         List<int> loadItems = ES3.Load(saveStringItemIDs, new List<int>());
         List<int> loadCount = ES3.Load(saveStringItemCount, new List<int>());
         items.Clear();

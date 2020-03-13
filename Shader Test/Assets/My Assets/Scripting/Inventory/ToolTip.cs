@@ -65,6 +65,7 @@ public class ToolTip : MonoBehaviour {
 
     }
 
+    /*
     public void UseItem()
     {
         myItem.Use();
@@ -75,6 +76,5 @@ public class ToolTip : MonoBehaviour {
         CloseToolTip();
 
     }
-
-
+    //*/
 }
