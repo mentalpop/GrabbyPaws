@@ -11,15 +11,17 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
     public TextMeshProUGUI itemQuantity;
     public Color colorNeutral;
     public Color colorMOver;
-    public GameObject itemTooltip;
+    public Vector2 tooltipOffset;
+    //public GameObject itemTooltip;
 
     private InventoryItem iItem;
     private List<InventoryItem> myList;
     private List<InventoryItem> otherList;
     private HellaHockster hellaHockster;
-    private bool mouseOver = false;
+    private ItemTooltip iTooltip;
 
     public void Unpack(InventoryItem _item, List<InventoryItem> _myList, List<InventoryItem> _otherList, HellaHockster _hellaHockster) {
+        iTooltip = Inventory.GetItemTooltip();
         iItem = _item;
         myList = _myList;
         otherList = _otherList;
@@ -29,14 +31,16 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     public void OnPointerEnter(PointerEventData evd) {
-        mouseOver = true;
         arrow.SetActive(true);
         itemName.color = colorMOver;
         itemQuantity.color = colorMOver;
+    //Tooltip
+        iTooltip.gameObject.SetActive(true);
+        iTooltip.Unpack(iItem, new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y));
     }
 
 	public void OnPointerExit (PointerEventData evd) {
-        mouseOver = false;
+        iTooltip.gameObject.SetActive(false);
         arrow.SetActive(false);
         itemName.color = colorNeutral;
         itemQuantity.color = colorNeutral;

@@ -11,16 +11,21 @@ public class LappyMenu : MonoBehaviour
     public HellaHockster hellaHuckster;
     public WishListWindow wishList;
     public Image lappyBG;
+    public ClickToClose clickToClose;
     public List<Sprite> lappyBGs = new List<Sprite>();
     [HideInInspector] public int chosenBGIndex = 0;
-    public ClickToClose clickToClose;
     
     public TabSortMenu startTabsSortMenu;
     public List<TabData> tabs = new List<TabData>();
     public ButtonGeneric startButton;
 
+	public ConfirmationPromptData promptQuit;
+	public ConfirmationPromptData promptSave;
+	private ConfirmationWindow confirmationWindow;
+	private bool awaitingConfirmation = false;
+
 	private void OnClickStart() {
-		startTabsSortMenu.gameObject.SetActive(true);
+		startTabsSortMenu.gameObject.SetActive(!startTabsSortMenu.gameObject.activeInHierarchy);
 	}
 
     private void OnEnable() {
@@ -33,14 +38,32 @@ public class LappyMenu : MonoBehaviour
         startTabsSortMenu.OnTabSelected -= SelectStartMenuItem;
         clickToClose.OnClick -= Close;
 		startButton.OnClick -= OnClickStart;
+		if (awaitingConfirmation) {
+			awaitingConfirmation = false;
+			confirmationWindow.OnChoiceMade -= OnConfirm;
+		}
     }
+    
+	private void OnConfirm(bool _choice) {
+		awaitingConfirmation = false;
+		confirmationWindow.OnChoiceMade -= OnConfirm;
+		if (_choice) {
+            if (confirmationWindow.promptData.promptID == ConfirmationPromptID.Quit) {
+                Application.Quit();
+            }
+            if (confirmationWindow.promptData.promptID == ConfirmationPromptID.Save) {
+                UI.instance.SaveGameData(0);
+            }
+		} else {
+			Debug.Log("User selected NOPE");
+		}
+	}
 
     void Start() {
         startTabsSortMenu.InstantiateTabs(tabs);
     }
 
     public void SelectStartMenuItem(int _activeTab) {
-        startTabsSortMenu.gameObject.SetActive(false);
         switch(_activeTab) {
             case 0: //Rewind Time
                 hellaHuckster.gameObject.SetActive(true);
@@ -58,10 +81,14 @@ public class LappyMenu : MonoBehaviour
                 optionsMenu.gameObject.SetActive(true);
                 break;
             case 5: //Quit to Title
-                Application.Quit();
+                confirmationWindow = UI.RequestConfirmation(promptQuit);
+                confirmationWindow.OnChoiceMade += OnConfirm;
+			    awaitingConfirmation = true;
                 break;
             case 6: //Save Game
-                UI.instance.SaveGameData(0);
+                confirmationWindow = UI.RequestConfirmation(promptSave);
+                confirmationWindow.OnChoiceMade += OnConfirm;
+			    awaitingConfirmation = true;
                 break;
             case 7: //Wish List
                 wishList.gameObject.SetActive(true);

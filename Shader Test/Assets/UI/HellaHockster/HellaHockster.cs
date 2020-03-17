@@ -9,7 +9,7 @@ public class HellaHockster : MonoBehaviour
     public Inventory inventory;
 
     public ButtonGeneric closeButton;
-    public CloseOnDeselect clickToClose;
+    public ClickToClose clickToClose;
     public ButtonOmni hocksterCallButton;
 	public int availableHocksters = 2;
 	public List<GameObject> hocksterImages = new List<GameObject>();
@@ -23,9 +23,13 @@ public class HellaHockster : MonoBehaviour
 	private List<InventoryItem> playerInventory = new List<InventoryItem>();
 	private List<InventoryItem> hocksterInventory = new List<InventoryItem>();
 
+	public ConfirmationPromptData promptData;
+	private ConfirmationWindow confirmationWindow;
+	private bool awaitingConfirmation = false;
+
 	private void OnEnable() {
 		hocksterCallButton.OnClick += HocksterCallButton_OnClick;
-		clickToClose.OnDeselected += Close;
+		clickToClose.OnClick += Close;
 		closeButton.OnClick += Close;
 		dumpTrash.OnClick += DumpAllTrash;
 		recoverTrash.OnClick += RecoverAllTrash;
@@ -38,7 +42,8 @@ public class HellaHockster : MonoBehaviour
 		playerInventory.Clear();
 		hocksterInventory.Clear();
 		foreach (var iItem in inventory.items) {
-			playerInventory.Add(iItem);
+	//Clone the inventory into a local list
+			playerInventory.Add(new InventoryItem(iItem.item, iItem.quantity));
 		}
 		UpdateDisplay();
 	}
@@ -49,12 +54,16 @@ public class HellaHockster : MonoBehaviour
 
 	private void OnDisable() {
 		hocksterCallButton.OnClick -= HocksterCallButton_OnClick;
-        clickToClose.OnDeselected -= Close;
+        clickToClose.OnClick -= Close;
         //inventory.OnItemChanged -= UpdateDisplay;
 		closeButton.OnClick -= Close;
 		dumpTrash.OnClick -= DumpAllTrash;
 		recoverTrash.OnClick -= RecoverAllTrash;
 		Currency.instance.OnCashChanged -= CurrencyCashUpdate;
+		if (awaitingConfirmation) {
+			awaitingConfirmation = false;
+			confirmationWindow.OnChoiceMade -= OnConfirm;
+		}
 	}
 
 	private void Close() {
@@ -64,6 +73,18 @@ public class HellaHockster : MonoBehaviour
 	private void HocksterCallButton_OnClick(bool _stateActive) {
 //SELL ITEMS
 		if (hocksterCallButton.available) {
+			confirmationWindow = UI.RequestConfirmation(promptData);
+			confirmationWindow.OnChoiceMade += OnConfirm;
+			awaitingConfirmation = true;
+		} else {
+			Debug.Log("No Hocksters available");
+		}
+	}
+
+	private void OnConfirm(bool _choice) {
+		awaitingConfirmation = false;
+		confirmationWindow.OnChoiceMade -= OnConfirm;
+		if (_choice) {
 			availableHocksters--;
 			UpdateHockstersAvailable();
 			if (availableHocksters < 1) {
@@ -80,7 +101,7 @@ public class HellaHockster : MonoBehaviour
 			hocksterInventory.Clear();
 			estimatedValue.text = "0";
 		} else {
-			Debug.Log("No Hocksters available");
+			Debug.Log("Did not call Hockster");
 		}
 	}
 

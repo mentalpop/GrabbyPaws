@@ -8,6 +8,6 @@ public class BottomCapAdjust : MonoBehaviour
     public RectTransform myRect;
 
     public void UpdateHeight(float heightOfScrollRect) {
-        myRect.sizeDelta = new Vector2(myRect.sizeDelta.x, Screen.height - heightOfAllElementsToSubtract - heightOfScrollRect); //
+        myRect.sizeDelta = new Vector2(myRect.sizeDelta.x, Mathf.Max(32f, Screen.height - heightOfAllElementsToSubtract - heightOfScrollRect)); //
     }
 }

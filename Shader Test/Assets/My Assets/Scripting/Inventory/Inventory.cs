@@ -9,6 +9,7 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     public ItemMetaList itemMetaList;
     public GadgetList gadgetList;
     public Vector3 dropPosition;
+    public ItemTooltip itemTooltip;
     public List<InventoryItem> items = new List<InventoryItem>();
     //public UI uiRef;
     [HideInInspector] public List<bool> gadgetUnlocked = new List<bool>();
@@ -221,6 +222,10 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
             }
         }
         return toDrop;
+    }
+
+    public static ItemTooltip GetItemTooltip() {
+        return instance.itemTooltip;
     }
 
 

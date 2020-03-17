@@ -7,7 +7,7 @@ public class WishListWindow : MonoBehaviour
     public GameObject gadgetPrefab;
     public Transform contentTransform;
     public ButtonGeneric closeButton;
-    public CloseOnDeselect clickToClose;
+    public ClickToClose clickToClose;
 
     private void Awake() {
         Unpack();
@@ -28,12 +28,12 @@ public class WishListWindow : MonoBehaviour
 
 	private void OnEnable() {
 		closeButton.OnClick += Close;
-		clickToClose.OnDeselected += Close;
+		clickToClose.OnClick += Close;
 	}
 
 	private void OnDisable() {
 		closeButton.OnClick -= Close;
-		clickToClose.OnDeselected -= Close;
+		clickToClose.OnClick -= Close;
 	}
     
 	private void Close() {

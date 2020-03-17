@@ -48,6 +48,7 @@ public class UI : Singleton<UI>
     public Sonos sonosAudio;
     public GameObject HUD;
     public LappyMenu lappy;
+    public ConfirmationWindow confirmationWindow;
     //public FlagRepository flagRepository;
     [Header("Readables")]
     public Readable book;
@@ -137,6 +138,12 @@ public class UI : Singleton<UI>
         }
     }
 
+    public static ConfirmationWindow RequestConfirmation(ConfirmationPromptData _data) {
+        instance.confirmationWindow.gameObject.SetActive(true);
+        instance.confirmationWindow.Unpack(_data);
+        return instance.confirmationWindow; //Allow calling object to subscribe to the result
+    }
+
     private void OnCurrencyChanged() {
         doShowCurrencyDisplay = true;
         currencyDisplay.UpdateCashDisplay();
@@ -164,7 +171,7 @@ public class UI : Singleton<UI>
     }
 //Save / Load
     public void SaveGameData(int fileNum) {
-        Debug.Log("Game Saved");
+        Debug.Log("Game Saved: "+Application.persistentDataPath);
         OnSave?.Invoke(fileNum);
     }
 
@@ -176,8 +183,8 @@ public class UI : Singleton<UI>
 
 public static class ScreenSpace
 {
-    public static float Width = 1920f;
-    public static float Height = 1080f;
+    public static float Width = 3840f;
+    public static float Height = 2160f;
 	public static float Convert(float variable) {
 		return variable * Screen.height / Height;
 	}

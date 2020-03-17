@@ -8,6 +8,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public Transform cube;
     public GameObject quantityDisplay;
     public TextMeshProUGUI quantity;
+    public Vector2 tooltipOffset;
     //public Image icon;
     //public Button removeButton;
 
@@ -17,6 +18,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     private Quaternion initialRotation;
     private InventoryItem iItem;
     private bool mouseOver = false;
+    private ItemTooltip iTooltip;
 
     void Update() {
         if (mouseOver)
@@ -24,6 +26,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
 
     public void Unpack(InventoryItem _item) {
+        iTooltip = Inventory.GetItemTooltip();
         iItem = _item;
         if (iItem.quantity > 1) {
             quantity.text = iItem.quantity.ToString();
@@ -108,11 +111,15 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData) {
 //Tooltip Handling
+        iTooltip.gameObject.SetActive(true);
+        //iTooltip.transform.position = new Vector3(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y, transform.position.z);
+        iTooltip.Unpack(iItem, new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y));
         mouseOver = true;
     }
 
     public void OnPointerExit(PointerEventData eventData) {
 //Tooltip Handling
+        iTooltip.gameObject.SetActive(false);
         mouseOver = false;
         model.transform.rotation = initialRotation;
     }

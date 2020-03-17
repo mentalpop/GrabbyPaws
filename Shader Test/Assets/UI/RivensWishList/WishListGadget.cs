@@ -21,6 +21,10 @@ public class WishListGadget : MonoBehaviour
 	private Inventory inventory;
 	private bool canBuildGadget = true;
 	private bool unlocked = false;
+    
+	public ConfirmationPromptData promptGadget;
+	private ConfirmationWindow confirmationWindow;
+	private bool awaitingConfirmation = false;
 	
 	public void Unpack(int _gadgetIndex, WishListWindow _wishListWindow) {
 		gadgetIndex = _gadgetIndex;
@@ -70,16 +74,33 @@ public class WishListGadget : MonoBehaviour
 
 	private void OnDisable() {
 		buildButton.OnClick -= BuildButton_OnClick;
+		if (awaitingConfirmation) {
+			awaitingConfirmation = false;
+			confirmationWindow.OnChoiceMade -= OnConfirm;
+		}
 	}
 
 	private void BuildButton_OnClick(bool _stateActive) {
 		if (canBuildGadget) {
+	//Make a confirmation request
+			confirmationWindow = UI.RequestConfirmation(promptGadget);
+			confirmationWindow.OnChoiceMade += OnConfirm;
+			awaitingConfirmation = true;
+		}
+	}
+
+	private void OnConfirm(bool _choice) {
+		awaitingConfirmation = false;
+		confirmationWindow.OnChoiceMade -= OnConfirm;
+		if (_choice) {
 			inventory.gadgetUnlocked[gadgetIndex] = true;
 	//Subtract items from Inventory
 			foreach (var item in gadgetData.items) {
 				inventory.Remove(item.item, item.quantity);
 			}
 			wishListWindow.Unpack();
+		} else {
+			Debug.Log("Did not build Gadget");
 		}
 	}
 }
