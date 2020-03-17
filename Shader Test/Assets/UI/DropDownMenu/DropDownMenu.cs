@@ -111,7 +111,10 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         Debug.Log("Bool" + ": " + (ScreenSpace.Inverse(transform.position.y) * (1f/UIRef.UIScale) - sizeExpanded.y + 17f < 0f));
         //*/
         //Debug.Log("transform.position.y" + ": " + ScreenSpace.Inverse(transform.position.y) * (1f/UIRef.UIScale));
-        float yOffset = ScreenSpace.Inverse(transform.position.y) - sizeExpanded.y;// + magicHeightOffset;
+        doChangePosition = false;
+        deltaHeight = 0f;
+        /* Do not resposition
+        float yOffset = ScreenSpace.Convert(transform.position.y) - sizeExpanded.y;// + magicHeightOffset;
         if (yOffset < 0f) { //sizeExpanded.y is its total height, if its position - its height is < 0, it would be off the bottom of the screen
             doChangePosition = true;
             deltaHeight = yOffset;
@@ -119,6 +122,7 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             doChangePosition = false;
             deltaHeight = 0f;
         }
+        //*/
     }
 
     private void Update() {
