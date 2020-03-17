@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LappyMenu : MonoBehaviour
 {
@@ -19,8 +20,9 @@ public class LappyMenu : MonoBehaviour
     public List<TabData> tabs = new List<TabData>();
     public ButtonGeneric startButton;
 
-	public ConfirmationPromptData promptQuit;
 	public ConfirmationPromptData promptSave;
+	public ConfirmationPromptData promptQuitTitle;
+	public ConfirmationPromptData promptQuitGame;
 	private ConfirmationWindow confirmationWindow;
 	private bool awaitingConfirmation = false;
 
@@ -48,11 +50,16 @@ public class LappyMenu : MonoBehaviour
 		awaitingConfirmation = false;
 		confirmationWindow.OnChoiceMade -= OnConfirm;
 		if (_choice) {
-            if (confirmationWindow.promptData.promptID == ConfirmationPromptID.Quit) {
+            if (confirmationWindow.promptData.promptID == ConfirmationPromptID.QuitToTitle) {
+        //Quit to Title
+                Close();
+                SceneManager.LoadScene("TitleScreen");
+            }
+            if (confirmationWindow.promptData.promptID == ConfirmationPromptID.QuitGame) {
                 Application.Quit();
             }
             if (confirmationWindow.promptData.promptID == ConfirmationPromptID.Save) {
-                UI.instance.SaveGameData(0);
+                UI.Instance.SaveGameData(0);
             }
 		} else {
 			Debug.Log("User selected NOPE");
@@ -74,24 +81,29 @@ public class LappyMenu : MonoBehaviour
             case 2: //Not Secrets
                 notSecrets.gameObject.SetActive(true);
                 break;
-            case 3: //Chat
+            case 3: //Wish List
+                wishList.gameObject.SetActive(true);
+                break;
+            case 4: //Chat
 
                 break;
-            case 4: //Options
+            case 5: //Options
                 optionsMenu.gameObject.SetActive(true);
-                break;
-            case 5: //Quit to Title
-                confirmationWindow = UI.RequestConfirmation(promptQuit);
-                confirmationWindow.OnChoiceMade += OnConfirm;
-			    awaitingConfirmation = true;
                 break;
             case 6: //Save Game
                 confirmationWindow = UI.RequestConfirmation(promptSave);
                 confirmationWindow.OnChoiceMade += OnConfirm;
 			    awaitingConfirmation = true;
                 break;
-            case 7: //Wish List
-                wishList.gameObject.SetActive(true);
+            case 7: //Quit to Title
+                confirmationWindow = UI.RequestConfirmation(promptQuitTitle);
+                confirmationWindow.OnChoiceMade += OnConfirm;
+			    awaitingConfirmation = true;
+                break;
+            case 8: //Quit Game
+                confirmationWindow = UI.RequestConfirmation(promptQuitGame);
+                confirmationWindow.OnChoiceMade += OnConfirm;
+			    awaitingConfirmation = true;
                 break;
         }
     }

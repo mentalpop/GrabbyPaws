@@ -35,7 +35,7 @@ public class WishListScrapPart : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        GameObject newGO = Instantiate(tooltipPrefab, UI.instance.lappy.transform, false);
+        GameObject newGO = Instantiate(tooltipPrefab, UI.Instance.lappy.transform, false);
         newGO.transform.position = new Vector3(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y, transform.position.z);
         wishlistTooltip = newGO.GetComponent<WishListTooltip>();
         wishlistTooltip.inventorySlot.Unpack(new InventoryItem(myItem.item, (int)Inventory.instance.InventoryCount(myItem.item.name)));

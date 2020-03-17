@@ -43,14 +43,14 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
 
     private void OnEnable() {
         RegisterSingleton (this);
-        UI.instance.OnSave += Save;
-        UI.instance.OnLoad += Load;
+        UI.Instance.OnSave += Save;
+        UI.Instance.OnLoad += Load;
         RegisterLuaFunctions();
     }
 
     private void OnDisable() {
-        UI.instance.OnSave -= Save;
-        UI.instance.OnLoad -= Load;
+        UI.Instance.OnSave -= Save;
+        UI.Instance.OnLoad -= Load;
     }
     #region Lua Functions
     private void RegisterLuaFunctions() {

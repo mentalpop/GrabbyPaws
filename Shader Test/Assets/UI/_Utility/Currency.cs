@@ -24,13 +24,13 @@ public class Currency : Singleton<Currency>
     
     private void OnEnable() {
         RegisterSingleton (this);
-        UI.instance.OnSave += Save;
-        UI.instance.OnLoad += Load;
+        UI.Instance.OnSave += Save;
+        UI.Instance.OnLoad += Load;
     }
 
     private void OnDisable() {
-        UI.instance.OnSave -= Save;
-        UI.instance.OnLoad -= Load;
+        UI.Instance.OnSave -= Save;
+        UI.Instance.OnLoad -= Load;
     }
 
     private string saveString = "currency";

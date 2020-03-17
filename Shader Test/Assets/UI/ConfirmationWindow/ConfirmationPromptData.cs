@@ -20,5 +20,7 @@ public enum ConfirmationPromptID
     Gadget,
     Save,
     Load,
-    Quit
+    QuitToTitle,
+    QuitGame,
+    NewGame
 }

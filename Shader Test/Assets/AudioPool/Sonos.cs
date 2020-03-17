@@ -60,12 +60,12 @@ public class Sonos : MonoBehaviour
     }
 
     private void OnEnable() {
-        UI.instance.OnSave += Save;
-        UI.instance.OnLoad += Load;
+        UI.Instance.OnSave += Save;
+        UI.Instance.OnLoad += Load;
     }
     private void OnDisable() {
-        UI.instance.OnSave -= Save;
-        UI.instance.OnLoad -= Load;
+        UI.Instance.OnSave -= Save;
+        UI.Instance.OnLoad -= Load;
     }
 
     public void Save(int fileIndex) {

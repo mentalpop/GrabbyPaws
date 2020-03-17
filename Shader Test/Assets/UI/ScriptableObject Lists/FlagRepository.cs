@@ -74,16 +74,16 @@ public class FlagRepository : Singleton<FlagRepository>
 //Save / Load
     private void OnEnable() {
         RegisterSingleton (this);
-        UI.instance.OnSave += Save;
-        UI.instance.OnLoad += Load;
+        UI.Instance.OnSave += Save;
+        UI.Instance.OnLoad += Load;
     //Debug
         SecretKeyFound(Secrets.s001Test.ToString());
         SecretKeyFound(Secrets.s002Test.ToString());
     }
 
     private void OnDisable() {
-        UI.instance.OnSave -= Save;
-        UI.instance.OnLoad -= Load;
+        UI.Instance.OnSave -= Save;
+        UI.Instance.OnLoad -= Load;
     }
 
     private string saveString = "flags";

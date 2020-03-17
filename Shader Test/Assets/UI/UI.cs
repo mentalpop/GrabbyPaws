@@ -41,7 +41,8 @@ public enum NPCLocations {
     //*/
 }
 
-public class UI : Singleton<UI>
+[DefaultExecutionOrder(-100)]
+public class UI : MonoBehaviour
 {
     public static string saveFileName = "grabby.paws";
 
@@ -62,6 +63,8 @@ public class UI : Singleton<UI>
     public Inventory inventory;
     public CinemachineBrain cBrain;
 
+    public static UI Instance { get; private set; }
+
     public delegate void FileIOEvent(int fileNum);
     public event FileIOEvent OnSave = delegate { };
     public event FileIOEvent OnLoad = delegate { };
@@ -72,12 +75,21 @@ public class UI : Singleton<UI>
     private List<GameObject> mouseCursorUsers = new List<GameObject>();
 
     private void OnEnable() {
-        RegisterSingleton (this);
         currency.OnCashChanged += OnCurrencyChanged;
     }
 
     private void OnDisable() {
         currency.OnCashChanged -= OnCurrencyChanged;
+    }
+
+    private void Awake() {
+    //Singleton Pattern
+        if (Instance != null && Instance != this) { 
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public void DisplayReadable(ReadableData rData) {
@@ -110,12 +122,12 @@ public class UI : Singleton<UI>
 
     public static void SetMouseState(bool lockMouse, GameObject gameObject) {
         if (lockMouse) {
-            instance.mouseCursorUsers.Add(gameObject);
+            Instance.mouseCursorUsers.Add(gameObject);
         } else {
-            instance.mouseCursorUsers.Remove(gameObject);
+            Instance.mouseCursorUsers.Remove(gameObject);
         }
         bool suppressCamera = false;
-        if (instance.mouseCursorUsers.Count > 0) {
+        if (Instance.mouseCursorUsers.Count > 0) {
             suppressCamera = true;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
@@ -123,8 +135,8 @@ public class UI : Singleton<UI>
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-        if (instance.cBrain != null) {
-            CinemachineFreeLook currentCamera = instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
+        if (Instance.cBrain != null) {
+            CinemachineFreeLook currentCamera = Instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
             Debug.Log("currentCamera: "+currentCamera);
             if (currentCamera != null) {
                 if (suppressCamera) {
@@ -139,9 +151,9 @@ public class UI : Singleton<UI>
     }
 
     public static ConfirmationWindow RequestConfirmation(ConfirmationPromptData _data) {
-        instance.confirmationWindow.gameObject.SetActive(true);
-        instance.confirmationWindow.Unpack(_data);
-        return instance.confirmationWindow; //Allow calling object to subscribe to the result
+        Instance.confirmationWindow.gameObject.SetActive(true);
+        Instance.confirmationWindow.Unpack(_data);
+        return Instance.confirmationWindow; //Allow calling object to subscribe to the result
     }
 
     private void OnCurrencyChanged() {
