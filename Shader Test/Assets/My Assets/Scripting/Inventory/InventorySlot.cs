@@ -113,7 +113,7 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 //Tooltip Handling
         iTooltip.gameObject.SetActive(true);
         //iTooltip.transform.position = new Vector3(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y, transform.position.z);
-        iTooltip.Unpack(iItem, new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y));
+        iTooltip.Unpack(iItem, transform.position);
         mouseOver = true;
     }
 

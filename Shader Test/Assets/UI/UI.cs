@@ -198,7 +198,7 @@ public static class ScreenSpace
     public static float Width = 3840f;
     public static float Height = 2160f;
 	public static float Convert(float variable) {
-		return variable * Screen.height / Height;
+		return variable * (Screen.height / Height);
 	}
 
     public static float Inverse(float variable) {

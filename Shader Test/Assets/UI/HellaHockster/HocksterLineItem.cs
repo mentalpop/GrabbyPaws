@@ -36,7 +36,7 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
         itemQuantity.color = colorMOver;
     //Tooltip
         iTooltip.gameObject.SetActive(true);
-        iTooltip.Unpack(iItem, new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y));
+        iTooltip.Unpack(iItem, transform.position);
     }
 
 	public void OnPointerExit (PointerEventData evd) {

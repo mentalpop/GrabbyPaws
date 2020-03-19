@@ -11,6 +11,7 @@ public class ItemTooltip : MonoBehaviour
     public TextMeshProUGUI value;
     public RectTransform myRect;
     public Vector2 canvasSize;
+    public Vector2 tooltipOffset;
     public float offset = 16f;
 
     public void Unpack(InventoryItem inventoryItem, Vector2 _position) {
@@ -29,11 +30,11 @@ public class ItemTooltip : MonoBehaviour
             value.text = string.Format("{0:n0}", _value);
         }
     //Keep on screen
-        var correctedPosition = Camera.main.WorldToScreenPoint(_position);
-        //Debug.Log("_position.y: "+(correctedPosition.y - 2160f / 2f));
+        Vector2 correctedPosition = Camera.main.WorldToScreenPoint(_position);
+        correctedPosition = new Vector2(ScreenSpace.Inverse(correctedPosition.x), ScreenSpace.Inverse(correctedPosition.y));
         float yMax = (canvasSize.y - myRect.rect.height - offset) / 2f;
-        myRect.anchoredPosition = new Vector3(Mathf.Clamp(correctedPosition.x, 0f, canvasSize.x - myRect.rect.width - offset), //
-            Mathf.Clamp(correctedPosition.y - canvasSize.y / 2f, -yMax, yMax), transform.position.z);
+        myRect.anchoredPosition = new Vector3(Mathf.Clamp(correctedPosition.x + tooltipOffset.x, 0f, canvasSize.x - myRect.rect.width - offset),
+            Mathf.Clamp(correctedPosition.y + tooltipOffset.y - canvasSize.y / 2f, -yMax, yMax), transform.position.z);
 
     }
 }
