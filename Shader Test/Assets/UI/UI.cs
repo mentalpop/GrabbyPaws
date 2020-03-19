@@ -70,6 +70,7 @@ public class UI : MonoBehaviour
     public event FileIOEvent OnLoad = delegate { };
 
     private bool doShowCurrencyDisplay = false;
+    private GameObject lockUI = null;
     private Coroutine currencyDisplayRoutine;
 
     private List<GameObject> mouseCursorUsers = new List<GameObject>();
@@ -172,13 +173,23 @@ public class UI : MonoBehaviour
         currencyDisplayRoutine = null;
     }
 
+    public static void LockUI(GameObject _gameObject) {
+        Instance.lockUI = _gameObject;
+    }
+
+    public static void UnlockUI() {
+        Instance.lockUI = null;
+    }
+
     void Update() {
-//Open / Close menus
-        if (Input.GetButtonDown("Inventory")) {
-            ShowInventoryDisplay();
-        }
-        if (Input.GetButtonDown("Kwit")) { //
-            ShowLappyMenu();
+        if (lockUI == null) { //No GameObject is currently locking the UI
+    //Open / Close menus
+            if (Input.GetButtonDown("Inventory")) {
+                ShowInventoryDisplay();
+            }
+            if (Input.GetButtonDown("Kwit")) { //
+                ShowLappyMenu();
+            }
         }
     }
 //Save / Load

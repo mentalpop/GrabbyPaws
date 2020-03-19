@@ -22,12 +22,14 @@ public class TitleMenuHandler : MonoBehaviour
         buttonNewGame.OnClick += OnClickNewGame;
         buttonLoad.OnClick += OnClickLoad;
         buttonQuit.OnClick += OnClickQuit;
+        UI.LockUI(gameObject);
     }
 
     private void OnDisable() {
         buttonNewGame.OnClick -= OnClickNewGame;
         buttonLoad.OnClick -= OnClickLoad;
         buttonQuit.OnClick -= OnClickQuit;
+        UI.UnlockUI();
     //
 		if (awaitingConfirmation) {
 			awaitingConfirmation = false;
