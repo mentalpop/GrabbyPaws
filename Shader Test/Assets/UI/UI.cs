@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pixelplacement;
+//using Pixelplacement;
 using Cinemachine;
 
 public enum NightPhases
@@ -62,6 +62,7 @@ public class UI : MonoBehaviour
     public GameObject InventoryDisplay;
     public Inventory inventory;
     public CinemachineBrain cBrain;
+    [HideInInspector] public vThirdPersonCamera thirdPersonCamera;
 
     public static UI Instance { get; private set; }
 
@@ -136,18 +137,24 @@ public class UI : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-        if (Instance.cBrain != null) {
-            CinemachineFreeLook currentCamera = Instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
-            Debug.Log("currentCamera: "+currentCamera);
-            if (currentCamera != null) {
-                if (suppressCamera) {
-                    currentCamera.m_XAxis.m_InputAxisName = "";
-                    currentCamera.m_YAxis.m_InputAxisName = "";
-                } else {
-                    currentCamera.m_XAxis.m_InputAxisName = "Mouse X";
-                    currentCamera.m_YAxis.m_InputAxisName = "Mouse Y";
+        if (Instance.thirdPersonCamera == null) {
+    //Using Cinemachine Freelook?
+            if (Instance.cBrain != null) {
+                CinemachineFreeLook currentCamera = Instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
+                Debug.Log("currentCamera: "+currentCamera);
+                if (currentCamera != null) {
+                    if (suppressCamera) {
+                        currentCamera.m_XAxis.m_InputAxisName = "";
+                        currentCamera.m_YAxis.m_InputAxisName = "";
+                    } else {
+                        currentCamera.m_XAxis.m_InputAxisName = "Mouse X";
+                        currentCamera.m_YAxis.m_InputAxisName = "Mouse Y";
+                    }
                 }
             }
+        } else {
+    //Using thirdPersonCamera
+            Instance.thirdPersonCamera.enabled = !suppressCamera;
         }
     }
 

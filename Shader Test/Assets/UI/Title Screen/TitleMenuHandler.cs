@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class TitleMenuHandler : MonoBehaviour
 {
@@ -15,7 +14,6 @@ public class TitleMenuHandler : MonoBehaviour
 	private bool awaitingConfirmation = false;
     
     [Header("Debug")]
-    public Scene loadScene;
     public bool saveFileExists = true;
 
     private void OnEnable() {
@@ -74,12 +72,12 @@ public class TitleMenuHandler : MonoBehaviour
 	}
 
     private void NewGame() {
-        SceneManager.LoadScene("UITestScene");
+        SceneTransitionHandler.SceneGoto("UITestScene", SpawnPoints.UITestRoomB);
     }
 
     private void LoadGame() {
         UI.Instance.LoadGameData(0);
     //Go to UI Test Room
-        SceneManager.LoadScene("UITestScene");
+        SceneTransitionHandler.SceneGoto("UITestScene", SpawnPoints.UITestRoomA);
     }
 }
