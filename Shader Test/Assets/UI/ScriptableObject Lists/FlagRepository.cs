@@ -1,17 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pixelplacement;
 using PixelCrushers.DialogueSystem;
 using System;
 
-public class FlagRepository : Singleton<FlagRepository>
+public class FlagRepository : MonoBehaviour
 {
     //public QuestCompletionFlags questFlags;
     public SecretFlagList secretFlags;
     public GameFlags flags = new GameFlags();
 
+    public static FlagRepository instance;
+
     private void Awake() {
+    //Singleton Pattern
+        if (instance != null && instance != this) { 
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
     //Initialize each to 0 //TODO: Load in these values
         foreach (QuestNames flag in Enum.GetValues(typeof(QuestNames))) {
             flags.questFlags.Add(flag.ToString(), false);
@@ -73,7 +81,6 @@ public class FlagRepository : Singleton<FlagRepository>
     }
 //Save / Load
     private void OnEnable() {
-        RegisterSingleton (this);
         UI.Instance.OnSave += Save;
         UI.Instance.OnLoad += Load;
     //Debug

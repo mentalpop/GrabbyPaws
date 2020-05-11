@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pixelplacement;
 using PixelCrushers.DialogueSystem;
 
-public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
+public class Inventory : MonoBehaviour//Singleton<Inventory>//, IFileIO<List<int>>
 {
     public ItemMetaList itemMetaList;
     public GadgetList gadgetList;
@@ -17,24 +16,20 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     private string saveStringItemIDs = "itemID";
     private string saveStringItemCount = "itemQuantity";
     private string saveStringGadgets = "gadgets";
-    /*
-    #region Singleton
-    public static Inventory instance;
-
-    private void Awake() {
-        if(instance != null) {
-            Debug.LogWarning("More than one inventory in scene");
-            return;
-        }
-        instance = this;
-    }
-    #endregion
-    //*/
 
     public delegate void InventoryEvent();
     public InventoryEvent OnItemChanged;
 
+    public static Inventory instance;
+
     private void Awake() {
+    //Singleton Pattern
+        if (instance != null && instance != this) { 
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
 //Set all Gadgets as locked initially
         for (int i = 0; i < gadgetList.gadgets.Count; i++) {
             gadgetUnlocked.Add(false);
@@ -42,7 +37,6 @@ public class Inventory : Singleton<Inventory>//, IFileIO<List<int>>
     }
 
     private void OnEnable() {
-        RegisterSingleton (this);
         UI.Instance.OnSave += Save;
         UI.Instance.OnLoad += Load;
         RegisterLuaFunctions();

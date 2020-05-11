@@ -1,22 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pixelplacement;
 using UnityEngine.SceneManagement;
 
 
-public class SceneTransitionHandler : Singleton<SceneTransitionHandler>
+public class SceneTransitionHandler : MonoBehaviour
 {
     public SpawnPoints spawnPoint;
     [HideInInspector] public SpawnManager spawnManager;
 
+    public static SceneTransitionHandler instance;
+
+    private void Awake() {
+    //Singleton Pattern
+        if (instance != null && instance != this) { 
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
     private void OnEnable() {
-        RegisterSingleton(this);
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable() {
-        RegisterSingleton(this);
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
