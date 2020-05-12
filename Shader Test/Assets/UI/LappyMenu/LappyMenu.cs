@@ -11,6 +11,7 @@ public class LappyMenu : MonoBehaviour
     public OptionsMenu optionsMenu;
     public HellaHockster hellaHuckster;
     public WishListWindow wishList;
+    public GameObject rivenChatWindow;
     public Image lappyBG;
     public ClickToClose clickToClose;
     public List<Sprite> lappyBGs = new List<Sprite>();
@@ -85,7 +86,7 @@ public class LappyMenu : MonoBehaviour
                 wishList.gameObject.SetActive(true);
                 break;
             case 4: //Chat
-
+                rivenChatWindow.SetActive(true);
                 break;
             case 5: //Options
                 optionsMenu.gameObject.SetActive(true);
