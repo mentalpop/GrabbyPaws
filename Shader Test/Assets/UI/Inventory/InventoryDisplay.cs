@@ -9,7 +9,6 @@ public class InventoryDisplay : MonoBehaviour
     public TabSortMenu inventoryTabMenu;
     public InventoryScrollRect inventoryScrollRect;
     public List<TabData> tabs = new List<TabData>();
-    private GTween gTween;
 
     [HideInInspector] public CategoryItem inventoryDisplayType;
 
