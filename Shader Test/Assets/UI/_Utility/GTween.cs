@@ -8,7 +8,7 @@ public class GTween {
     public bool effectActive = true;
         
     private float timePassed = 0f;
-    private bool doReverse = false;
+    public bool doReverse = false;
 
     public GTween(float _tweenDuration, float _tweenStartVal, float _tweenTargetVal, bool _doReverse) {
         Initiate(_tweenDuration, _tweenStartVal, _tweenTargetVal, _doReverse);

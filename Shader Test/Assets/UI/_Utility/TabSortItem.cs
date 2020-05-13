@@ -11,6 +11,7 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 	public Image background;
 	//public Image myHighlightImage;
     public TextMeshProUGUI title;
+    public bool ignoreContentActive = false;
     //public bool doSwapSprite = true;
 //Set by Menu
 	[HideInInspector] public bool contentActive = false;
@@ -18,11 +19,13 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     [HideInInspector] public int tabID;
     private TabData tabData;
 
+    /*
     public void InsertSeparator(GameObject separator) {
 //Instantiate a separator as 1 index ahead of yourself
         GameObject newSeperator = Instantiate(separator, transform.parent, false);
         newSeperator.transform.SetSiblingIndex(transform.GetSiblingIndex() + 1);
     }
+    //*/
 
     public void UnpackData(TabData _tabData, TabSortMenu _TabSortMenu, int _tabID) {
         tabData = _tabData;
@@ -56,17 +59,19 @@ public class TabSortItem : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     //*/
 
     public void OnPointerEnter(PointerEventData evd) {
-		background.color = tabData.bgColorHighlight;
+		if (ignoreContentActive || !contentActive)
+            background.color = tabData.bgColorHighlight;
 	}
 
 	public void OnPointerExit (PointerEventData evd) {
-		background.color = tabData.bgColor;
+		if (ignoreContentActive || !contentActive)
+            background.color = tabData.bgColor;
 	}
 		
 	public void OnPointerClick (PointerEventData evd) {
-		//if (!contentActive) {
-		background.color = tabData.bgColor;
-        myParentMenu.TabSelect(tabID);
-        //}
+		if (ignoreContentActive || !contentActive) {
+		    background.color = tabData.bgColor;
+            myParentMenu.TabSelect(tabID);
+        }
 	}
 }

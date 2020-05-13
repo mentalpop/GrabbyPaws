@@ -14,15 +14,12 @@ public class ScrollResize : MonoBehaviour
     private GTween gTween;
     private float targetHeight = 0f;
 
-    private void Awake() {
-        gTween = new GTween(0.3f, 0.5f, 1f, false);
-    }
+    public delegate void ScrollResizeEvent();
+    public event ScrollResizeEvent OnClose = delegate { };
 
-    /*
-    void Start() {
-        RectResize(countChildTransform.childCount);
+    private void Awake() {
+        gTween = new GTween(0.3f, 0f, 1f, false);
     }
-    //*/
 
     private void Update() {
         if (gTween.effectActive) {
@@ -30,6 +27,10 @@ public class ScrollResize : MonoBehaviour
             if (gTween.effectActive) {
                 myRect.sizeDelta = new Vector2(myRect.rect.width, targetHeight * tweenVal);
             } else {
+                if (gTween.doReverse) {
+                    OnClose();
+                    targetHeight = 0f;
+                }
                 myRect.sizeDelta = new Vector2(myRect.rect.width, targetHeight);
             }
         }
@@ -39,5 +40,9 @@ public class ScrollResize : MonoBehaviour
         int numToResize = Mathf.Min(maxChildrenOnScreen, childCount);
         targetHeight = heightPerChild * numToResize;
         gTween.Reset();
+    }
+
+    public void Collapse() {
+        gTween.Reverse();
     }
 }

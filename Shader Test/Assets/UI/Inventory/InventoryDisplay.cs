@@ -7,10 +7,14 @@ public class InventoryDisplay : MonoBehaviour
     public Inventory inventory;
     
     public TabSortMenu inventoryTabMenu;
-    public InventoryScrollRect inventoryScrollRect;
     public List<TabData> tabs = new List<TabData>();
+    public Transform menuBGTransform;
+    public BottomCapAdjust bottomCapAdjust;
 
     [HideInInspector] public CategoryItem inventoryDisplayType;
+
+    private List<InventoryTab> iTabs = new List<InventoryTab>();
+    private InventoryScrollRect inventoryScrollRect;
 
     private void OnEnable() {
         inventoryTabMenu.OnTabSelected += SetActiveTab;
@@ -23,15 +27,42 @@ public class InventoryDisplay : MonoBehaviour
     }
 
     void Start() {
+//Instantiate tabs and create a local list
         inventoryTabMenu.InstantiateTabs(tabs);
+        float _depthSet = 0f;
+        for (int i = 0; i < inventoryTabMenu.tabs.Count; i++) {
+            InventoryTab tab = inventoryTabMenu.tabs[i].GetComponent<InventoryTab>();
+    //Manually set z depth of Tab Headers and Scroll Rects
+            _depthSet = -1f * (i + 1);
+            tab.transform.position = new Vector3(tab.transform.position.x, tab.transform.position.y, -1.5f * (i + 1));
+            tab.inventoryScrollRect.transform.position = new Vector3(tab.inventoryScrollRect.transform.position.x, tab.inventoryScrollRect.transform.position.y, _depthSet);
+            iTabs.Add(tab);
+        }
+    //Put the menu in front of the last tab
+        menuBGTransform.SetAsLastSibling();
+        menuBGTransform.position = new Vector3(menuBGTransform.position.x, menuBGTransform.position.y, _depthSet * 2f);
+        /*
+        foreach (var tabObj in inventoryTabMenu.tabs) {
+            InventoryTab tab = tabObj.GetComponent<InventoryTab>();
+            iTabs.Add(tab);
+        }
+        //*/
+        inventoryScrollRect = iTabs[0].inventoryScrollRect;
     }
+
     public void SetActiveTab(int _activeTab) {
         inventoryDisplayType = (CategoryItem)_activeTab;
+    //Tell the original scrollRect to collapse
+        inventoryScrollRect.scrollResize.Collapse();
+    //Assign the new ScrollRect and open it
+        inventoryScrollRect = iTabs[_activeTab].inventoryScrollRect;
         //Debug.Log("inventoryDisplayType" + ": " + inventoryDisplayType);
         UpdateDisplay();
     //Set position in Heirarchy to be one more than the active tab
+        /*
         inventoryScrollRect.transform.SetAsLastSibling(); //Do this first to put it to the end of the list
         inventoryScrollRect.transform.SetSiblingIndex(inventoryTabMenu.tabs[_activeTab].transform.GetSiblingIndex() + 1);
+        //*/
         /*
         foreach (var scrollRect in inventoryScrollRect) {
             scrollRect.gameObject.SetActive(inventoryScrollRect.IndexOf(scrollRect) == _activeTab);
@@ -41,6 +72,7 @@ public class InventoryDisplay : MonoBehaviour
     }
 
     public void UpdateDisplay() {
-        inventoryScrollRect.Unpack(inventory.items);
+        inventoryScrollRect.Unpack(inventory.items, inventoryDisplayType);
+        bottomCapAdjust.UpdateHeight(inventoryScrollRect.scrollResize.myRect.rect.height);
     }
 }
