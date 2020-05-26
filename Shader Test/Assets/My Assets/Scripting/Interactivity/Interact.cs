@@ -10,7 +10,7 @@ public class Interact : MonoBehaviour {
 		if (Input.GetButtonDown("Steal") || Input.GetMouseButtonDown(0)) {
 			InteractWith ();
 		}
-		//Debug.DrawRay (fpsCam.transform.position, fpsCam.transform.forward);
+		Debug.DrawRay (fpsCam.transform.position, fpsCam.transform.forward);
 	}
 
 	void InteractWith (){
