@@ -54,5 +54,6 @@ public class HocksterLineItem : MonoBehaviour, IPointerEnterHandler, IPointerExi
     //Move entiire stack
             hellaHockster.MoveItem(myList, otherList, iItem.item, iItem.quantity);
         }
+        iTooltip.gameObject.SetActive(false);
 	}
 }
