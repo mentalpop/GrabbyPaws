@@ -10,9 +10,14 @@ public class UITest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B)) { //B for Book
             UI.Instance.DisplayReadable(sampleBook);
         }
+        /*
         if (Input.GetKeyDown(KeyCode.Keypad0)) {
             float test = Sonos.GetVolume(AudioType.Music);
             Debug.Log("AudioType.Music: "+test);
+        }
+        //*/
+        if (Input.GetKeyDown(KeyCode.Keypad0)) {
+            FlagRepository.WriteQuestKey(QuestNames.q001TwilightCottonCandy.ToString(), true);
         }
 //Saving / Loading
         if (Input.GetKeyDown(KeyCode.S)) { //Save
