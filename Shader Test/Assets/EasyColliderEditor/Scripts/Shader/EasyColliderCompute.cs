@@ -121,7 +121,7 @@ namespace ECE
         _OverlapMaterial.SetPass(0);
         // draw the topology as points. the squares are drawn in the shader by triangles from the points passed in through the overlap buffer when it is updated.
         // Graphics.DrawProceduralNow(MeshTopology.Points, _OverlapBuffer.count);
-        Graphics.DrawProcedural(MeshTopology.Points, _OverlapBuffer.count);
+        Graphics.DrawProceduralNow(MeshTopology.Points, _OverlapBuffer.count);
       }
       if (_HoveredBuffer != null && _ValidHoverBuffer)
       {
@@ -129,7 +129,7 @@ namespace ECE
         _HoveredMaterial.SetFloat("_Size", HoveredSize);
         _HoveredMaterial.SetPass(0);
         // Graphics.DrawProceduralNow(MeshTopology.Points, _HoveredBuffer.count);
-        Graphics.DrawProcedural(MeshTopology.Points, _HoveredBuffer.count);
+        Graphics.DrawProceduralNow(MeshTopology.Points, _HoveredBuffer.count);
       }
       if (_SelectedBuffer != null && _ValidSelectedBuffer)
       {
@@ -137,7 +137,7 @@ namespace ECE
         _SelectedMaterial.SetFloat("_Size", SelectedSize);
         _SelectedMaterial.SetPass(0);
         // Graphics.DrawProceduralNow(MeshTopology.Points, _SelectedBuffer.count);
-        Graphics.DrawProcedural(MeshTopology.Points, _SelectedBuffer.count);
+        Graphics.DrawProceduralNow(MeshTopology.Points, _SelectedBuffer.count);
       }
       if (_DisplayAllBuffer != null && _ValidDisplayAllBuffer)
       {
@@ -145,7 +145,7 @@ namespace ECE
         _DisplayAllMaterial.SetFloat("_Size", DisplayAllSize);
         _DisplayAllMaterial.SetPass(0);
         // Graphics.DrawProceduralNow(MeshTopology.Points, _DisplayAllBuffer.count);
-        Graphics.DrawProcedural(MeshTopology.Points, _DisplayAllBuffer.count);
+        Graphics.DrawProceduralNow(MeshTopology.Points, _DisplayAllBuffer.count);
       }
     }
 
