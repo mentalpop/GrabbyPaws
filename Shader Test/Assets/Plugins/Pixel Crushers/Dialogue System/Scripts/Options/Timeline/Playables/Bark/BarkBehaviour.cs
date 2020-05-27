@@ -28,7 +28,9 @@ namespace PixelCrushers.DialogueSystem
 
         public string GetEditorBarkText()
         {
-            return useConversation ? "(From " + conversation + ")" : text;
+            return useConversation 
+                ? ("[" + conversation + "] '" + PreviewUI.GetDialogueText(conversation, -1) + "'")
+                : text;
         }
 
     }

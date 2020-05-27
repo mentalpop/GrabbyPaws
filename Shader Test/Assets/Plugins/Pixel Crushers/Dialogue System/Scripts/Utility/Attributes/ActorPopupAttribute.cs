@@ -6,7 +6,7 @@ namespace PixelCrushers.DialogueSystem
 {
 
     /// <summary>
-    /// Add [Actor] to a string to use a popup of actor names in the inspector.
+    /// Add [ActorPopup] to a string to use a popup of actor names in the inspector.
     /// </summary>
     public class ActorPopupAttribute : PropertyAttribute
     {

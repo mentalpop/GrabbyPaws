@@ -136,14 +136,14 @@ namespace PixelCrushers.DialogueSystem
             EditorGUILayout.PropertyField(initialDatabaseProperty, true);
             if (initialDatabaseProperty.objectReferenceValue == null)
             {
-                if (GUILayout.Button("Create", EditorStyles.miniButton, GUILayout.Width(44)))
+                if (GUILayout.Button("Create", EditorStyles.miniButton, GUILayout.Width(50)))
                 {
                     createDatabase = true; // Must delay until after drawing GUI to not interrupt GUI layout.
                 }
             }
             else
             {
-                if (GUILayout.Button("Edit", EditorStyles.miniButton, GUILayout.Width(32)))
+                if (GUILayout.Button("Edit", EditorStyles.miniButton, GUILayout.Width(36)))
                 {
                     Selection.activeObject = dialogueSystemController.initialDatabase;
                     PixelCrushers.DialogueSystem.DialogueEditor.DialogueEditorWindow.OpenDialogueEditorWindow();

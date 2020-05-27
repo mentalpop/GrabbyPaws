@@ -41,6 +41,7 @@ namespace PixelCrushers.DialogueSystem
             EditorGUILayout.PropertyField(serializedObject.FindProperty("explicitNavigationForTemplateButtons"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("loopExplicitNavigation"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("autonumber"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("blockInputDuration"), true);
 
             EditorGUILayout.LabelField("Visibility", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("startState"), true);
@@ -49,6 +50,7 @@ namespace PixelCrushers.DialogueSystem
             EditorGUILayout.PropertyField(serializedObject.FindProperty("focusAnimationTrigger"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("unfocusAnimationTrigger"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_hasFocus"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("m_deactivateOnHidden"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("onOpen"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("onClose"), true);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("onFocus"), true);

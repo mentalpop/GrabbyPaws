@@ -81,6 +81,7 @@ namespace PixelCrushers.DialogueSystem.Articy
             DrawOtherScriptsField();
             DrawUseTechnicalNamesToggle();
             DrawDirectConversationLinksToEntry1Toggle();
+            DrawDefaultActorsToggle();
             DrawConvertMarkupToggle();
             DrawSplitPipesToggle();
             DrawDocumentsSubmenu();
@@ -208,7 +209,7 @@ namespace PixelCrushers.DialogueSystem.Articy
                     EditorGUILayout.HelpBox("Note: Because FlowFragment Script is specified, you must register a custom Lua function named '" + prefs.FlowFragmentScript + "' or the Dialogue System will report errors. If you don't want to do this, clear FlowFragment Script.", MessageType.Info);
                     if (GUILayout.Button("Info", GUILayout.Width(40)))
                     {
-                        Application.OpenURL("http://pixelcrushers.com/dialogue_system/manual/html/lua_in_scripts.html#luaClassRegisterFunction");
+                        Application.OpenURL("https://pixelcrushers.com/dialogue_system/manual2x/html/logic_and_lua.html#luaClassRegisterFunction");
                     }
                     EditorGUILayout.EndHorizontal();
                 }
@@ -243,6 +244,13 @@ namespace PixelCrushers.DialogueSystem.Articy
             prefs.DirectConversationLinksToEntry1 = EditorGUILayout.Toggle(new GUIContent("Conv. Links to Entry 1",
                 "When a link points to a conversation's START node, redirect it to entry 1 instead."),
                 prefs.DirectConversationLinksToEntry1);
+        }
+
+        private void DrawDefaultActorsToggle()
+        {
+            prefs.UseDefaultActorsIfNoneAssignedToDialogue = EditorGUILayout.Toggle(new GUIContent("Use Default Actors If None",
+                "If no actors are assigned to a dialogue, assign default 'Player' and 'NPC' actors. If unticked, leave conversation unassigned."),
+                prefs.UseDefaultActorsIfNoneAssignedToDialogue);
         }
 
         private void DrawConvertMarkupToggle()
@@ -304,19 +312,19 @@ namespace PixelCrushers.DialogueSystem.Articy
         {
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            DrawReviewButton();
+            DrawReadXMLButton();
             DrawClearButton();
-            DrawImportButton();
+            DrawSaveDatabaseButton();
             EditorGUILayout.EndHorizontal();
         }
 
         /// <summary>
         /// Draws the Review button, and loads/reviews the project if clicked.
         /// </summary>
-        private void DrawReviewButton()
+        private void DrawReadXMLButton()
         {
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(prefs.ProjectFilename));
-            if (GUILayout.Button(new GUIContent("Review", "Load the XML file so you can adjust conversion parameters such as what to include in the dialogue database and which actor is the player. Also click this button after re-exporting from articy to reload the updated XML file."), GUILayout.Width(100))) ReviewArticyProject();
+            if (GUILayout.Button(new GUIContent("Read XML", "Load the XML file so you can adjust conversion parameters such as what to include in the dialogue database and which actor is the player. Also click this button after re-exporting from articy to reload the updated XML file."), GUILayout.Width(120))) ReviewArticyProject();
             EditorGUI.EndDisabledGroup();
         }
 
@@ -325,16 +333,16 @@ namespace PixelCrushers.DialogueSystem.Articy
         /// </summary>
         private void DrawClearButton()
         {
-            if (GUILayout.Button("Clear", GUILayout.Width(100))) ClearArticyProject();
+            if (GUILayout.Button("Clear", GUILayout.Width(120))) ClearArticyProject();
         }
 
         /// <summary>
         /// Draws the Import button, and converts the project into a dialogue database if clicked.
         /// </summary>
-        private void DrawImportButton()
+        private void DrawSaveDatabaseButton()
         {
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(prefs.ProjectFilename) || string.IsNullOrEmpty(prefs.OutputFolder));
-            if (GUILayout.Button("Import", GUILayout.Width(100)))
+            if (GUILayout.Button(new GUIContent("Save Database", "Convert the XML data loaded in memory into a dialogue database and save it in the project. If you change your articy project and re-export XML, click Read XML again before clicking this button."), GUILayout.Width(120)))
             {
                 if (!prefs.OutputFolder.EndsWith("/")) prefs.OutputFolder += "/";
                 if (!FolderExists(prefs.OutputFolder))

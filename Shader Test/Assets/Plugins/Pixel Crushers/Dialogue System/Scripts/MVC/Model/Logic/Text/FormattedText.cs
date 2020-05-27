@@ -88,7 +88,7 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// Gets or sets the [pic=#] value.
         /// </summary>
-        /// <value>The pic index, where <c>0<c/c> means unused.</value>
+        /// <value>The pic index, where <c>0</c> means unused.</value>
         public int pic { get; set; }
 
         /// <summary>

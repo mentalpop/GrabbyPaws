@@ -47,6 +47,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private void SetCurrentConversation(Conversation conversation)
         {
             if (verboseDebug) Debug.Log("<color=magenta>Set current conversation to ID=" + ((conversation != null) ? conversation.id : -1) + "</color>");
+            ClearActorInfoCaches();
             if (conversation != null && conversation.id != currentConversationID) ResetCurrentEntryID();
             currentConversation = conversation;
             if (currentConversation != null)
@@ -68,6 +69,18 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             else
             {
                 currentEntry = null;
+            }
+        }
+
+        public void RefreshConversation()
+        {
+            if (currentConversation == null)
+            {
+                ResetConversationSection();
+            }
+            else
+            {
+                OpenConversation(currentConversation);
             }
         }
 
@@ -156,6 +169,14 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 menu.AddItem(new GUIContent("Sort/Reorder IDs/All Conversations"), false, ConfirmReorderIDsAllConversations);
                 menu.AddItem(new GUIContent("Search Bar"), isSearchBarOpen, ToggleDialogueTreeSearchBar);
                 menu.AddItem(new GUIContent("Nodes"), false, ActivateNodeEditorMode);
+                if (currentConversation == null)
+                {
+                    menu.AddDisabledItem(new GUIContent("Refresh"));
+                }
+                else
+                {
+                    menu.AddItem(new GUIContent("Refresh"), false, RefreshConversation);
+                }
                 AddRelationsInspectorMenuItems(menu);
                 menu.ShowAsContext();
             }

@@ -421,7 +421,13 @@ namespace PixelCrushers.DialogueSystem
                                     {
                                         if (!isValid) text = string.Format("[em{0}]{1}[/em{0}]", (int)m_emTagForInvalidResponses, text);
                                     }
-                                    pcResponses.Add(new Response(FormattedText.Parse(text, m_database.emphasisSettings), destinationEntry, isValid));
+                                    var formattedText = FormattedText.Parse(text, m_database.emphasisSettings);
+                                    if (!isValid)
+                                    {
+                                        formattedText.forceAuto = false;
+                                        formattedText.forceMenu = false;
+                                    }
+                                    pcResponses.Add(new Response(formattedText, destinationEntry, isValid));
                                     DialogueLua.MarkDialogueEntryOffered(destinationEntry);
                                 }
                             }
@@ -557,6 +563,10 @@ namespace PixelCrushers.DialogueSystem
                 }
                 if (actor == null) actor = m_database.GetActor(id);
                 string nameInDatabase = (actor != null) ? actor.Name : string.Empty;
+                if (character == null && !string.IsNullOrEmpty(nameInDatabase))
+                {
+                    character = CharacterInfo.GetRegisteredActorTransform(nameInDatabase);
+                }
                 var actorID = (actor != null) ? actor.id : id;
                 CharacterInfo characterInfo = new CharacterInfo(actorID, nameInDatabase, character, m_database.GetCharacterType(id), GetPortrait(character, actor));
                 m_characterInfoCache.Add(id, characterInfo);

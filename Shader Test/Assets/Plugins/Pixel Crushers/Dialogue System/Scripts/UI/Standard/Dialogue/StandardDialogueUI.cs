@@ -91,6 +91,12 @@ namespace PixelCrushers.DialogueSystem
             conversationUIElements.OpenSubtitlePanelsOnStart();
         }
 
+        public override void Close()
+        {
+            conversationUIElements.standardMenuControls.ClearCache();
+            base.Close();
+        }
+
         #endregion
 
         #region Update
@@ -218,6 +224,11 @@ namespace PixelCrushers.DialogueSystem
         public virtual void OverrideActorMenuPanel(Transform actorTransform, MenuPanelNumber menuPanelNumber, StandardUIMenuPanel customPanel)
         {
             conversationUIElements.standardMenuControls.OverrideActorMenuPanel(actorTransform, menuPanelNumber, customPanel ?? conversationUIElements.defaultMenuPanel);
+        }
+
+        public virtual void OverrideActorMenuPanel(Actor actor, MenuPanelNumber menuPanelNumber, StandardUIMenuPanel customPanel)
+        {
+            conversationUIElements.standardMenuControls.OverrideActorMenuPanel(actor, menuPanelNumber, customPanel ?? conversationUIElements.defaultMenuPanel);
         }
 
         #endregion

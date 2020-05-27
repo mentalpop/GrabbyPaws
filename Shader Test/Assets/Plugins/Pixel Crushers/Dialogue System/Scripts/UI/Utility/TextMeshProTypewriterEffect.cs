@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -48,13 +49,13 @@ namespace PixelCrushers.DialogueSystem
         public bool IsPlaying { get { return isPlaying; } }
         /// @endcond
 
-        private const string RPGMakerCodeQuarterPause = @"\,";
-        private const string RPGMakerCodeFullPause = @"\.";
-        private const string RPGMakerCodeSkipToEnd = @"\^";
-        private const string RPGMakerCodeInstantOpen = @"\>";
-        private const string RPGMakerCodeInstantClose = @"\<";
+        protected const string RPGMakerCodeQuarterPause = @"\,";
+        protected const string RPGMakerCodeFullPause = @"\.";
+        protected const string RPGMakerCodeSkipToEnd = @"\^";
+        protected const string RPGMakerCodeInstantOpen = @"\>";
+        protected const string RPGMakerCodeInstantClose = @"\<";
 
-        private enum RPGMakerTokenType
+        protected enum RPGMakerTokenType
         {
             None,
             QuarterPause,
@@ -64,10 +65,10 @@ namespace PixelCrushers.DialogueSystem
             InstantClose
         }
 
-        private Dictionary<int, List<RPGMakerTokenType>> rpgMakerTokens = new Dictionary<int, List<RPGMakerTokenType>>();
+        protected Dictionary<int, List<RPGMakerTokenType>> rpgMakerTokens = new Dictionary<int, List<RPGMakerTokenType>>();
 
-        private TMPro.TMP_Text m_textComponent = null;
-        private TMPro.TMP_Text textComponent
+        protected TMPro.TMP_Text m_textComponent = null;
+        protected TMPro.TMP_Text textComponent
         {
             get
             {
@@ -76,7 +77,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private AudioSource runtimeAudioSource
+        protected AudioSource runtimeAudioSource
         {
             get
             {
@@ -91,10 +92,10 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private bool started = false;
-        private int charactersTyped = 0;
-        private Coroutine typewriterCoroutine = null;
-        private MonoBehaviour coroutineController = null;
+        protected bool started = false;
+        protected int charactersTyped = 0;
+        protected Coroutine typewriterCoroutine = null;
+        protected MonoBehaviour coroutineController = null;
 
         public override void Awake()
         {
@@ -102,7 +103,7 @@ namespace PixelCrushers.DialogueSystem
             if (removeDuplicateTypewriterEffects) RemoveIfDuplicate();
         }
 
-        private void RemoveIfDuplicate()
+        protected void RemoveIfDuplicate()
         {
             var effects = GetComponents<TextMeshProTypewriterEffect>();
             if (effects.Length > 1)
@@ -195,14 +196,14 @@ namespace PixelCrushers.DialogueSystem
         /// Play typewriter on text immediately.
         /// </summary>
         /// <param name="text"></param>
-        public void PlayText(string text, int fromIndex = 0)
+        public virtual void PlayText(string text, int fromIndex = 0)
         {
             StopTypewriterCoroutine();
             textComponent.text = text;
             StartTypewriterCoroutine(fromIndex);
         }
 
-        private void StartTypewriterCoroutine(int fromIndex)
+        protected void StartTypewriterCoroutine(int fromIndex)
         {
             if (coroutineController == null || !coroutineController.gameObject.activeInHierarchy)
             {
@@ -218,12 +219,12 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// Plays the typewriter effect.
         /// </summary>
-        public IEnumerator Play(int fromIndex)
+        public virtual IEnumerator Play(int fromIndex)
         {
             if ((textComponent != null) && (charactersPerSecond > 0))
             {
                 if (waitOneFrameBeforeStarting) yield return null;
-                fromIndex = Tools.StripTextMeshProTags(textComponent.text.Substring(0, fromIndex)).Length;
+                fromIndex = StripRPGMakerCodes(Tools.StripTextMeshProTags(textComponent.text)).Substring(0, fromIndex).Length;
                 ProcessRPGMakerCodes();
                 if (runtimeAudioSource != null) runtimeAudioSource.clip = audioClip;
                 onBegin.Invoke();
@@ -237,6 +238,7 @@ namespace PixelCrushers.DialogueSystem
                 textComponent.maxVisibleCharacters = fromIndex;
                 textComponent.ForceMeshUpdate();
                 TMPro.TMP_TextInfo textInfo = textComponent.textInfo;
+                var parsedText = textComponent.GetParsedText();
                 int totalVisibleCharacters = textInfo.characterCount; // Get # of Visible Character in text object
                 charactersTyped = fromIndex;
                 int skippedCharacters = 0;
@@ -246,7 +248,7 @@ namespace PixelCrushers.DialogueSystem
                     {
                         var deltaTime = DialogueTime.time - lastTime;
                         elapsed += deltaTime;
-                        var goal = (elapsed * charactersPerSecond) - skippedCharacters;
+                        var goal = (elapsed * charactersPerSecond) + skippedCharacters;
                         while (charactersTyped < goal)
                         {
                             if (rpgMakerTokens.ContainsKey(charactersTyped))
@@ -258,10 +260,10 @@ namespace PixelCrushers.DialogueSystem
                                     switch (token)
                                     {
                                         case RPGMakerTokenType.QuarterPause:
-                                            yield return new WaitForSeconds(quarterPauseDuration);
+                                            yield return DialogueTime.WaitForSeconds(quarterPauseDuration);
                                             break;
                                         case RPGMakerTokenType.FullPause:
-                                            yield return new WaitForSeconds(fullPauseDuration);
+                                            yield return DialogueTime.WaitForSeconds(fullPauseDuration);
                                             break;
                                         case RPGMakerTokenType.SkipToEnd:
                                             charactersTyped = totalVisibleCharacters - 1;
@@ -281,13 +283,13 @@ namespace PixelCrushers.DialogueSystem
                                     }
                                 }
                             }
-                            var typedCharacter = (0 <= charactersTyped && charactersTyped < textComponent.text.Length) ? textComponent.text[charactersTyped] : ' ';
-                            if (charactersTyped < totalVisibleCharacters && !IsSilentCharacter(typedCharacter)) PlayCharacterAudio();
+                            var typedCharacter = (0 <= charactersTyped && charactersTyped < parsedText.Length) ? parsedText[charactersTyped] : ' ';
+                            if (charactersTyped < totalVisibleCharacters && !IsSilentCharacter(typedCharacter)) PlayCharacterAudio(typedCharacter);
                             onCharacter.Invoke();
                             charactersTyped++;
                             textComponent.maxVisibleCharacters = charactersTyped;
-                            if (IsFullPauseCharacter(typedCharacter)) yield return new WaitForSeconds(fullPauseDuration);
-                            else if (IsQuarterPauseCharacter(typedCharacter)) yield return new WaitForSeconds(quarterPauseDuration);
+                            if (IsFullPauseCharacter(typedCharacter)) yield return DialogueTime.WaitForSeconds(fullPauseDuration);
+                            else if (IsQuarterPauseCharacter(typedCharacter)) yield return DialogueTime.WaitForSeconds(quarterPauseDuration);
                         }
                     }
                     textComponent.maxVisibleCharacters = charactersTyped;
@@ -307,12 +309,13 @@ namespace PixelCrushers.DialogueSystem
             Stop();
         }
 
-        private void ProcessRPGMakerCodes()
+        protected void ProcessRPGMakerCodes()
         {
             rpgMakerTokens.Clear();
             var source = textComponent.text;
             var result = string.Empty;
             if (!source.Contains("\\")) return;
+            source = Tools.StripTextMeshProTags(source);
             int safeguard = 0;
             while (!string.IsNullOrEmpty(source) && safeguard < 9999)
             {
@@ -333,10 +336,10 @@ namespace PixelCrushers.DialogueSystem
                     source = source.Remove(0, 1);
                 }
             }
-            textComponent.text = result;
+            textComponent.text = Regex.Replace(textComponent.text, @"\\[\.\,\^\<\>]", string.Empty);
         }
 
-        private bool PeelRPGMakerTokenFromFront(ref string source, out RPGMakerTokenType token)
+        protected bool PeelRPGMakerTokenFromFront(ref string source, out RPGMakerTokenType token)
         {
             token = RPGMakerTokenType.None;
             if (string.IsNullOrEmpty(source) || source.Length < 2 || source[0] != '\\') return false;
@@ -369,7 +372,7 @@ namespace PixelCrushers.DialogueSystem
             return true;
         }
 
-        private void StopTypewriterCoroutine()
+        protected void StopTypewriterCoroutine()
         {
             if (typewriterCoroutine == null) return;
             if (coroutineController == null)
@@ -389,14 +392,17 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public override void Stop()
         {
-            if (isPlaying) onEnd.Invoke();
-            Sequencer.Message(SequencerMessages.Typed);
+            if (isPlaying)
+            {
+                onEnd.Invoke();
+                Sequencer.Message(SequencerMessages.Typed);
+            }
             StopTypewriterCoroutine();
             if (textComponent != null) textComponent.maxVisibleCharacters = textComponent.textInfo.characterCount;
             HandleAutoScroll();
         }
 
-        private void HandleAutoScroll()
+        protected void HandleAutoScroll()
         {
             if (!autoScrollSettings.autoScrollEnabled) return;
             if (autoScrollSettings.scrollRect != null)

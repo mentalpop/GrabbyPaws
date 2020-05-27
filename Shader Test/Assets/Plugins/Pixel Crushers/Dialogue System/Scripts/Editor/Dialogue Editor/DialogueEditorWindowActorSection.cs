@@ -420,12 +420,17 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 var nodeColorField = actor.fields.Find(x => string.Equals(x.title, NodeColorFieldTitle));
                 if (nodeColorField != null)
                 {
+                    if (string.IsNullOrEmpty(nodeColorField.value)) // Make sure we have a valid color.
+                    {
+                        nodeColorField.value = actor.IsPlayer ? "Blue" : "Gray";
+                    }
                     EditorGUI.BeginChangeCheck();
 #if UNITY_5 || UNITY_2017
                     var nodeColor = EditorGUILayout.ColorField(GUIContent.none, EditorTools.NodeColorStringToColor(nodeColorField.value), true, true, false, null);
 #else
                     var nodeColor = EditorGUILayout.ColorField(GUIContent.none, EditorTools.NodeColorStringToColor(nodeColorField.value), true, true, false);
 #endif
+                    nodeColor.a = 1; // Force solid alpha.
                     if (EditorGUI.EndChangeCheck())
                     {
                         nodeColorField.value = Tools.ToWebColor(nodeColor);

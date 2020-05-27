@@ -15,6 +15,16 @@ namespace PixelCrushers
 
         private static int s_currentLanguageID = 0;
 
+        /// <summary>
+        /// If a language's field value is blank, use the default language's field value.
+        /// </summary>
+        public static bool useDefaultLanguageForBlankTranslations 
+        { 
+            get { return m_useDefaultLanguageForBlankTranslations; }
+            set { m_useDefaultLanguageForBlankTranslations = value; }
+        }
+        private static bool m_useDefaultLanguageForBlankTranslations = true;
+
         private Dictionary<string, int> m_languages = new Dictionary<string, int>(); // <languageName, languageID>
 
         private Dictionary<int, TextTableField> m_fields = new Dictionary<int, TextTableField>(); // <fieldID, {translations}>
@@ -105,7 +115,7 @@ namespace PixelCrushers
         /// </summary>
         public bool HasLanguage(string languageName)
         {
-            return languages.ContainsKey(languageName);
+            return string.IsNullOrEmpty(languageName) || languages.ContainsKey(languageName);
         }
 
         /// <summary>
@@ -113,7 +123,7 @@ namespace PixelCrushers
         /// </summary>
         public bool HasLanguage(int languageID)
         {
-            return languages.ContainsValue(languageID);
+            return languageID == 0 || languages.ContainsValue(languageID);
         }
 
         /// <summary>
@@ -344,9 +354,15 @@ namespace PixelCrushers
         {
             var field = GetField(fieldID);
             if (field == null) return GetFieldName(fieldID);
-            if (field.HasTextForLanguage(languageID)) return field.GetTextForLanguage(languageID);
+            string result;
+            if (field.HasTextForLanguage(languageID))
+            {
+                result = field.GetTextForLanguage(languageID).Replace(@"\n", "\n");
+                if (!string.IsNullOrEmpty(result)) return result;
+            }
             var defaultText = field.GetTextForLanguage(0);
-            return !string.IsNullOrEmpty(defaultText) ? defaultText : GetFieldName(fieldID);
+            result = (!string.IsNullOrEmpty(defaultText) && useDefaultLanguageForBlankTranslations) ? defaultText : GetFieldName(fieldID);
+            return result.Replace(@"\n", "\n");
         }
 
         /// <summary>
@@ -364,12 +380,16 @@ namespace PixelCrushers
         {
             var field = GetField(fieldName);
             if (field == null) return fieldName;
-            if (field.HasTextForLanguage(languageID)) return field.GetTextForLanguage(languageID).Replace(@"\n", "\n");
+            string result;
+            if (field.HasTextForLanguage(languageID))
+            {
+                result = field.GetTextForLanguage(languageID).Replace(@"\n", "\n");
+                if (!string.IsNullOrEmpty(result)) return result;
+            }
             var defaultText = field.GetTextForLanguage(0);
-            var result = !string.IsNullOrEmpty(defaultText) ? defaultText : fieldName;
+            result = (!string.IsNullOrEmpty(defaultText) && useDefaultLanguageForBlankTranslations) ? defaultText : fieldName;
             return result.Replace(@"\n", "\n");
         }
-
         /// <summary>
         /// Looks up a field's localized text for a specified language.
         /// </summary>

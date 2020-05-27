@@ -262,7 +262,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (DialogueManager.IsDialogueSystemInputDisabled()) return false;
             if (enableTouch && IsTouchDown()) return true;
-            return ((useKey != KeyCode.None) && Input.GetKeyDown(useKey))
+            return ((useKey != KeyCode.None) && InputDeviceManager.IsKeyDown(useKey))
                 || (!string.IsNullOrEmpty(useButton) && DialogueManager.GetInputButtonDown(useButton));
         }
 
@@ -335,6 +335,7 @@ namespace PixelCrushers.DialogueSystem
 
         protected virtual void CheckTriggerEnter(GameObject other)
         {
+            if (!enabled) return;
             Usable usable = other.GetComponent<Usable>();
             if (usable != null && usable.enabled)
             {

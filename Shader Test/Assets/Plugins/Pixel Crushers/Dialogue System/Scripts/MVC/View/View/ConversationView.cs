@@ -38,7 +38,7 @@ namespace PixelCrushers.DialogueSystem
         private delegate bool IsCancelKeyDownDelegate();
 
         private IDialogueUI ui = null;
-        private Sequencer sequencer = null;
+        private Sequencer m_sequencer = null;
         private DisplaySettings settings = null;
         private Subtitle lastNPCSubtitle = null;
         private Subtitle lastPCSubtitle = null;
@@ -49,10 +49,13 @@ namespace PixelCrushers.DialogueSystem
         private bool waitForContinue = false;
         private bool notifyOnFinishSubtitle = false;
         private bool isPlayingResponseMenuSequence = false;
+        private int initialFrameCount;
 
         public DisplaySettings displaySettings { get { return settings; } }
 
         public bool isWaitingForContinue { get { return waitForContinue; } }
+
+        public Sequencer sequencer { get { return m_sequencer; } }
 
         /// <summary>
         /// Initialize a UI and sequencer with displaySettings.
@@ -69,9 +72,10 @@ namespace PixelCrushers.DialogueSystem
         public void Initialize(IDialogueUI ui, Sequencer sequencer, DisplaySettings displaySettings, DialogueEntrySpokenDelegate dialogueEntrySpokenHandler)
         {
             this.ui = ui;
-            this.sequencer = sequencer;
+            this.m_sequencer = sequencer;
             this.settings = displaySettings;
             this.dialogueEntrySpokenHandler = dialogueEntrySpokenHandler;
+            this.initialFrameCount = Time.frameCount;
             ui.Open();
             sequencer.Open();
             ui.SelectedResponseHandler += OnSelectedResponse;
@@ -84,9 +88,9 @@ namespace PixelCrushers.DialogueSystem
         public void Close()
         {
             ui.SelectedResponseHandler -= OnSelectedResponse;
-            sequencer.FinishedSequenceHandler -= OnFinishedSubtitle;
+            m_sequencer.FinishedSequenceHandler -= OnFinishedSubtitle;
             ui.Close();
-            sequencer.Close();
+            m_sequencer.Close();
             Destroy(this);
         }
 
@@ -148,9 +152,9 @@ namespace PixelCrushers.DialogueSystem
                 {
                     waitForContinue = false;
                 }
-                sequencer.SetParticipants(subtitle.speakerInfo.transform, subtitle.listenerInfo.transform);
-                sequencer.entrytag = subtitle.entrytag;
-                sequencer.subtitleEndTime = GetDefaultSubtitleDuration(subtitle.formattedText.text);
+                m_sequencer.SetParticipants(subtitle.speakerInfo.transform, subtitle.listenerInfo.transform);
+                m_sequencer.entrytag = subtitle.entrytag;
+                m_sequencer.subtitleEndTime = GetDefaultSubtitleDuration(subtitle.formattedText.text);
                 if (!string.IsNullOrEmpty(subtitle.sequence) && subtitle.sequence.Contains("{{default}}"))
                 {
                     subtitle.sequence = subtitle.sequence.Replace("{{default}}", GetDefaultSequence(subtitle));
@@ -165,7 +169,7 @@ namespace PixelCrushers.DialogueSystem
                 }
                 lastSubtitle = subtitle;
                 if (dialogueEntrySpokenHandler != null) dialogueEntrySpokenHandler(subtitle);
-                sequencer.PlaySequence(string.IsNullOrEmpty(subtitle.sequence) ? GetDefaultSequence(subtitle) : PreprocessSequence(subtitle), settings.subtitleSettings.informSequenceStartAndEnd, false);
+                m_sequencer.PlaySequence(string.IsNullOrEmpty(subtitle.sequence) ? GetDefaultSequence(subtitle) : PreprocessSequence(subtitle), settings.subtitleSettings.informSequenceStartAndEnd, false);
             }
             else
             {
@@ -359,6 +363,8 @@ namespace PixelCrushers.DialogueSystem
 
         private void HandleContinueButtonClick()
         {
+            // If we just started and another conversation just ended, ignore the continue:
+            if (Time.frameCount == initialFrameCount && initialFrameCount == ConversationController.frameLastConversationEnded) return;
             waitForContinue = false;
             FinishSubtitle();
         }
@@ -382,7 +388,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (!waitForContinue)
             {
-                if (sequencer != null) sequencer.Stop();
+                if (m_sequencer != null) m_sequencer.Stop();
                 ui.HideSubtitle(lastSubtitle);
                 if (notifyOnFinishSubtitle)
                 {
@@ -430,9 +436,9 @@ namespace PixelCrushers.DialogueSystem
             }
             if (!string.IsNullOrEmpty(responseMenuSequence))
             {
-                sequencer.FinishedSequenceHandler -= OnFinishedSubtitle;
-                sequencer.Stop();
-                sequencer.PlaySequence(responseMenuSequence);
+                m_sequencer.FinishedSequenceHandler -= OnFinishedSubtitle;
+                m_sequencer.Stop();
+                m_sequencer.PlaySequence(responseMenuSequence);
                 isPlayingResponseMenuSequence = true;
             }
         }
@@ -442,9 +448,9 @@ namespace PixelCrushers.DialogueSystem
             if (isPlayingResponseMenuSequence)
             {
                 isPlayingResponseMenuSequence = false;
-                sequencer.Stop();
-                sequencer.StopAllCoroutines();
-                sequencer.FinishedSequenceHandler += OnFinishedSubtitle;
+                m_sequencer.Stop();
+                m_sequencer.StopAllCoroutines();
+                m_sequencer.FinishedSequenceHandler += OnFinishedSubtitle;
             }
         }
 
@@ -485,7 +491,7 @@ namespace PixelCrushers.DialogueSystem
             }
             else
             {
-                float duration = sequencer.subtitleEndTime;
+                float duration = m_sequencer.subtitleEndTime;
                 var line = settings.GetDefaultSequence();
                 if (isPlayerLine && !string.IsNullOrEmpty(settings.GetDefaultPlayerSequence()))
                 {
@@ -509,7 +515,30 @@ namespace PixelCrushers.DialogueSystem
         /// </returns>
         public float GetDefaultSubtitleDuration(string text)
         {
+            return GetDefaultSubtitleDurationInSeconds(text, settings);
+            //if (overrideGetDefaultSubtitleDuration != null) return overrideGetDefaultSubtitleDuration(text);
+            //int numCharacters = string.IsNullOrEmpty(text) ? 0 : Tools.StripRichTextCodes(text).Length;
+            //float numRPGMakerPauses = 0;
+            //if (text.Contains("\\"))
+            //{
+            //    var numFullPauses = (text.Length - text.Replace("\\.", string.Empty).Length) / 2;
+            //    var numQuarterPauses = (text.Length - text.Replace("\\,", string.Empty).Length) / 2;
+            //    numRPGMakerPauses = (1.0f * numFullPauses) + (0.25f * numQuarterPauses);
+            //}
+            //return Mathf.Max(settings.GetMinSubtitleSeconds(), numRPGMakerPauses + (numCharacters / Mathf.Max(1, settings.GetSubtitleCharsPerSecond())));
+        }
+
+        /// <summary>
+        /// A duration based on the text length and the Dialogue Manager's 
+        /// Subtitle Settings > Min Subtitle Seconds and Subtitle Chars Per Second.
+        /// Also factors in time for RPGMaker-style pause codes.
+        /// </summary>
+        /// <param name="text">Text.</param>
+        /// <param name="displaySettings">If null, uses Dialogue Manager's Display Settings.</param>
+        public static float GetDefaultSubtitleDurationInSeconds(string text, DisplaySettings displaySettings = null)
+        {
             if (overrideGetDefaultSubtitleDuration != null) return overrideGetDefaultSubtitleDuration(text);
+            var settings = displaySettings ?? DialogueManager.displaySettings;
             int numCharacters = string.IsNullOrEmpty(text) ? 0 : Tools.StripRichTextCodes(text).Length;
             float numRPGMakerPauses = 0;
             if (text.Contains("\\"))
@@ -526,7 +555,7 @@ namespace PixelCrushers.DialogueSystem
             if ((subtitle == null) || (string.IsNullOrEmpty(subtitle.sequence))) return string.Empty;
             subtitle.sequence = Sequencer.ReplaceShortcuts(subtitle.sequence);
             if (!subtitle.sequence.Contains(SequencerKeywords.End)) return subtitle.sequence;
-            float duration = sequencer.subtitleEndTime;
+            float duration = m_sequencer.subtitleEndTime;
             return subtitle.sequence.Replace(SequencerKeywords.End, duration.ToString(System.Globalization.CultureInfo.InvariantCulture));
         }
 
@@ -576,10 +605,10 @@ namespace PixelCrushers.DialogueSystem
                 bool validSpeakerTransform = CharacterInfoHasValidTransform(lastSubtitle.speakerInfo);
                 bool validListenerTransform = CharacterInfoHasValidTransform(lastSubtitle.listenerInfo);
                 bool speakerIsListener = validSpeakerTransform && validListenerTransform && (lastSubtitle.speakerInfo.transform == lastSubtitle.listenerInfo.transform);
-                if (validSpeakerTransform) lastSubtitle.speakerInfo.transform.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, sequencer.listener, SendMessageOptions.DontRequireReceiver);
-                if (validListenerTransform && !speakerIsListener) lastSubtitle.listenerInfo.transform.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, sequencer.speaker, SendMessageOptions.DontRequireReceiver);
+                if (validSpeakerTransform) lastSubtitle.speakerInfo.transform.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, m_sequencer.listener ?? transform, SendMessageOptions.DontRequireReceiver);
+                if (validListenerTransform && !speakerIsListener) lastSubtitle.listenerInfo.transform.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, m_sequencer.speaker ?? transform, SendMessageOptions.DontRequireReceiver);
             }
-            DialogueManager.instance.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, sequencer.speaker, SendMessageOptions.DontRequireReceiver);
+            DialogueManager.instance.BroadcastMessage(DialogueSystemMessages.OnConversationCancelled, m_sequencer.speaker ?? transform, SendMessageOptions.DontRequireReceiver);
         }
 
         private bool CharacterInfoHasValidTransform(CharacterInfo characterInfo)

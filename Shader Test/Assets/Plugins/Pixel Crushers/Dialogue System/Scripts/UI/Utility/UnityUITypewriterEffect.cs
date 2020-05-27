@@ -52,17 +52,17 @@ namespace PixelCrushers.DialogueSystem
         public bool IsPlaying { get { return isPlaying; } }
         /// @endcond
 
-        private const string RichTextBoldOpen = "<b>";
-        private const string RichTextBoldClose = "</b>";
-        private const string RichTextItalicOpen = "<i>";
-        private const string RichTextItalicClose = "</i>";
-        private const string RichTextColorOpenPrefix = "<color=";
-        private const string RichTextColorClose = "</color>";
-        private const string RichTextSizeOpenPrefix = "<size=";
-        private const string RichTextSizeClose = "</size>";
-        private const string QuadPrefix = "<quad ";
+        protected const string RichTextBoldOpen = "<b>";
+        protected const string RichTextBoldClose = "</b>";
+        protected const string RichTextItalicOpen = "<i>";
+        protected const string RichTextItalicClose = "</i>";
+        protected const string RichTextColorOpenPrefix = "<color=";
+        protected const string RichTextColorClose = "</color>";
+        protected const string RichTextSizeOpenPrefix = "<size=";
+        protected const string RichTextSizeClose = "</size>";
+        protected const string QuadPrefix = "<quad ";
 
-        private enum TokenType
+        protected enum TokenType
         {
             Character,
             BoldOpen,
@@ -79,7 +79,7 @@ namespace PixelCrushers.DialogueSystem
             InstantClose
         }
 
-        private class Token
+        protected class Token
         {
             public TokenType tokenType;
             public char character;
@@ -95,18 +95,18 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private UnityEngine.UI.Text control;
-        private bool started = false;
-        private string original = null;
-        private string frontSkippedText = string.Empty;
-        private Coroutine typewriterCoroutine = null;
-        private MonoBehaviour coroutineController = null;
+        protected UnityEngine.UI.Text control;
+        protected bool started = false;
+        protected string original = null;
+        protected string frontSkippedText = string.Empty;
+        protected Coroutine typewriterCoroutine = null;
+        protected MonoBehaviour coroutineController = null;
 
-        private StringBuilder current;
-        private List<TokenType> openTokenTypes;
-        private List<Token> tokens;
+        protected StringBuilder current;
+        protected List<TokenType> openTokenTypes;
+        protected List<Token> tokens;
 
-        private int MaxSafeguard = 16384;
+        protected int MaxSafeguard = 16384;
 
         public override void Awake()
         {
@@ -125,7 +125,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private void RemoveIfDuplicate()
+        protected void RemoveIfDuplicate()
         {
             var effects = GetComponents<UnityUITypewriterEffect>();
             if (effects.Length > 1)
@@ -180,7 +180,7 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// Pauses the effect.
         /// </summary>
-        public void Pause()
+        public virtual void Pause()
         {
             paused = true;
         }
@@ -189,7 +189,7 @@ namespace PixelCrushers.DialogueSystem
         /// Unpauses the effect. The text will resume at the point where it
         /// was paused; it won't try to catch up to make up for the pause.
         /// </summary>
-        public void Unpause()
+        public virtual void Unpause()
         {
             paused = false;
         }
@@ -210,12 +210,12 @@ namespace PixelCrushers.DialogueSystem
         /// Play typewriter on text immediately.
         /// </summary>
         /// <param name="text"></param>
-        public void PlayText(string text, int fromIndex = 0)
+        public virtual void PlayText(string text, int fromIndex = 0)
         {
             StartTyping(text, fromIndex);
         }
 
-        private void StartTypewriterCoroutine(int fromIndex)
+        protected virtual void StartTypewriterCoroutine(int fromIndex)
         {
             if (coroutineController == null || !coroutineController.gameObject.activeInHierarchy)
             {
@@ -231,7 +231,7 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// Plays the typewriter effect.
         /// </summary>
-        public IEnumerator Play(int fromIndex = 0)
+        public virtual IEnumerator Play(int fromIndex = 0)
         {
             if ((control != null) && (charactersPerSecond > 0))
             {
@@ -317,7 +317,7 @@ namespace PixelCrushers.DialogueSystem
                                     {
                                         current.Append(token.character);
                                     }
-                                    if (!IsSilentCharacter(token.character)) PlayCharacterAudio();
+                                    if (!IsSilentCharacter(token.character)) PlayCharacterAudio(token.character);
                                     onCharacter.Invoke();
                                     charactersTyped++;
                                     if (IsFullPauseCharacter(token.character))
@@ -381,7 +381,7 @@ namespace PixelCrushers.DialogueSystem
             Stop();
         }
 
-        private Token GetNextToken(List<Token> tokens)
+        protected Token GetNextToken(List<Token> tokens)
         {
             if (tokens.Count == 0) return null;
             int lastIndex = rightToLeft ? tokens.Count - 1 : 0;
@@ -390,7 +390,7 @@ namespace PixelCrushers.DialogueSystem
             return token;
         }
 
-        private void OpenRichText(StringBuilder current, Token token, List<TokenType> openTokens)
+        protected void OpenRichText(StringBuilder current, Token token, List<TokenType> openTokens)
         {
             switch (token.tokenType)
             {
@@ -408,7 +408,7 @@ namespace PixelCrushers.DialogueSystem
             openTokens.Insert(0, token.tokenType);
         }
 
-        private void CloseRichText(StringBuilder current, Token token, List<TokenType> openTokens)
+        protected void CloseRichText(StringBuilder current, Token token, List<TokenType> openTokens)
         {
             var openTokenType = TokenType.BoldOpen;
             switch (token.tokenType)
@@ -442,7 +442,7 @@ namespace PixelCrushers.DialogueSystem
             if (first != -1) openTokens.RemoveAt(first);
         }
 
-        private void AddInstantText(StringBuilder current, List<TokenType> openTokenTypes, List<Token> tokens)
+        protected void AddInstantText(StringBuilder current, List<TokenType> openTokenTypes, List<Token> tokens)
         {
             int safeguard = 0;
             while ((tokens.Count > 0) && (safeguard < MaxSafeguard))
@@ -472,7 +472,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private string GetCurrentText(StringBuilder current, List<TokenType> openTokenTypes, List<Token> tokens, bool withoutTransparentText = false)
+        protected string GetCurrentText(StringBuilder current, List<TokenType> openTokenTypes, List<Token> tokens, bool withoutTransparentText = false)
         {
             if (current == null) return string.Empty;
             if (openTokenTypes == null || tokens == null) return current.ToString();
@@ -558,7 +558,7 @@ namespace PixelCrushers.DialogueSystem
             return sb.ToString();
         }
 
-        private List<Token> Tokenize(string text)
+        protected List<Token> Tokenize(string text)
         {
             var tokens = new List<Token>();
             var remainder = text;
@@ -608,7 +608,7 @@ namespace PixelCrushers.DialogueSystem
             return tokens;
         }
 
-        private Token TryTokenize(string code, TokenType tokenType, float duration, ref string remainder)
+        protected Token TryTokenize(string code, TokenType tokenType, float duration, ref string remainder)
         {
             if (remainder.StartsWith(code, System.StringComparison.OrdinalIgnoreCase))
             {
@@ -621,7 +621,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private Token TryTokenizeColorOpen(ref string remainder)
+        protected Token TryTokenizeColorOpen(ref string remainder)
         {
             if (remainder.StartsWith(RichTextColorOpenPrefix))
             {
@@ -635,7 +635,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private Token TryTokenizeSizeOpen(ref string remainder)
+        protected Token TryTokenizeSizeOpen(ref string remainder)
         {
             if (remainder.StartsWith(RichTextSizeOpenPrefix))
             {
@@ -649,7 +649,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private Token TryTokenizeQuad(ref string remainder)
+        protected Token TryTokenizeQuad(ref string remainder)
         {
             if (remainder.StartsWith(QuadPrefix))
             {
@@ -663,7 +663,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private void StopTypewriterCoroutine()
+        protected virtual void StopTypewriterCoroutine()
         {
             if (typewriterCoroutine == null) return;
             if (coroutineController == null)
@@ -683,8 +683,11 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public override void Stop()
         {
-            if (isPlaying) onEnd.Invoke();
-            Sequencer.Message(SequencerMessages.Typed);
+            if (isPlaying)
+            {
+                onEnd.Invoke();
+                Sequencer.Message(SequencerMessages.Typed);
+            }
             StopTypewriterCoroutine();
             if (control != null) control.text = UITools.StripRPGMakerCodes(frontSkippedText + original);
             original = null;
@@ -702,7 +705,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private void InitAutoScroll()
+        protected void InitAutoScroll()
         {
             // Ensure sizer text alpha is 0:
             if (autoScrollSettings.autoScrollEnabled && autoScrollSettings.sizerText != null)
@@ -711,7 +714,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private void HandleAutoScroll()
+        protected void HandleAutoScroll()
         {
             if (!autoScrollSettings.autoScrollEnabled) return;
             if (autoScrollSettings.sizerText != null)
@@ -728,7 +731,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        private IEnumerator HandleAutoScrollAfterOneFrame()
+        protected IEnumerator HandleAutoScrollAfterOneFrame()
         {
             yield return null;
             HandleAutoScroll();

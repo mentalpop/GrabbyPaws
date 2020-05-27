@@ -282,6 +282,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     if (EditorUtility.DisplayCancelableProgressBar("Searching Database", "Searching conversation '" + conversation.Title + "' for '" + globalSearchText + "'. Please wait...", (database.actors.Count + database.items.Count + database.locations.Count + numConversationsDone) / size)) return;
                     foreach (var field in conversation.fields)
                     {
+                        if (string.IsNullOrEmpty(field.title) || string.IsNullOrEmpty(field.value)) continue;
                         if (field.title.Contains(globalSearchText) || field.value.Contains(globalSearchText))
                         {
                             result += "\nConversation: '" + conversation.Title + "': Field '" + field.title + "': " + field.value;
@@ -291,16 +292,17 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     {
                         foreach (var field in entry.fields)
                         {
+                            if (string.IsNullOrEmpty(field.title) || string.IsNullOrEmpty(field.value)) continue;
                             if (field.title.Contains(globalSearchText) || field.value.Contains(globalSearchText))
                             {
                                 result += "\nConversation '" + conversation.Title + "' entry " + entry.id + ": Field '" + field.title + "': " + field.value;
                             }
                         }
-                        if (entry.conditionsString.Contains(globalSearchText))
+                        if (!string.IsNullOrEmpty(entry.conditionsString) && entry.conditionsString.Contains(globalSearchText))
                         {
                             result += "\nConversation '" + conversation.Title + "' entry " + entry.id + ": Script: " + entry.conditionsString;
                         }
-                        if (entry.userScript.Contains(globalSearchText))
+                        if (!string.IsNullOrEmpty(entry.userScript) && entry.userScript.Contains(globalSearchText))
                         {
                             result += "\nConversation '" + conversation.Title + "' entry " + entry.id + ": Script: " + entry.userScript;
                         }

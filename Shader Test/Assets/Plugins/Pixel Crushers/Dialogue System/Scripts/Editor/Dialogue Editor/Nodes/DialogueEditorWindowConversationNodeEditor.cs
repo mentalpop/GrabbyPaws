@@ -48,9 +48,11 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         [SerializeField]
         private bool autoArrangeOnCreate = false;
 
-        private Dictionary<int, Texture2D> actorPortraitCache = null;
+        private Dictionary<int, Sprite> actorPortraitCache = null;
 
-        private Dictionary<int, Color> actorNodeColorCache = null;
+        private Dictionary<int, Color> actorCustomColorCache = null;
+        private Dictionary<int, bool> actorHasCustomColorCache = null;
+        private Dictionary<int, bool> actorIsPlayerCache = null;
 
         [SerializeField]
         private bool zoomLocked;
@@ -78,7 +80,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private GUIContent currentHoverGUIContent = null;
         private Rect currentHoverRect;
 
-        private GUIStyle nodeStyle = null;
+        //private GUIStyle nodeStyle = null;
 
         private static Color OutgoingLinkColor = Color.yellow;
         private static Color IncomingLinkColor = new Color(0.6f, 0.3f, 0.1f);
@@ -118,9 +120,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             if (nodeEditorDeleteCurrentConversation) DeleteCurrentConversationInNodeEditor();
             //--- Unnecessary: if (inspectorSelection == null) inspectorSelection = currentConversation;
 
-            DrawNodeEditorTopControls();
-
-            if (showParticipantNames) DrawParticipantsOnCanvas();
+            DrawNodeEditorTopControls();            
 
             var topOffset = GetTopOffsetHeight();
 
@@ -142,6 +142,10 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             {
                 EditorZoomArea.End();
             }
+
+            DrawDatabaseName();
+            if (showParticipantNames) DrawParticipantsOnCanvas();
+
             Handles.color = MajorGridLineColor;
             Handles.DrawLine(new Vector2(0, topOffset), new Vector2(position.width, topOffset));
 
@@ -485,59 +489,166 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             }
         }
 
+        #region Node Styles
+
+        private Dictionary<Styles.Color, GUIStyle> m_nodeStyles = new Dictionary<Styles.Color, GUIStyle>();
+        private Dictionary<Styles.Color, GUIStyle> m_nodeStylesSelected = new Dictionary<Styles.Color, GUIStyle>();
+        private GUIStyle m_customNodeStyle = null;
+
+        private GUIStyle GetNodeStyle(Styles.Color color, bool isSelected)
+        {
+            return isSelected ? GetNodeStyle(m_nodeStylesSelected, color, isSelected) : GetNodeStyle(m_nodeStyles, color, isSelected);
+        }
+
+        private GUIStyle GetNodeStyle(Dictionary <Styles.Color, GUIStyle> dict, Styles.Color color, bool isSelected)
+        {
+            GUIStyle nodeStyle;
+            if (!dict.TryGetValue(color, out nodeStyle))
+            {
+                nodeStyle = Styles.GetNodeStyle("node", color, isSelected);
+                dict.Add(color, nodeStyle);
+            }
+            return nodeStyle;
+        }
+
+        private void GetNodeStyle(DialogueEntry entry, out GUIStyle nodeStyle, out bool isSelected, out bool isCustomColor, out Color customColor)
+        {
+            isCustomColor = false;
+            customColor = Color.white;
+            isSelected = multinodeSelection.nodes.Contains(entry);
+            if (IsCurrentRuntimeEntry(entry))
+            {
+                // Current runtime entry is green:
+                nodeStyle = GetNodeStyle(Styles.Color.Green, isSelected);
+            }
+            else if (entry.id == 0)
+            {
+                // START node is orange:
+                nodeStyle = GetNodeStyle(Styles.Color.Orange, isSelected);
+            }
+            else if (orphanIDs.Contains(entry.id) && (entry.id != 0))
+            {
+                // Orphaned nodes are red:
+                nodeStyle = GetNodeStyle(Styles.Color.Red, isSelected);
+            }
+            else
+            {
+                // Check if actor has custom color:
+                var actorID = entry.ActorID;
+                if (actorHasCustomColorCache == null) actorHasCustomColorCache = new Dictionary<int, bool>();
+                if (actorIsPlayerCache == null) actorIsPlayerCache = new Dictionary<int, bool>();
+                if (actorCustomColorCache == null) actorCustomColorCache = new Dictionary<int, Color>();
+                if (!actorHasCustomColorCache.ContainsKey(actorID) || 
+                    (actorCustomColorCache.ContainsKey(actorID) && (actorCustomColorCache[actorID].a == 0)))
+                {
+                    var actor = database.GetActor(actorID);
+                    actorIsPlayerCache[actorID] = (actor != null) ? actor.IsPlayer : false;
+                    if (actor != null && actor.FieldExists(NodeColorFieldTitle))
+                    {
+                        var colorFieldValue = actor.LookupValue(NodeColorFieldTitle);
+                        if (!string.IsNullOrEmpty(colorFieldValue))
+                        {
+                            var actorColor = EditorTools.NodeColorStringToColor(colorFieldValue);
+                            if (actorColor.r == 0 && actorColor.g == 0 && actorColor.b == 0)
+                            {
+                                actorColor = actor.IsPlayer ? Color.blue : Color.gray;
+                            }
+                            actorColor.a = 1;
+                            actorCustomColorCache.Add(actorID, actorColor);
+                            actorHasCustomColorCache[actorID] = true;
+                        }
+                        else
+                        {
+                            actorHasCustomColorCache[actorID] = false;
+                        }
+                    }
+                    else
+                    {
+                        actorHasCustomColorCache[actorID] = false;
+                    }
+                }
+                if (actorHasCustomColorCache[actorID])
+                {
+                    // Use actor's custom color:
+                    isCustomColor = true;
+                    customColor = actorCustomColorCache[actorID];
+                    if (m_customNodeStyle == null)
+                    {
+#if UNITY_2019_3_OR_NEWER
+                        m_customNodeStyle = new GUIStyle(GUI.skin.button);
+#else
+                        m_customNodeStyle = new GUIStyle(GUI.skin.box);
+#endif
+                        m_customNodeStyle.contentOffset = new Vector2(0, -6);
+                        var nodeTexture = EditorGUIUtility.Load("Dialogue System/EditorNode.png") as Texture2D;
+                        m_customNodeStyle.normal.background = nodeTexture ?? Texture2D.whiteTexture;
+                        m_customNodeStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(0.9f, 0.9f, 0.9f) : Color.black;
+                        m_customNodeStyle.wordWrap = false;
+                        m_customNodeStyle.alignment = TextAnchor.MiddleCenter;
+                    }
+                    nodeStyle = m_customNodeStyle;
+                }
+                else
+                {
+                    // Use default colors (blue for player, gray for NPCs):
+                    nodeStyle = actorIsPlayerCache[actorID]
+                        ? nodeStyle = GetNodeStyle(Styles.Color.Blue, isSelected)
+                    : nodeStyle = GetNodeStyle(Styles.Color.Gray, isSelected);
+                }
+            }
+        }
+
+#endregion
+
         private void DrawEntryNode(DialogueEntry entry)
         {
             if (!nodeEditorVisibleRect.Overlaps(entry.canvasRect)) return; // Skip drawing if not in visible window.
 
-            bool isSelected = multinodeSelection.nodes.Contains(entry);
-            var nodeColor = GetNodeColor(entry);
-            if (entry.id == 0) nodeColor = EditorTools.NodeColor_Orange;
-            if (IsCurrentRuntimeEntry(entry))
-            {
-                nodeColor = EditorTools.NodeColor_Green;
-            }
-
-            if (orphanIDs.Contains(entry.id) && (entry.id != 0)) nodeColor = EditorTools.NodeColor_Red;
-
-            if (nodeStyle == null || nodeStyle.normal == null || nodeStyle.normal.background == null)
-            {
-                nodeStyle = new GUIStyle(GUI.skin.box);
-                nodeStyle.wordWrap = false;
-                nodeStyle.contentOffset = new Vector2(0, -4);
-                nodeStyle.alignment = TextAnchor.MiddleCenter;
-                nodeStyle.normal.background = (EditorGUIUtility.Load("Dialogue System/EditorNode.png") as Texture2D) ?? Texture2D.whiteTexture;
-                nodeStyle.normal.textColor = EditorGUIUtility.isProSkin ? new Color(0.9f, 0.9f, 0.9f) : Color.black;
-            }
+            GUIStyle nodeStyle;
+            bool isSelected;
+            bool isCustomColor;
+            Color customColor;
+            GetNodeStyle(entry, out nodeStyle, out isSelected, out isCustomColor, out customColor);
 
             string nodeLabel = GetDialogueEntryNodeText(entry);
             if (showQuickDialogueTextEntry && entry == currentEntry) nodeLabel = string.Empty;
 
             var guicolor_backup = GUI.backgroundColor;
-            GUI.backgroundColor = nodeColor;
 
-            var boxRect = entry.canvasRect;
+            var boxRect = new Rect(entry.canvasRect.x, entry.canvasRect.y, entry.canvasRect.width + 4, entry.canvasRect.height + 4);
 
-            if (isSelected)
+            if (isCustomColor)
             {
-                GUI.backgroundColor = Color.white;
-                var bigRect = new Rect(boxRect.x - 1, boxRect.y - 4, boxRect.width + 6, boxRect.height + 8);
-                GUI.Box(bigRect, string.Empty, Styles.GetNodeStyle("node", (nodeColor == EditorTools.NodeColor_Blue) ? Styles.Color.Blue : Styles.Color.Gray, isSelected));
-                GUI.backgroundColor = nodeColor;
+                if (isSelected)
+                {
+                    var bigRect = new Rect(boxRect.x + 2, boxRect.y, boxRect.width - 4, boxRect.height - 2);
+                    GUI.Box(bigRect, string.Empty, Styles.GetNodeStyle("node", Styles.Color.Blue, true));
+                }
+                GUI.backgroundColor = customColor;
             }
 
-            GUI.Box(new Rect(boxRect.x, boxRect.y, boxRect.width + 4, boxRect.height + 4),
-                nodeLabel, nodeStyle);
+            GUI.Box(boxRect, nodeLabel, nodeStyle);
 
-            GUI.backgroundColor = guicolor_backup;
+            if (isCustomColor)
+            {
+                GUI.backgroundColor = guicolor_backup;
+            }
 
             if (showActorPortraits)
             {
                 var portrait = GetActorPortrait(entry.ActorID);
                 if (portrait != null)
                 {
-                    GUI.DrawTexture(new Rect(boxRect.x - 30, boxRect.y, 30, 30), portrait);
+                    GUIDrawSprite(new Rect(boxRect.x - 30, boxRect.y, 30, 30), portrait);
                 }
             }
+        }
+
+        public void GUIDrawSprite(Rect rect, Sprite sprite)
+        {
+            Rect spriteRect = sprite.rect;
+            Texture2D tex = sprite.texture;
+            GUI.DrawTextureWithTexCoords(rect, tex, new Rect(spriteRect.x / tex.width, spriteRect.y / tex.height, spriteRect.width / tex.width, spriteRect.height / tex.height));
         }
 
         private void DrawQuickDialogueTextEntry()
@@ -572,13 +683,13 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             return quickDialogueTextEntryRect;
         }
 
-        private Texture2D GetActorPortrait(int actorID)
+        private Sprite GetActorPortrait(int actorID)
         {
-            if (actorPortraitCache == null) actorPortraitCache = new Dictionary<int, Texture2D>();
+            if (actorPortraitCache == null) actorPortraitCache = new Dictionary<int, Sprite>();
             if (!actorPortraitCache.ContainsKey(actorID))
             {
                 var actor = database.GetActor(actorID);
-                actorPortraitCache.Add(actorID, (actor != null) ? actor.portrait : null);
+                actorPortraitCache.Add(actorID, (actor != null) ? actor.GetPortraitSprite() : null);
             }
             return actorPortraitCache[actorID];
         }
@@ -587,8 +698,8 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         {
             if (entry == null) return EditorTools.NodeColor_Gray;
             var actorID = entry.ActorID;
-            if (actorNodeColorCache == null) actorNodeColorCache = new Dictionary<int, Color>();
-            if (!actorNodeColorCache.ContainsKey(actorID))
+            if (actorCustomColorCache == null) actorCustomColorCache = new Dictionary<int, Color>();
+            if (!actorCustomColorCache.ContainsKey(actorID))
             {
                 var nodeColor = database.IsPlayerID(actorID) ? EditorTools.NodeColor_Blue : EditorTools.NodeColor_Gray;
                 var actor = database.GetActor(actorID);
@@ -596,15 +707,17 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 {
                     nodeColor = EditorTools.NodeColorStringToColor(actor.LookupValue(NodeColorFieldTitle));
                 }
-                actorNodeColorCache.Add(actorID, nodeColor);
+                actorCustomColorCache.Add(actorID, nodeColor);
             }
-            return actorNodeColorCache[actorID];
+            return actorCustomColorCache[actorID];
         }
 
         private void ClearActorInfoCaches()
         {
             actorPortraitCache = null;
-            actorNodeColorCache = null;
+            actorCustomColorCache = null;
+            actorHasCustomColorCache = null;
+            actorIsPlayerCache = null;
         }
 
         private void CheckOrphanIDs()
@@ -1079,10 +1192,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         {
             if (isLassoing)
             {
-                Color originalColor = GUI.color;
-                GUI.color = new Color(1, 1, 1, 0.5f);
-                GUI.Box(lassoRect, string.Empty);
-                GUI.color = originalColor;
+                EditorGUI.DrawRect(lassoRect, new Color(1, 1, 1, 0.3f));
             }
         }
 

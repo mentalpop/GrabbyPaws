@@ -87,7 +87,7 @@ namespace PixelCrushers
 
         private void Awake()
         {
-            m_instance = this;
+            if (m_instance == null) m_instance = this;
             if (!string.IsNullOrEmpty(currentLanguagePlayerPrefsKey) && PlayerPrefs.HasKey(currentLanguagePlayerPrefsKey))
             {
                 m_currentLanguage = PlayerPrefs.GetString(currentLanguagePlayerPrefsKey);

@@ -44,7 +44,7 @@ namespace PixelCrushers.DialogueSystem
                     }
                     else
                     {
-                        var message = "Conversation (" + DialogueActor.GetActorName(actorTransform) + "->" + DialogueActor.GetActorName(input.conversant) + "): " + input.conversation;
+                        var message = "Conversation (" + DialogueActor.GetActorName(actorTransform) + "->" + DialogueActor.GetActorName(input.conversant) + "): [" + input.conversation + "] '" + input.GetEditorDialogueText() + "' (may vary)";
                         PreviewUI.ShowMessage(message, 2, 0);
                     }
                 }

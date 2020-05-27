@@ -87,7 +87,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             {
                 var asset = assets[i];
                 IDs.Add(asset.id.ToString());
-                names.Add(new GUIContent(string.Format("[{0}] {1}", asset.id, asset.Name), string.Empty));
+                names.Add(new GUIContent(string.Format("{0} [{1}]", asset.Name, asset.id), string.Empty));
             }
             return new AssetList(IDs.ToArray(), names.ToArray());
         }

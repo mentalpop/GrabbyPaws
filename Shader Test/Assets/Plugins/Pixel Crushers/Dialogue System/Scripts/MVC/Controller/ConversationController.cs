@@ -26,7 +26,7 @@ namespace PixelCrushers.DialogueSystem
         /// <summary>
         /// The current state of the conversation.
         /// </summary>
-        private ConversationState state = null;
+        private ConversationState m_state = null;
 
         /// <summary>
         /// Indicates whether the ConversationController is currently running a conversation.
@@ -47,6 +47,8 @@ namespace PixelCrushers.DialogueSystem
         public ConversationModel conversationModel { get { return m_model; } }
 
         public ConversationView conversationView { get { return m_view; } }
+
+        public ConversationState currentState { get { return m_state; } }
 
         /// <summary>
         /// Gets or sets the IsDialogueEntryValid delegate.
@@ -86,6 +88,15 @@ namespace PixelCrushers.DialogueSystem
         private int m_currentConversationID;
         private Response m_currentResponse = null;
 
+        // Records time when last conversation ended in case a new conversation starts on the same
+        // frame and needs to know.
+        private static int _frameLastConversationEnded = -1;
+        public static int frameLastConversationEnded { get { return _frameLastConversationEnded; } }
+
+        public ConversationController()
+        {
+        }
+
         /// <summary>
         /// Initializes a new ConversationController and starts the conversation in the model.
         /// Also sends OnConversationStart messages to the participants.
@@ -115,6 +126,34 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Initializes a ConversationController and starts the conversation in the model.
+        /// Also sends OnConversationStart messages to the participants.
+        /// </summary>
+        /// <param name='model'>
+        /// Data model of the conversation.
+        /// </param>
+        /// <param name='view'>
+        /// View to use to provide a user interface for the conversation.
+        /// </param>
+        /// <param name='endConversationHandler'>
+        /// Handler to call to inform when the conversation is done.
+        /// </param>
+        public void Initialize(ConversationModel model, ConversationView view, bool alwaysForceResponseMenu, EndConversationDelegate endConversationHandler)
+        {
+            isActive = true;
+            this.m_model = model;
+            this.m_view = view;
+            this.m_endConversationHandler = endConversationHandler;
+            this.randomizeNextEntry = false;
+            model.InformParticipants(DialogueSystemMessages.OnConversationStart);
+            view.FinishedSubtitleHandler += OnFinishedSubtitle;
+            view.SelectedResponseHandler += OnSelectedResponse;
+            m_currentConversationID = model.GetConversationID(model.firstState);
+            SetConversationOverride(model.firstState);
+            GotoState(model.firstState);
+        }
+
+        /// <summary>
         /// Closes the currently-running conversation, which also sends OnConversationEnd messages
         /// to the participants.
         /// </summary>
@@ -122,8 +161,9 @@ namespace PixelCrushers.DialogueSystem
         {
             if (isActive)
             {
-                isActive = false;
                 if (DialogueDebug.logInfo) Debug.Log(string.Format("{0}: Ending conversation.", new System.Object[] { DialogueDebug.Prefix }));
+                isActive = false;
+                _frameLastConversationEnded = Time.frameCount;
                 m_view.displaySettings.conversationOverrideSettings = null;
                 m_view.FinishedSubtitleHandler -= OnFinishedSubtitle;
                 m_view.SelectedResponseHandler -= OnSelectedResponse;
@@ -142,7 +182,7 @@ namespace PixelCrushers.DialogueSystem
         /// </param>
         public void GotoState(ConversationState state)
         {
-            this.state = state;
+            this.m_state = state;
             DialogueManager.instance.currentConversationState = state;
             if (state != null)
             {
@@ -219,21 +259,21 @@ namespace PixelCrushers.DialogueSystem
         {
             var randomize = randomizeNextEntry;
             randomizeNextEntry = false;
-            if (state.hasNPCResponse)
+            if (m_state.hasNPCResponse)
             {
-                GotoState(m_model.GetState(randomize ? state.GetRandomNPCEntry() : state.firstNPCResponse.destinationEntry));
+                GotoState(m_model.GetState(randomize ? m_state.GetRandomNPCEntry() : m_state.firstNPCResponse.destinationEntry));
             }
-            else if (state.hasPCResponses)
+            else if (m_state.hasPCResponses)
             {
                 bool isPCResponseMenuNext, isPCAutoResponseNext;
-                AnalyzePCResponses(state, out isPCResponseMenuNext, out isPCAutoResponseNext);
+                AnalyzePCResponses(m_state, out isPCResponseMenuNext, out isPCAutoResponseNext);
                 if (isPCAutoResponseNext)
                 {
-                    GotoState(m_model.GetState(state.pcAutoResponse.destinationEntry));
+                    GotoState(m_model.GetState(m_state.pcAutoResponse.destinationEntry));
                 }
                 else
                 {
-                    m_view.StartResponses(state.subtitle, state.pcResponses);
+                    m_view.StartResponses(m_state.subtitle, m_state.pcResponses);
                 }
             }
             else
@@ -262,11 +302,11 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public void GotoFirstResponse()
         {
-            if (state != null)
+            if (m_state != null)
             {
-                if (state.pcResponses.Length > 0)
+                if (m_state.pcResponses.Length > 0)
                 {
-                    m_view.SelectResponse(new SelectedResponseEventArgs(state.pcResponses[0]));
+                    m_view.SelectResponse(new SelectedResponseEventArgs(m_state.pcResponses[0]));
                 }
             }
         }
@@ -276,11 +316,11 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public void GotoLastResponse()
         {
-            if (state != null)
+            if (m_state != null)
             {
-                if (state.pcResponses.Length > 0)
+                if (m_state.pcResponses.Length > 0)
                 {
-                    m_view.SelectResponse(new SelectedResponseEventArgs(state.pcResponses[state.pcResponses.Length - 1]));
+                    m_view.SelectResponse(new SelectedResponseEventArgs(m_state.pcResponses[m_state.pcResponses.Length - 1]));
                 }
             }
         }
@@ -290,11 +330,11 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public void GotoRandomResponse()
         {
-            if (state != null)
+            if (m_state != null)
             {
-                if (state.pcResponses.Length > 0)
+                if (m_state.pcResponses.Length > 0)
                 {
-                    m_view.SelectResponse(new SelectedResponseEventArgs(state.pcResponses[UnityEngine.Random.Range(0, state.pcResponses.Length)]));
+                    m_view.SelectResponse(new SelectedResponseEventArgs(m_state.pcResponses[UnityEngine.Random.Range(0, m_state.pcResponses.Length)]));
                 }
             }
         }
@@ -326,9 +366,9 @@ namespace PixelCrushers.DialogueSystem
 
         public void UpdateResponses()
         {
-            if (state != null)
+            if (m_state != null)
             {
-                m_model.UpdateResponses(state);
+                m_model.UpdateResponses(m_state);
                 OnFinishedSubtitle(this, EventArgs.Empty);
             }
         }

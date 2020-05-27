@@ -16,7 +16,9 @@ namespace PixelCrushers
             /// This method should return a string that represents the data you want to save.
             /// You can use SaveSystem.Serialize() to serialize a serializable object to a 
             /// string. This will use the serializer component on the Save System GameObject,
-            /// which defaults to JSON serialization.
+            /// which defaults to Unity's built-in JSON serialization. Remember that Unity
+			/// cannot directly serialize lists or arrays, so you must put them inside a
+			/// class.
             return string.Empty;
         }
 

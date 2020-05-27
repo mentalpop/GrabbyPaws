@@ -81,7 +81,7 @@ namespace PixelCrushers
 
                 if (isStringAssetAssigned || !isContentAssigned)
                 {
-                    float buttonWidth = 36;
+                    float buttonWidth = 40;
                     EditorGUI.PropertyField(new Rect(position.x, position.y + yOffset, position.width - buttonWidth, EditorGUIUtility.singleLineHeight), stringAssetProperty, GUIContent.none);
                     EditorGUI.BeginDisabledGroup(isStringAssetAssigned);
                     bool createNewAsset = GUI.Button(new Rect(position.x + position.width - buttonWidth, position.y + yOffset, buttonWidth, EditorGUIUtility.singleLineHeight),
@@ -143,16 +143,24 @@ namespace PixelCrushers
         public static string GetStringFieldValue(SerializedProperty stringFieldProperty)
         {
             if (stringFieldProperty == null) return string.Empty;
+            var textProperty = stringFieldProperty.FindPropertyRelative("m_text");
+            if (textProperty != null && !string.IsNullOrEmpty(textProperty.stringValue))
+            {
+                return textProperty.stringValue;
+            }
             var stringAssetProperty = stringFieldProperty.FindPropertyRelative("m_stringAsset");
-            if (stringAssetProperty != null && stringAssetProperty.objectReferenceValue != null && stringAssetProperty.objectReferenceValue is StringAsset)
+            if (stringAssetProperty != null && stringAssetProperty.objectReferenceValue is StringAsset)
             {
                 return (stringAssetProperty.objectReferenceValue as StringAsset).text;
             }
-            else
+            var textTableProperty = stringFieldProperty.FindPropertyRelative("m_textTable");
+            if (textTableProperty != null && textTableProperty.objectReferenceValue is TextTable)
             {
-                var textProperty = stringFieldProperty.FindPropertyRelative("m_text");
-                return (textProperty != null) ? textProperty.stringValue : string.Empty;
+                var textTable = textTableProperty.objectReferenceValue as TextTable;
+                var textTableFieldIDProperty = stringFieldProperty.FindPropertyRelative("m_textTableFieldID");
+                return textTable.GetFieldTextForLanguage(textTableFieldIDProperty.intValue, UILocalizationManager.instance.currentLanguage);
             }
+            return string.Empty;
         }
 
         public static void SetStringFieldValue(SerializedProperty stringFieldProperty, string value)

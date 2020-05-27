@@ -15,9 +15,9 @@ namespace PixelCrushers.DialogueSystem
 
         public DialogueDatabase database;
 
-        public enum ConditionWizardResourceType { Quest, QuestEntry, Variable, Actor, Item, Location, SimStatus, Custom }
+        public enum ConditionWizardResourceType { Quest, QuestEntry, Variable, Actor, Item, Location, SimStatus, Custom, ManualEnter }
 
-        public enum ScriptWizardResourceType { Quest, QuestEntry, Variable, Actor, Item, Location, SimStatus, Alert, Custom }
+        public enum ScriptWizardResourceType { Quest, QuestEntry, Variable, Actor, Item, Location, SimStatus, Alert, Custom, ManualEnter }
 
         public enum EqualityType { Is, IsNot }
 
@@ -34,6 +34,8 @@ namespace PixelCrushers.DialogueSystem
         public string[] complexQuestNames = new string[0];
 
         public string[] variableNames = new string[0];
+
+        public string[] variablePopupNames = new string[0];
 
         public FieldType[] variableTypes = new FieldType[0];
 
@@ -117,7 +119,7 @@ namespace PixelCrushers.DialogueSystem
                 case ConditionWizardResourceType.Variable: return ScriptWizardResourceType.Variable;
                 case ConditionWizardResourceType.Location: return ScriptWizardResourceType.Location;
                 case ConditionWizardResourceType.SimStatus: return ScriptWizardResourceType.SimStatus;
-                case ConditionWizardResourceType.Custom: return ScriptWizardResourceType.Custom;
+                case ConditionWizardResourceType.ManualEnter: return ScriptWizardResourceType.ManualEnter;
             }
         }
 
@@ -133,7 +135,7 @@ namespace PixelCrushers.DialogueSystem
                 case ScriptWizardResourceType.Variable: return ConditionWizardResourceType.Variable;
                 case ScriptWizardResourceType.Location: return ConditionWizardResourceType.Location;
                 case ScriptWizardResourceType.SimStatus: return ConditionWizardResourceType.SimStatus;
-                case ScriptWizardResourceType.Custom: return ConditionWizardResourceType.Custom;
+                case ScriptWizardResourceType.ManualEnter: return ConditionWizardResourceType.ManualEnter;
             }
         }
 
@@ -176,12 +178,20 @@ namespace PixelCrushers.DialogueSystem
         public void RefreshVariableNames()
         {
             List<string> nameList = new List<string>();
+            List<string> popupNameList = new List<string>();
             List<FieldType> typeList = new List<FieldType>();
             if (database != null)
             {
-                database.variables.ForEach(variable => { nameList.Add(variable.Name); typeList.Add(variable.Type); });
+                database.variables.ForEach(variable => 
+                {
+                    var variableName = variable.Name;
+                    nameList.Add(variableName);
+                    popupNameList.Add(variableName.Replace(".", "/"));
+                    typeList.Add(variable.Type); 
+                });
             }
             variableNames = nameList.ToArray();
+            variablePopupNames = popupNameList.ToArray();
             variableTypes = typeList.ToArray();
         }
 
@@ -340,6 +350,59 @@ namespace PixelCrushers.DialogueSystem
                     return ">=";
                 default:
                     return "==";
+            }
+        }
+
+        public void FindAllCustomLuaFuncs(bool findConditionFuncs, out CustomLuaFunctionInfoRecord[] customLuaFuncs, out string[] customLuaFuncNames)
+        {
+            var recordList = new List<CustomLuaFunctionInfoRecord>();
+            var nameList = new List<string>();
+            var guids = AssetDatabase.FindAssets("t:CustomLuaFunctionInfo");
+            foreach (var guid in guids)
+            {
+                var asset = AssetDatabase.LoadAssetAtPath<CustomLuaFunctionInfo>(AssetDatabase.GUIDToAssetPath(guid));
+                if (asset == null) continue;
+                var records = findConditionFuncs ? asset.conditionFunctions : asset.scriptFunctions;
+                foreach (var record in records)
+                {
+                    if (record == null || string.IsNullOrEmpty(record.functionName)) continue;
+                    recordList.Add(record);
+                    nameList.Add(record.functionName);
+                }
+            }
+            customLuaFuncs = recordList.ToArray();
+            customLuaFuncNames = nameList.ToArray();
+        }
+
+        public void InitCustomParamValues(CustomLuaFunctionInfoRecord record, out object[] customParamValues)
+        {
+            if (record == null)
+            {
+                customParamValues = new object[0];
+                return;
+            }
+            customParamValues = new object[record.parameters.Length];
+            for (int i = 0; i < record.parameters.Length; i++)
+            {
+                switch (record.parameters[i])
+                {
+                    case CustomLuaParameterType.Bool:
+                        customParamValues[i] = BooleanType.False;
+                        break;
+                    case CustomLuaParameterType.Double:
+                        customParamValues[i] = (float)0;
+                        break;
+                    case CustomLuaParameterType.String:
+                        customParamValues[i] = string.Empty;
+                        break;
+                    case CustomLuaParameterType.Actor:
+                    case CustomLuaParameterType.Quest:
+                    case CustomLuaParameterType.QuestEntry:
+                    case CustomLuaParameterType.Variable:
+                    case CustomLuaParameterType.Item:
+                        customParamValues[i] = (int)0;
+                        break;
+                }
             }
         }
 

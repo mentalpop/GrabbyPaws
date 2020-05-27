@@ -346,12 +346,25 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             }
             else if (useGroupField)
             {
-                EditTextField(item.fields, "Group", "The group this quest belongs to.", false);
-                DrawLocalizedVersions(item.fields, "Group {0}", false, FieldType.Text);
+                if (groupField == null)
+                {
+                    groupField = new Field("Group", string.Empty, FieldType.Text);
+                    item.fields.Add(groupField);
+                    SetDatabaseDirty("Create Group Field");
+                }
+                if (groupField.typeString == "CustomFieldType_Text")
+                {
+                    EditTextField(item.fields, "Group", "The group this quest belongs to.", false);
+                    DrawLocalizedVersions(item.fields, "Group {0}", false, FieldType.Text);
+                }
+                else
+                {
+                    DrawField(new GUIContent("Group", "The group this quest belongs to."), groupField, false);
+                }
             }
 
             // State:
-            EditorGUILayout.BeginHorizontal();
+            //EditorGUILayout.BeginHorizontal();
             Field stateField = Field.Lookup(item.fields, "State");
             if (stateField == null)
             {
@@ -359,9 +372,9 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 item.fields.Add(stateField);
                 SetDatabaseDirty("Create State Field");
             }
-            EditorGUILayout.LabelField(new GUIContent("State", "The starting state of the quest."), GUILayout.Width(140));
-            stateField.value = DrawQuestStateField(stateField.value);
-            EditorGUILayout.EndHorizontal();
+            //EditorGUILayout.LabelField(new GUIContent("State", "The starting state of the quest."), GUILayout.Width(140));
+            stateField.value = DrawQuestStateField(new GUIContent("State", "The starting state of the quest."), stateField.value);
+            //EditorGUILayout.EndHorizontal();
 
             // Trackable:
             bool trackable = item.LookupBool("Trackable");
@@ -494,6 +507,30 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     }
                 });
                 questLanguages.ForEach(language => item.fields.Add(new Field(string.Format("Entry {0} {1}", entryCount, language), string.Empty, FieldType.Localization)));
+
+                if (entryCount > 1)
+                {
+                    // Copy any custom "Entry 1 ..." fields to "Entry # ..." fields:
+                    var fieldCount = item.fields.Count;
+                    for (int i = 0; i < fieldCount; i++)
+                    {
+                        var field = item.fields[i];
+                        if (field.title.StartsWith("Entry 1 "))
+                        {
+                            // Skip Entry 1, Entry 1 State, or Entry 1 Language:
+                            if (string.Equals(field.title, "Entry 1") || string.Equals(field.title, "Entry 1 State")) continue;
+                            var afterEntryNumber = field.title.Substring("Entry 1 ".Length);
+                            if (questLanguages.Contains(afterEntryNumber)) continue;
+
+                            // Otherwise add:
+                            var copiedField = new Field(field);
+                            copiedField.title = "Entry " + entryCount + " " + afterEntryNumber;
+                            if (copiedField.type == FieldType.Text) copiedField.value = string.Empty;
+                            item.fields.Add(copiedField);
+                        }
+                    }
+                }
+
                 SetDatabaseDirty("Add New Quest Entry");
             }
             EditorWindowTools.EndIndentedSection();

@@ -84,9 +84,8 @@ namespace PixelCrushers
             if (!started) return;
             var textTable = this.textTable;
             var language = UILocalizationManager.instance.currentLanguage;
-            if (string.IsNullOrEmpty(language)) return;
 
-            // Skip if no language set:
+            // Skip if no text table or language set:
             if (textTable == null)
             {
                 Debug.LogWarning("No localized text table is assigned to " + name + " or a UI Localized Manager component.", this);

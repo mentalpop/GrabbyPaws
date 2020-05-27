@@ -17,8 +17,10 @@ namespace PixelCrushers.DialogueSystem
 
         public static void DeprecationWarning(MonoBehaviour mb, string extraInfo = null)
         {
+#if !SUPPRESS_DEPRECATION_WARNINGS
             if (mb == null) return;
-            Debug.LogWarning("Dialogue System: " + mb.GetType().Name + " is deprecated and will be removed in the next version. " + extraInfo, mb);
+            Debug.LogWarning("Dialogue System: " + mb.GetType().Name + " is deprecated and will be removed in the next version. " + extraInfo + "\nTo supress this message, add the scripting define symbol SUPPRESS_DEPRECATION_WARNINGS", mb);
+#endif
         }
 
         /// <summary>

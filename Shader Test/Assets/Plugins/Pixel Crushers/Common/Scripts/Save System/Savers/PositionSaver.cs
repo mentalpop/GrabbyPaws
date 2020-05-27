@@ -148,8 +148,8 @@ namespace PixelCrushers
             else
             {
                 transform.position = position;
-                transform.rotation = rotation;
             }
+            transform.rotation = rotation;
         }
 
     }

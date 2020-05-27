@@ -168,6 +168,14 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 menu.AddItem(new GUIContent("Settings/Add New Nodes to Right"), addNewNodesToRight, ToggleAddNewNodesToRight);
                 menu.AddItem(new GUIContent("Settings/Confirm Node and Link Deletion"), confirmDelete, ToggleConfirmDelete);
                 menu.AddItem(new GUIContent("Outline Mode"), false, ActivateOutlineMode);
+                if (currentConversation == null)
+                {
+                    menu.AddDisabledItem(new GUIContent("Refresh"));
+                }
+                else
+                {
+                    menu.AddItem(new GUIContent("Refresh"), false, RefreshConversation);
+                }
                 AddRelationsInspectorMenuItems(menu);
                 menu.ShowAsContext();
             }

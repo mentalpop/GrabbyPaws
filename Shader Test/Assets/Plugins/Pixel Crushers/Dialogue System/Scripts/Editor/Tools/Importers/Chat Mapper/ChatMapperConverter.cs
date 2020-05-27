@@ -32,6 +32,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         static ChatMapperConverter()
         {
+            EditorApplication.projectWindowItemOnGUI -= OnProjectWindowItemOnGUI;
             EditorApplication.projectWindowItemOnGUI += OnProjectWindowItemOnGUI;
         }
 
@@ -502,6 +503,7 @@ namespace PixelCrushers.DialogueSystem
 
         private DialogueDatabase LoadOrCreateDatabase(string filename)
         {
+            if (prefs.outputFolder.EndsWith("/")) prefs.outputFolder = prefs.outputFolder.Substring(0, prefs.outputFolder.Length - 1);
             string assetPath = string.Format("{0}/{1}.asset", prefs.outputFolder, filename);
             DialogueDatabase database = null;
             if (prefs.overwrite)
@@ -594,11 +596,11 @@ namespace PixelCrushers.DialogueSystem
                 {
                     if (Field.FieldExists(entry.fields, "Sequence"))
                     {
-                        entry.currentSequence = "None()";
+                        entry.currentSequence = "Continue()";
                     }
                     else
                     {
-                        entry.fields.Add(new Field("Sequence", "None()", FieldType.Text));
+                        entry.fields.Add(new Field("Sequence", "Continue()", FieldType.Text));
                     }
                 }
             }

@@ -68,7 +68,7 @@ namespace PixelCrushers.DialogueSystem.SequencerCommands
         private void SetPosition(Vector3 newPosition, Quaternion newRotation)
         {
             // For efficiency, doesn't warp NavMeshAgent.
-            if (subjectRigidbody != null)
+            if (subjectRigidbody != null && !subjectRigidbody.isKinematic)
             {
                 subjectRigidbody.MoveRotation(newRotation);
                 subjectRigidbody.MovePosition(newPosition);

@@ -29,26 +29,30 @@ namespace PixelCrushers.DialogueSystem
         protected List<StandardUIMenuPanel> m_builtinPanels = new List<StandardUIMenuPanel>();
         protected StandardUIMenuPanel m_defaultPanel = null;
         protected Dictionary<Transform, StandardUIMenuPanel> m_actorPanelCache = new Dictionary<Transform, StandardUIMenuPanel>();
+        protected Dictionary<int, StandardUIMenuPanel> m_actorIdPanelCache = new Dictionary<int, StandardUIMenuPanel>();
         protected StandardUIMenuPanel m_currentPanel = null;
         protected Sprite m_pcPortraitSprite = null;
         protected string m_pcPortraitName = null;
+        protected bool useFirstResponseForPortrait = false;
 
         #endregion
 
         #region Initialization & Lookup
 
-        public void Initialize(StandardUIMenuPanel[] menuPanels, StandardUIMenuPanel defaultMenuPanel)
+        public void Initialize(StandardUIMenuPanel[] menuPanels, StandardUIMenuPanel defaultMenuPanel, bool useFirstResponseForMenuPortrait)
         {
             m_builtinPanels.Clear();
             m_builtinPanels.AddRange(menuPanels);
             m_defaultPanel = (defaultMenuPanel != null) ? defaultMenuPanel : (m_builtinPanels.Count > 0) ? m_builtinPanels[0] : null;
             ClearCache();
             if (timeoutHandler == null) timeoutHandler = DefaultTimeoutHandler;
+            useFirstResponseForPortrait = useFirstResponseForMenuPortrait;
         }
 
-        protected void ClearCache()
+        public void ClearCache()
         {
             m_actorPanelCache.Clear();
+            m_actorIdPanelCache.Clear();
         }
 
         /// <summary>
@@ -70,42 +74,84 @@ namespace PixelCrushers.DialogueSystem
             m_actorPanelCache[actorTransform] = GetPanelFromNumber(menuPanelNumber, customPanel);
         }
 
+        /// <summary>
+        /// For speakers who do not have a GameObject, this method overrides the actor's default panel.
+        /// </summary>
+        public void OverrideActorMenuPanel(Actor actor, MenuPanelNumber menuPanelNumber, StandardUIMenuPanel customPanel)
+        {
+            if (actor == null) return;
+            m_actorIdPanelCache[actor.id] = GetPanelFromNumber(menuPanelNumber, customPanel);
+        }
+
         protected Transform GetActorTransformFromID(int actorID)
         {
             var actor = DialogueManager.masterDatabase.GetActor(actorID);
-            return (actor != null) ? CharacterInfo.GetRegisteredActorTransform(actor.Name) : DialogueManager.currentActor;
+            if (actor != null)
+            {
+                var actorTransform = CharacterInfo.GetRegisteredActorTransform(actor.Name);
+                if (actorTransform == null)
+                {
+                    var actorGO = GameObject.Find(actor.Name);
+                    if (actorGO != null) actorTransform = actorGO.transform;
+                }
+                if (actorTransform != null) return actorTransform;
+            }
+            return DialogueManager.currentActor;
         }
 
-        protected virtual StandardUIMenuPanel GetPanel(Subtitle lastSubtitle, Response[] responses)
+        public virtual StandardUIMenuPanel GetPanel(Subtitle lastSubtitle, Response[] responses)
         {
-            // Find player's DialogueActor:
+            // Find player's transform & DialogueActor:
             var playerTransform = (lastSubtitle != null && lastSubtitle.speakerInfo.isPlayer) ? lastSubtitle.speakerInfo.transform
                 : (responses != null && responses.Length > 0) ? GetActorTransformFromID(responses[0].destinationEntry.ActorID)
+                : (lastSubtitle != null && lastSubtitle.listenerInfo.isPlayer) ? lastSubtitle.listenerInfo.transform
                 : DialogueManager.currentActor;
             if (playerTransform == null) playerTransform = DialogueManager.currentActor;
 
-            if (playerTransform == null) return m_defaultPanel;
-            if (m_actorPanelCache.ContainsKey(playerTransform)) return m_actorPanelCache[playerTransform];
-            var dialogueActor = DialogueActor.GetDialogueActorComponent(playerTransform);
+            var playerDialogueActor = DialogueActor.GetDialogueActorComponent(playerTransform);
 
             // Check NPC for non-default menu panel:
-            var playerUsesDefaultMenuPanel = dialogueActor == null || dialogueActor.standardDialogueUISettings.menuPanelNumber == MenuPanelNumber.Default;
-            var otherTransform = (lastSubtitle != null && lastSubtitle.speakerInfo.isNPC) ? lastSubtitle.speakerInfo.transform : DialogueManager.currentConversant;
-            if (playerUsesDefaultMenuPanel && otherTransform != null && m_actorPanelCache.ContainsKey(otherTransform)) return m_actorPanelCache[otherTransform];
-            var otherDialogueActor = DialogueActor.GetDialogueActorComponent(otherTransform);
-            if (otherDialogueActor != null &&
-                (otherDialogueActor.standardDialogueUISettings.useMenuPanelFor == DialogueActor.UseMenuPanelFor.MeAndResponsesToMe ||
-                (otherDialogueActor.standardDialogueUISettings.menuPanelNumber != MenuPanelNumber.Default && playerUsesDefaultMenuPanel)))
+            var playerUsesDefaultMenuPanel = playerDialogueActor != null && playerDialogueActor.standardDialogueUISettings.menuPanelNumber == MenuPanelNumber.Default;
+            var npcTransform = (lastSubtitle != null && lastSubtitle.speakerInfo.isNPC) ? lastSubtitle.speakerInfo.transform
+                : (lastSubtitle != null) ? lastSubtitle.listenerInfo.transform : DialogueManager.currentConversant;
+            if (npcTransform == null) npcTransform = DialogueManager.currentConversant;
+            if (playerUsesDefaultMenuPanel && npcTransform != null && m_actorPanelCache.ContainsKey(npcTransform))
             {
-                if (otherTransform != null && m_actorPanelCache.ContainsKey(otherTransform)) return m_actorPanelCache[otherTransform];
-                var otherPanel = GetDialogueActorPanel(otherDialogueActor);
-                if (otherPanel != null) return otherPanel;
+                // We've already cached a menu panel to use when responding to this NPC, so return it:
+                return m_actorPanelCache[npcTransform];
+            }
+            var npcDialogueActor = DialogueActor.GetDialogueActorComponent(npcTransform);
+            if (npcDialogueActor != null &&
+                (npcDialogueActor.standardDialogueUISettings.useMenuPanelFor == DialogueActor.UseMenuPanelFor.MeAndResponsesToMe ||
+                (npcDialogueActor.standardDialogueUISettings.menuPanelNumber != MenuPanelNumber.Default &&
+                playerUsesDefaultMenuPanel)))
+            {
+                // NPC's DialogueActor specifies a menu panel to use when responding to it, so cache and return it:
+                var npcMenuPanel = GetDialogueActorPanel(npcDialogueActor);
+                if (npcMenuPanel != null)
+                {
+                    m_actorPanelCache[npcTransform] = npcMenuPanel;
+                    return npcMenuPanel;
+                }
+            }
+
+            if (playerTransform != null)
+            {
+                // If NPC doesn't specify a menu panel, check for an override by player's transform:
+                if (m_actorPanelCache.ContainsKey(playerTransform)) return m_actorPanelCache[playerTransform];
+            }
+            else
+            {
+                // If no player transform, check for an override by player actor ID:
+                var playerID = (lastSubtitle != null && lastSubtitle.speakerInfo.isPlayer) ? lastSubtitle.speakerInfo.id
+                    : (responses != null && responses.Length > 0) ? responses[0].destinationEntry.ActorID : -1;
+                if (m_actorIdPanelCache.ContainsKey(playerID)) return m_actorIdPanelCache[playerID];
             }
 
             // Otherwise use player's menu panel:
-            var panel = GetDialogueActorPanel(dialogueActor);
+            var panel = GetDialogueActorPanel(playerDialogueActor);
             if (panel == null) panel = m_defaultPanel;
-            m_actorPanelCache.Add(playerTransform, panel);
+            if (playerTransform != null) m_actorPanelCache.Add(playerTransform, panel);
             return panel;
         }
 
@@ -193,6 +239,15 @@ namespace PixelCrushers.DialogueSystem
             else
             {
                 m_currentPanel = panel;
+                if (useFirstResponseForPortrait && responses.Length > 0)
+                {
+                    var menuCharacterInfo = DialogueManager.conversationModel.GetCharacterInfo(responses[0].destinationEntry.ActorID);
+                    if (menuCharacterInfo != null)
+                    {
+                        m_pcPortraitName = menuCharacterInfo.Name;
+                        m_pcPortraitSprite = menuCharacterInfo.portrait;
+                    }
+                }
                 panel.SetPCPortrait(m_pcPortraitSprite, m_pcPortraitName);
                 panel.ShowResponses(lastSubtitle, responses, target);
             }
@@ -227,7 +282,16 @@ namespace PixelCrushers.DialogueSystem
                 var panel = kvp.Value;
                 if (panel != null && !m_builtinPanels.Contains(panel)) panel.Close();
             }
-            ClearCache();
+            if (m_actorIdPanelCache.Count > 0)
+            {
+                var cachedPanels = new List<StandardUIMenuPanel>(m_actorIdPanelCache.Values);
+                foreach (var kvp in m_actorIdPanelCache)
+                {
+                    var panel = kvp.Value;
+                    if (panel != null && !m_builtinPanels.Contains(panel) && !cachedPanels.Contains(panel)) panel.Close();
+                }
+            }
+            //--- No longer close cache when closing menu: ClearCache();
         }
 
         /// <summary>

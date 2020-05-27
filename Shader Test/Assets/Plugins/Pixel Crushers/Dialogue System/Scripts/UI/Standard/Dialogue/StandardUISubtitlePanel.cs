@@ -56,6 +56,9 @@ namespace PixelCrushers.DialogueSystem
         [Tooltip("If a player actor uses this panel, don't show player portrait name & image; keep previous NPC portrait visible instead.")]
         public bool onlyShowNPCPortraits = false;
 
+        [Tooltip("Clear text when closing panel, including when hiding using SetDialoguePanel().")]
+        public bool clearTextOnClose = true;
+
         /// <summary>
         /// Invoked when the subtitle panel gains focus.
         /// </summary>
@@ -87,6 +90,11 @@ namespace PixelCrushers.DialogueSystem
             protected set { m_currentSubtitle = value; }
         }
 
+        /// <summary>
+        /// The database name of the actor whose display name appears in the Portrait Name field.
+        /// </summary>
+        public string portraitActorName { get; protected set; }
+
         #endregion
 
         #region Internal Properties
@@ -95,6 +103,7 @@ namespace PixelCrushers.DialogueSystem
         protected bool haveSavedOriginalColor { get { return m_haveSavedOriginalColor; } set { m_haveSavedOriginalColor = value; } }
         protected Color originalColor { get; set; }
         private string m_accumulatedText = string.Empty;
+        public string accumulatedText { get { return m_accumulatedText; } set { m_accumulatedText = value; } }
         private Animator m_animator = null;
         private Animator animator { get { if (m_animator == null && portraitImage != null) m_animator = portraitImage.GetComponent<Animator>(); return m_animator; } }
         private bool m_isDefaultNPCPanel = false;
@@ -103,6 +112,8 @@ namespace PixelCrushers.DialogueSystem
         public bool isDefaultPCPanel { get { return m_isDefaultPCPanel; } set { m_isDefaultPCPanel = value; } }
         private int m_panelNumber = -1;
         public int panelNumber { get { return m_panelNumber; } set { m_panelNumber = value; } }
+        public Transform m_actorOverridingPanel = null;
+        public Transform actorOverridingPanel { get { return m_actorOverridingPanel; } set { m_actorOverridingPanel = value; } }
 
         private Coroutine m_focusWhenOpenCoroutine = null;
 
@@ -160,6 +171,7 @@ namespace PixelCrushers.DialogueSystem
             if (this.portraitImage != null) this.portraitImage.sprite = portraitSprite;
             if (this.portraitName != null) this.portraitName.text = portraitName;
             if (subtitleText.text != null) subtitleText.text = string.Empty;
+            portraitActorName = (dialogueActor != null) ? dialogueActor.actor : portraitName;
             CheckDialogueActorAnimator(dialogueActor);
         }
 
@@ -169,9 +181,9 @@ namespace PixelCrushers.DialogueSystem
             OpenOnStartConversation(UITools.CreateSprite(portraitTexture), portraitName, dialogueActor);
         }
 
-        public void OnConversationStart(Transform actor)
+        public virtual void OnConversationEnd(Transform actor)
         {
-            m_accumulatedText = string.Empty;
+            ClearText();
         }
 
         /// <summary>
@@ -184,7 +196,7 @@ namespace PixelCrushers.DialogueSystem
             Open();
             Focus();
             SetContent(subtitle);
-            CheckSubtitleAnimator(subtitle);
+            actorOverridingPanel = null;
         }
 
         /// <summary>
@@ -224,7 +236,7 @@ namespace PixelCrushers.DialogueSystem
         public override void Close()
         {
             if (isOpen) base.Close();
-            m_accumulatedText = string.Empty;
+            if (clearTextOnClose) ClearText();
             hasFocus = false;
         }
 
@@ -233,7 +245,7 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public virtual void Focus()
         {
-            if (panelState == PanelState.Opening)
+            if (panelState == PanelState.Opening && enabled && gameObject.activeInHierarchy)
             {
                 if (m_focusWhenOpenCoroutine != null) StopCoroutine(m_focusWhenOpenCoroutine);
                 m_focusWhenOpenCoroutine = StartCoroutine(FocusWhenOpen());
@@ -280,13 +292,19 @@ namespace PixelCrushers.DialogueSystem
         /// </summary>
         public virtual void Unfocus()
         {
-            var isPlayingFocusAnimation = (m_focusWhenOpenCoroutine != null);
-            if (isPlayingFocusAnimation)
+            if (m_focusWhenOpenCoroutine != null)
             {
                 StopCoroutine(m_focusWhenOpenCoroutine);
                 m_focusWhenOpenCoroutine = null;
             }
-            if (!(hasFocus || isPlayingFocusAnimation)) return;
+            if (!string.IsNullOrEmpty(focusAnimationTrigger) && animatorMonitor.currentTrigger == focusAnimationTrigger)
+            {
+                animatorMonitor.CancelCurrentAnimation();
+            }
+            else
+            {
+                if (!hasFocus) return;
+            }
             if (panelState == PanelState.Opening) panelState = PanelState.Open;
             hasFocus = false;
             animatorMonitor.SetTrigger(unfocusAnimationTrigger, null, false);
@@ -307,7 +325,7 @@ namespace PixelCrushers.DialogueSystem
         protected virtual void SetUIElementsActive(bool value)
         {
             Tools.SetGameObjectActive(panel, value);
-            Tools.SetGameObjectActive(portraitImage, value);
+            Tools.SetGameObjectActive(portraitImage, value && portraitImage != null && portraitImage.sprite != null);
             portraitName.SetActive(value);
             subtitleText.SetActive(value);
             Tools.SetGameObjectActive(continueButton, false); // Let ConversationView determine if continueButton should be shown.
@@ -379,6 +397,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (subtitle == null) return;
             currentSubtitle = subtitle;
+            CheckSubtitleAnimator(subtitle);
             if (!onlyShowNPCPortraits || subtitle.speakerInfo.isNPC)
             {                
                 if (portraitImage != null)
@@ -387,6 +406,7 @@ namespace PixelCrushers.DialogueSystem
                     portraitImage.sprite = sprite;
                     Tools.SetGameObjectActive(portraitImage, sprite != null);
                 }
+                portraitActorName = subtitle.speakerInfo.nameInDatabase;
                 portraitName.text = subtitle.speakerInfo.Name;
                 UITools.SendTextChangeMessage(portraitName);
             }
@@ -405,7 +425,7 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        protected IEnumerator StartTypingWhenFocused(UITextField subtitleText, string text, int fromIndex)
+        protected virtual IEnumerator StartTypingWhenFocused(UITextField subtitleText, string text, int fromIndex)
         {
             subtitleText.text = string.Empty;
             float timeout = Time.realtimeSinceStartup + 5f;
@@ -442,10 +462,12 @@ namespace PixelCrushers.DialogueSystem
             if (subtitle != null && useAnimatedPortraits && animator != null)
             {
                 var dialogueActor = DialogueActor.GetDialogueActorComponent(subtitle.speakerInfo.transform);
-                if (dialogueActor != null && dialogueActor.standardDialogueUISettings.portraitAnimatorController != null)
+                if (dialogueActor != null) // && dialogueActor.standardDialogueUISettings.portraitAnimatorController != null)
                 {
                     var speakerPanelNumber = dialogueActor.GetSubtitlePanelNumber();
-                    var isMyPanel = (PanelNumberUtility.GetSubtitlePanelIndex(speakerPanelNumber) == this.panelNumber) ||
+                    var isMyPanel =
+                        (actorOverridingPanel == subtitle.speakerInfo.transform) ||
+                        (PanelNumberUtility.GetSubtitlePanelIndex(speakerPanelNumber) == this.panelNumber) ||
                         (speakerPanelNumber == SubtitlePanelNumber.Default && subtitle.speakerInfo.isNPC && isDefaultNPCPanel) ||
                         (speakerPanelNumber == SubtitlePanelNumber.Default && subtitle.speakerInfo.isPlayer && isDefaultPCPanel) ||
                         (speakerPanelNumber == SubtitlePanelNumber.Custom && dialogueActor.standardDialogueUISettings.customSubtitlePanel == this);
@@ -453,6 +475,10 @@ namespace PixelCrushers.DialogueSystem
                     {
                         StartCoroutine(SetAnimatorAtEndOfFrame(dialogueActor.standardDialogueUISettings.portraitAnimatorController));
                     }
+                }
+                else
+                {
+                    StartCoroutine(SetAnimatorAtEndOfFrame(null));
                 }
             }
         }

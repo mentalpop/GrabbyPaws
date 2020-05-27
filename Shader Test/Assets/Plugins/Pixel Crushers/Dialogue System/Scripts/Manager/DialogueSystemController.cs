@@ -57,7 +57,7 @@ namespace PixelCrushers.DialogueSystem
         public bool preloadResources = false;
 
         [Tooltip("Use a copy of the dialogue database at runtime instead of the asset file directly. This allows you to change the database without affecting the asset.")]
-        public bool instantiateDatabase = false;
+        public bool instantiateDatabase = true;
 
         /// <summary>
         /// If <c>true</c>, Unity will not destroy the game object when loading a new level.
@@ -140,6 +140,15 @@ namespace PixelCrushers.DialogueSystem
 
         public static bool applicationIsQuitting = false;
         public static string lastInitialDatabaseName = null;
+
+#if UNITY_2019_3_OR_NEWER
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void InitStaticVariables()
+        {
+            applicationIsQuitting = false;
+            lastInitialDatabaseName = null;
+        }
+#endif
 
         /// <summary>
         /// Gets the dialogue database manager.
@@ -356,7 +365,7 @@ namespace PixelCrushers.DialogueSystem
         /// <returns></returns>
         public bool StandardGetInputButtonDown(string buttonName)
         {
-            return InputDeviceManager.IsButtonDown(buttonName); // Was: Input.GetButtonDown(buttonName);
+            return InputDeviceManager.IsButtonDown(buttonName);
         }
 
         private bool DisabledGetInputButtonDown(string buttonName)
@@ -462,9 +471,14 @@ namespace PixelCrushers.DialogueSystem
         /// </param>
         public void SetLanguage(string language)
         {
+            if (m_uiLocalizationManager == null)
+            {
+                m_uiLocalizationManager = gameObject.AddComponent<UILocalizationManager>(); ;
+                m_uiLocalizationManager.textTable = displaySettings.localizationSettings.textTable;
+            }
+            m_uiLocalizationManager.currentLanguage = language;
             displaySettings.localizationSettings.language = language;
             Localization.language = language;
-            if (m_uiLocalizationManager != null) m_uiLocalizationManager.currentLanguage = language;
         }
 
         private void CheckDebugLevel()
@@ -633,6 +647,7 @@ namespace PixelCrushers.DialogueSystem
         {
             PreloadMasterDatabase();
             PreloadDialogueUI();
+            Sequencer.Preload();
         }
 
         /// <summary>
@@ -689,6 +704,7 @@ namespace PixelCrushers.DialogueSystem
                 SetConversationUI(actor, conversant);
 
                 m_calledRandomizeNextEntry = false;
+                m_conversationController = new ConversationController();
                 var model = new ConversationModel(m_databaseManager.masterDatabase, title, actor, conversant, allowLuaExceptions, isDialogueEntryValid, initialDialogueEntryID);
                 var needToSetRandomizeNextEntryAgain = m_calledRandomizeNextEntry; // Special case when START node leads to group node with RandomizeNextEntry().
                 m_calledRandomizeNextEntry = false;
@@ -697,7 +713,7 @@ namespace PixelCrushers.DialogueSystem
                 var view = this.gameObject.AddComponent<ConversationView>();
                 view.Initialize(dialogueUI, GetNewSequencer(), displaySettings, OnDialogueEntrySpoken);
                 view.SetPCPortrait(model.GetPCSprite(), model.GetPCName());
-                m_conversationController = new ConversationController(model, view, displaySettings.inputSettings.alwaysForceResponseMenu, OnEndConversation);
+                m_conversationController.Initialize(model, view, displaySettings.inputSettings.alwaysForceResponseMenu, OnEndConversation);
                 if (needToSetRandomizeNextEntryAgain) RandomizeNextEntry();
                 var target = (actor != null) ? actor : this.transform;
                 if (actor != this.transform) gameObject.BroadcastMessage(DialogueSystemMessages.OnConversationStart, target, SendMessageOptions.DontRequireReceiver);
@@ -1166,7 +1182,7 @@ namespace PixelCrushers.DialogueSystem
             }
             var speakerInfo = GetCharacterInfoFromTransform(speaker);
             var listenerInfo = GetCharacterInfoFromTransform(listener);
-            var formattedText = FormattedText.Parse(barkText, masterDatabase.emphasisSettings);
+            var formattedText = FormattedText.Parse(GetLocalizedText(barkText), masterDatabase.emphasisSettings);
             if (sequence == null) sequence = string.Empty;
             var responseMenuSequence = string.Empty; // Not used in barks.
             DialogueEntry dialogueEntry = null;
@@ -1213,7 +1229,7 @@ namespace PixelCrushers.DialogueSystem
             if (dialogueUI != null && (displaySettings.alertSettings.allowAlertsDuringConversations || !isConversationActive))
             {
                 if (message.Contains("\\n")) message = message.Replace("\\n", "\n");
-                dialogueUI.ShowAlert(GetLocalizedText(message), duration);
+                dialogueUI.ShowAlert(GetLocalizedText(FormattedText.ParseCode(message)), duration);
             }
         }
 
@@ -1598,6 +1614,23 @@ namespace PixelCrushers.DialogueSystem
             return canvas;
         }
 
+        /// <summary>
+        /// Sets the dialogue UI's main panel visible or invisible.
+        /// </summary>
+        /// <param name="show">If true, show (or re-show) the panel; if false, hide it.</param>
+        /// <param name="immediate">If true, skip animation and change immediately.</param>
+        public void SetDialoguePanel(bool show, bool immediate = false)
+        {
+            if (conversationView == null)
+            {
+                if (DialogueDebug.logWarnings) Debug.LogWarning("Dialogue System: SetDialoguePanel() is only valid when a conversation is active.");
+            }
+            else
+            {
+                conversationView.sequencer.SetDialoguePanel(show, immediate);
+            }
+        }
+
         private Sequencer GetNewSequencer()
         {
             Sequencer sequencer = this.gameObject.AddComponent<Sequencer>();
@@ -1808,32 +1841,31 @@ namespace PixelCrushers.DialogueSystem
         }
 
 #if EVALUATION_VERSION
-		private GUIStyle evaluationWatermarkStyle = null;
-		private Rect watermarkRect1;
-		private Rect watermarkRect2;
-		
-		public void OnGUI() {
-			if (Camera.main == null) return;
-			if (Camera.main.GetComponent<GUILayer>() == null) Camera.main.gameObject.AddComponent<GUILayer>();
-			if (evaluationWatermarkStyle == null) {
-				evaluationWatermarkStyle = new GUIStyle(GUI.skin.label);
-				evaluationWatermarkStyle.fontSize = 20;
-				evaluationWatermarkStyle.fontStyle = FontStyle.Bold;
-				evaluationWatermarkStyle.alignment = TextAnchor.MiddleCenter;
-				evaluationWatermarkStyle.normal.textColor = new Color(1, 1, 1, 0.5f);
-				Vector2 size = evaluationWatermarkStyle.CalcSize(new GUIContent("Evaluation Version"));
-                if (Random.value < 0.5f) {
-                    watermarkRect1 = new Rect(Screen.width - size.x - 20, 0, size.x + 20, size.y);
-                    watermarkRect2 = new Rect(Screen.width - size.x - 20, size.y - 8, size.x + 20, size.y);
-                } else {
-                    watermarkRect1 = new Rect(20, Screen.height - 2 * size.y - 8 , size.x + 20, size.y);
-                    watermarkRect2 = new Rect(20, Screen.height - size.y - 8, size.x + 20, size.y);
-                }
-            }
-			GUI.Label(watermarkRect1, "Dialogue System", evaluationWatermarkStyle);
-			GUI.Label(watermarkRect2, "Evaluation Version", evaluationWatermarkStyle);
-		}
+
+        private GameObject watermark = null;
+
+        protected virtual void LateUpdate()
+        {
+            if (watermark != null) return;
+            watermark = new GameObject("Eval");
+            watermark.transform.SetParent(transform);
+            var canvas = watermark.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 16383;
+            Destroy(watermark.GetComponent<UnityEngine.UI.GraphicRaycaster>());
+            Destroy(watermark.GetComponent<UnityEngine.UI.CanvasScaler>());
+            var text = watermark.AddComponent<UnityEngine.UI.Text>();
+            text.text = "Dialogue System\nEvaluation Version";
+            text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            text.fontSize = 24;
+            text.fontStyle = FontStyle.Bold;
+            text.color = new Color(1, 1, 1, 0.75f);
+            text.alignment = (Random.value < 0.5f) ? TextAnchor.UpperLeft: TextAnchor.LowerRight;
+            text.raycastTarget = false;
+        }
+
 #endif
+
 
     }
 

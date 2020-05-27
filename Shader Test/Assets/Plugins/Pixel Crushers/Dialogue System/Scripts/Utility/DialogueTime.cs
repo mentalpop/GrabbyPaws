@@ -72,6 +72,7 @@ namespace PixelCrushers.DialogueSystem
             set
             {
                 m_customTime = value;
+                GameTime.time = value;
             }
         }
 
@@ -112,6 +113,7 @@ namespace PixelCrushers.DialogueSystem
                         break;
                 }
                 m_isPaused = value;
+                GameTime.isPaused = value;
             }
         }
 

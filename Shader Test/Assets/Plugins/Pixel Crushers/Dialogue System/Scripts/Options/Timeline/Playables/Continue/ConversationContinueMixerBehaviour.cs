@@ -5,6 +5,7 @@
 using UnityEngine;
 using UnityEngine.Playables;
 using System.Collections.Generic;
+using UnityEngine.Timeline;
 
 namespace PixelCrushers.DialogueSystem
 {
@@ -25,13 +26,46 @@ namespace PixelCrushers.DialogueSystem
                 if (inputWeight > 0.001f && !played.Contains(i))
                 {
                     played.Add(i);
+                    var inputPlayable = (ScriptPlayable<ContinueConversationBehaviour>)playable.GetInput(i);
+                    ContinueConversationBehaviour input = inputPlayable.GetBehaviour();
                     if (Application.isPlaying)
                     {
-                        DialogueManager.instance.BroadcastMessage("OnConversationContinueAll", SendMessageOptions.DontRequireReceiver);
+                        switch (input.operation)
+                        {
+                            case ContinueConversationBehaviour.Operation.Continue:
+                                DialogueManager.instance.BroadcastMessage("OnConversationContinueAll", SendMessageOptions.DontRequireReceiver);
+                                break;
+                            case ContinueConversationBehaviour.Operation.ClearSubtitleText:
+                                var standardDialogueUI = DialogueManager.dialogueUI as StandardDialogueUI;
+                                if (standardDialogueUI != null)
+                                {
+                                    if (input.clearAllPanels)
+                                    {
+                                        for (int j = 0; j < standardDialogueUI.conversationUIElements.subtitlePanels.Length; j++)
+                                        {
+                                            if (standardDialogueUI.conversationUIElements.subtitlePanels[j] == null) continue;
+                                            standardDialogueUI.conversationUIElements.subtitlePanels[j].ClearText();
+                                        }
+                                    }
+                                    else if (0 <= input.clearPanelNumber && input.clearPanelNumber < standardDialogueUI.conversationUIElements.subtitlePanels.Length &&
+                                        standardDialogueUI.conversationUIElements.subtitlePanels[input.clearPanelNumber] != null)
+                                    {
+                                        standardDialogueUI.conversationUIElements.subtitlePanels[input.clearPanelNumber].ClearText();
+                                    }
+                                }
+                                break;
+                        }
                     }
                     else
                     {
-                        PreviewUI.ShowMessage("Continue", 3, -1);
+                        switch (input.operation)
+                        {
+                            case ContinueConversationBehaviour.Operation.Continue:
+                                PreviewUI.ShowMessage(GetEditorContinueText(playable), 3, -1);
+                                break;
+                            case ContinueConversationBehaviour.Operation.ClearSubtitleText:
+                                break;
+                        }
                     }
                 }
                 else if (inputWeight <= 0.001f && played.Contains(i))
@@ -41,8 +75,69 @@ namespace PixelCrushers.DialogueSystem
             }
         }
 
-        public override void OnGraphStart(Playable playable)
+        private string GetEditorContinueText(Playable playable)
         {
+#if UNITY_EDITOR
+            var go = UnityEditor.Selection.activeGameObject;
+            if (go != null)
+            {
+                var director = go.GetComponent<PlayableDirector>();
+                if (director == null) director = GameObject.FindObjectOfType<PlayableDirector>();
+                if (director == null) Debug.Log("Select PlayableDirector GameObject to be able to preview bark clip text.");
+                if (director != null && director.playableAsset != null)
+                {
+                    var currentTime = director.time;
+                    var timelineAsset = director.playableAsset as TimelineAsset;
+
+                    // Find the latest StartConversationClip up to the current time:
+                    double startConversationTime = 0;
+                    string conversationTitle = string.Empty;
+                    int startingEntryID = -1;
+                    foreach (var track in timelineAsset.GetOutputTracks())
+                    {
+                        foreach (var clip in track.GetClips())
+                        {
+                            if (clip.start > currentTime) break;
+                            if (clip.asset.GetType() == typeof(StartConversationClip))
+                            {
+                                var startConversationClip = clip.asset as StartConversationClip;
+                                startConversationTime = clip.start;
+                                conversationTitle = startConversationClip.template.conversation;
+                                startingEntryID = startConversationClip.template.jumpToSpecificEntry ? startConversationClip.template.entryID : -1;
+                            }
+                        }
+                    }
+
+                    // Count how many continues have passed since last StartConversationClip:
+                    int numContinues = 0;
+                    foreach (var track in timelineAsset.GetOutputTracks())
+                    {
+                        foreach (var clip in track.GetClips())
+                        {
+                            if (clip.start > currentTime) break;
+                            if (clip.start > startConversationTime &&
+                                clip.asset.GetType() == typeof(ContinueConversationClip))
+                            {
+                                numContinues++;
+                            }
+                        }
+                    }
+
+                    var dialogueText = PreviewUI.GetDialogueText(conversationTitle, startingEntryID, numContinues);
+                    //Debug.Log(numContinues + " continues since " + conversationTitle + " entry " + startingEntryID +
+                    //    " started at " + startConversationTime + ": " + dialogueText);
+                    if (!string.IsNullOrEmpty(dialogueText))
+                    {
+                        return dialogueText + " (may vary)";
+                    }
+                }
+            }
+#endif
+            return "Continue";
+        }
+
+        public override void OnGraphStart(Playable playable)
+        {            
             base.OnGraphStart(playable);
             played.Clear();
         }

@@ -18,6 +18,9 @@ namespace PixelCrushers.DialogueSystem
         [Tooltip("Main panel for conversation UI (optional).")]
         public UIPanel mainPanel;
 
+        [Tooltip("Never deactivate Main Panel. Will still play show & hide animations if specified.")]
+        public bool dontDeactivateMainPanel = false;
+
         public StandardUISubtitlePanel[] subtitlePanels;
 
         [Tooltip("Default panel for NPC subtitles.")]
@@ -33,6 +36,9 @@ namespace PixelCrushers.DialogueSystem
 
         [Tooltip("Default panel for response menus.")]
         public StandardUIMenuPanel defaultMenuPanel;
+
+        [Tooltip("When showing response menu, use portrait info of player actor assigned to first response.")]
+        public bool useFirstResponseForMenuPortrait;
 
         #endregion
 
@@ -55,7 +61,7 @@ namespace PixelCrushers.DialogueSystem
         public void Initialize()
         {
             m_standardSubtitleControls.Initialize(subtitlePanels, defaultNPCSubtitlePanel, defaultPCSubtitlePanel);
-            m_standardMenuControls.Initialize(menuPanels, defaultMenuPanel);
+            m_standardMenuControls.Initialize(menuPanels, defaultMenuPanel, useFirstResponseForMenuPortrait);
         }
 
         #endregion
@@ -71,6 +77,7 @@ namespace PixelCrushers.DialogueSystem
         {
             m_initializedAnimator = true;
             if (mainPanel != null) mainPanel.Open();
+            standardSubtitleControls.ApplyQueuedActorPanelCache();
         }
 
         private void HidePanel()
@@ -84,7 +91,7 @@ namespace PixelCrushers.DialogueSystem
             {
                 standardSubtitleControls.Close();
                 standardMenuControls.Close();
-                if (mainPanel != null) mainPanel.Close();
+                if (mainPanel != null && !dontDeactivateMainPanel) mainPanel.Close();
             }
         }
 
@@ -92,7 +99,11 @@ namespace PixelCrushers.DialogueSystem
         {
             HideSubtitlePanelsImmediate();
             HideMenuPanelsImmediate();
-            if (mainPanel != null) { mainPanel.gameObject.SetActive(false); mainPanel.panelState = UIPanel.PanelState.Closed; }
+            if (mainPanel != null && !dontDeactivateMainPanel) 
+            { 
+                mainPanel.gameObject.SetActive(false); 
+                mainPanel.panelState = UIPanel.PanelState.Closed; 
+            }
         }
 
         private void HideSubtitlePanelsImmediate()

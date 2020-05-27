@@ -810,6 +810,16 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
+        /// Sets the dialogue UI's main panel visible or invisible.
+        /// </summary>
+        /// <param name="show">If true, show (or re-show) the panel; if false, hide it.</param>
+        /// <param name="immediate">If true, skip animation and change immediately.</param>
+        public static void SetDialoguePanel(bool show, bool immediate = false)
+        {
+            instance.SetDialoguePanel(show, immediate);
+        }
+
+        /// <summary>
         /// Sets an actor's portrait. If can be:
         /// - 'default' or <c>null</c> to use the primary portrait defined in the database,
         /// - 'pic=#' to use an alternate portrait defined in the database (numbered from 2), or

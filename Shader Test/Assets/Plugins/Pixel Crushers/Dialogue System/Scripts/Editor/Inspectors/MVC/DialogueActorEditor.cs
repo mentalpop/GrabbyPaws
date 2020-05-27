@@ -27,7 +27,8 @@ namespace PixelCrushers.DialogueSystem
             }
             EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("portrait"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("spritePortrait"), new GUIContent("Portrait (Sprite)"), true);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("portrait"), new GUIContent("Portrait (Texture2D)"), true);
 
             var barkUISettingsProperty = serializedObject.FindProperty("barkUISettings");
             barkUISettingsProperty.isExpanded = EditorGUILayout.Foldout(barkUISettingsProperty.isExpanded, "Bark UI Settings");

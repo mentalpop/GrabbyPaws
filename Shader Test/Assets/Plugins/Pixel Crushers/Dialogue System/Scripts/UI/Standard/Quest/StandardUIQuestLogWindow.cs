@@ -41,6 +41,8 @@ namespace PixelCrushers.DialogueSystem
         public StandardUIQuestTitleButtonTemplate selectedCompletedQuestHeadingTemplate;
         [Tooltip("If there are no quests to show, show the No Active/Completed Quests Text above.")]
         public bool showNoQuestsText = true;
+        [Tooltip("Select first quest in list when open. If unticked and Always Auto Focus is ticked, selects button assigned to main panel's First Selected field (Close button).")]
+        public bool selectFirstQuestOnOpen = false;
         [Tooltip("Show details when quest button is selected (highlighted/hovered), not when clicked.")]
         public bool showDetailsOnSelect = false;
         [Tooltip("Keep all groups expanded.")]
@@ -214,6 +216,7 @@ namespace PixelCrushers.DialogueSystem
         {
             if (!m_isAwake) return;
             UnityEngine.UI.Selectable elementToSelect = null;
+            UnityEngine.UI.Selectable firstQuestElement = null;
             showingActiveQuestsHeading.SetActive(isShowingActiveQuests);
             showingCompletedQuestHeading.SetActive(!isShowingActiveQuests);
             selectionPanelContentManager.Clear();
@@ -273,6 +276,7 @@ namespace PixelCrushers.DialogueSystem
                         var target = quest.Title;
                         questTitle.button.onClick.AddListener(() => { OnClickQuest(target); });
                         if (showDetailsOnSelect) AddShowDetailsOnSelect(questTitle.button, target);
+                        if (firstQuestElement == null) firstQuestElement = questTitle.button;
                         if (string.Equals(quest.Title, questTitleToSelect))
                         {
                             elementToSelect = questTitle.button;
@@ -293,6 +297,7 @@ namespace PixelCrushers.DialogueSystem
                 var target = quest.Title;
                 questTitle.button.onClick.AddListener(() => { OnClickQuest(target); });
                 if (showDetailsOnSelect) AddShowDetailsOnSelect(questTitle.button, target);
+                if (firstQuestElement == null) firstQuestElement = questTitle.button;
                 if (string.Equals(quest.Title, questTitleToSelect))
                 {
                     elementToSelect = questTitle.button;
@@ -304,7 +309,7 @@ namespace PixelCrushers.DialogueSystem
             if (quests.Length == 0 && showNoQuestsText)
             {
                 var questTitle = selectionPanelContentManager.Instantiate<StandardUIQuestTitleButtonTemplate>(completedQuestHeadingTemplate);
-                var dummyText = IsShowingActiveQuests ? noActiveQuestsText : noCompletedQuestsText;
+                var dummyText = noQuestsMessage;
                 questTitle.Assign(dummyText, dummyText, null);
                 selectionPanelContentManager.Add(questTitle, questSelectionContentContainer);
             }
@@ -312,6 +317,10 @@ namespace PixelCrushers.DialogueSystem
             SetStateToggleButtons();
             mainPanel.RefreshSelectablesList();
             if (mainPanel != null) UnityEngine.UI.LayoutRebuilder.MarkLayoutForRebuild(mainPanel.GetComponent<RectTransform>());
+            if (elementToSelect == null && selectFirstQuestOnOpen)
+            {
+                elementToSelect = firstQuestElement;
+            }
             if (elementToSelect != null)
             {
                 StartCoroutine(SelectElement(elementToSelect));

@@ -189,6 +189,11 @@ namespace PixelCrushers.DialogueSystem
             return false;
         }
 
+        protected virtual void PlayCharacterAudio(char c)
+        {
+            PlayCharacterAudio();
+        }
+
         protected virtual void PlayCharacterAudio()
         {
             if (audioClip == null || audioSource == null) return;

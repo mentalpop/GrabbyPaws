@@ -110,9 +110,10 @@ namespace PixelCrushers.DialogueSystem
             {
                 Name = dialogueActor.GetActorName();
                 var actor = DialogueManager.masterDatabase.GetActor(dialogueActor.actor);
-                if (dialogueActor.portrait != null)
+                var dialogueActorPortrait = dialogueActor.GetPortraitSprite();
+                if (dialogueActorPortrait != null)
                 {
-                    this.portrait = dialogueActor.GetPortraitSprite();
+                    this.portrait = dialogueActorPortrait;
                 }
                 else if (actor != null)
                 {

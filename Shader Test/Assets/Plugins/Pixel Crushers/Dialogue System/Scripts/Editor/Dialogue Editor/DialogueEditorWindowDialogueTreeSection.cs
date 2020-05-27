@@ -54,6 +54,11 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
         private Field currentEntryConversant = null;
         private bool entryEventFoldout = false;
         private bool entryFieldsFoldout = false;
+        private SequenceSyntaxState sequenceSyntaxState = SequenceSyntaxState.Unchecked;
+        private GUIContent[] linkToDestinations = new GUIContent[0];
+        private DialogueEntry linkToDestinationsFromEntry = null;
+
+        public static bool linkToDebug = false;
 
         private DialogueEntry _currentEntry = null;
         [SerializeField]
@@ -67,6 +72,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             set
             {
                 _currentEntry = value;
+                sequenceSyntaxState = SequenceSyntaxState.Unchecked;
                 if (value != null)
                 {
                     currentEntryID = value.id;
@@ -594,7 +600,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 }
 
                 // Sequence (including localized if defined):
-                entry.Sequence = SequenceEditorTools.DrawLayout(new GUIContent("Sequence", "Cutscene played when speaking this entry. If set, overrides Dialogue Manager's Default Sequence. Drag audio clips to add AudioWait() commands."), entry.Sequence, ref sequenceRect);
+                entry.Sequence = SequenceEditorTools.DrawLayout(new GUIContent("Sequence", "Cutscene played when speaking this entry. If set, overrides Dialogue Manager's Default Sequence. Drag audio clips to add AudioWait() commands."), entry.Sequence, ref sequenceRect, ref sequenceSyntaxState);
                 DrawLocalizedVersions(entry.fields, "Sequence {0}", false, FieldType.Text);
 
                 // Response Menu Sequence:
@@ -720,7 +726,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                 // Sequence (including localized if defined):
                 var sequence = GetMultinodeSelectionFieldValue(DialogueSystemFields.Sequence);
                 EditorGUI.BeginChangeCheck();
-                sequence = SequenceEditorTools.DrawLayout(new GUIContent("Sequence", "Cutscene played when speaking these entries. If set, overrides Dialogue Manager's Default Sequence. Drag audio clips to add AudioWait() commands."), sequence, ref sequenceRect);
+                sequence = SequenceEditorTools.DrawLayout(new GUIContent("Sequence", "Cutscene played when speaking these entries. If set, overrides Dialogue Manager's Default Sequence. Drag audio clips to add AudioWait() commands."), sequence, ref sequenceRect, ref sequenceSyntaxState);
                 if (EditorGUI.EndChangeCheck()) { changed = true; SetMultinodeSelectionFieldValue(DialogueSystemFields.Sequence, sequence); }
 
                 // Response Menu Sequence:
@@ -1021,6 +1027,31 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             return 0;
         }
 
+        private void PrepareLinkToDestinations(DialogueEntry entry)
+        {
+            List<GUIContent> destinationList = new List<GUIContent>();
+            destinationList.Add(new GUIContent("(Link To)", string.Empty));
+            destinationList.Add(new GUIContent("(Another Conversation)", string.Empty));
+            destinationList.Add(new GUIContent("(New Entry)", string.Empty));
+            for (int i = 0; i < currentConversation.dialogueEntries.Count; i++)
+            {
+                var destinationEntry = currentConversation.dialogueEntries[i];
+                if (destinationEntry != entry)
+                {
+                    if (linkToDebug)
+                    {
+                        destinationList.Add(new GUIContent("[" + destinationEntry.id + "]"));
+                    }
+                    else
+                    {
+                        destinationList.Add(new GUIContent(Tools.StripRichTextCodes(GetDialogueEntryText(destinationEntry)), string.Empty));
+                    }
+                }
+            }
+            linkToDestinations = destinationList.ToArray();
+            linkToDestinationsFromEntry = entry;
+        }
+
         private bool DrawDialogueEntryLinks(
             DialogueEntry entry,
             ref Link linkToDelete,
@@ -1035,17 +1066,17 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
             try
             {
                 EditorGUI.BeginChangeCheck();
-
-                List<GUIContent> destinationList = new List<GUIContent>();
-                destinationList.Add(new GUIContent("(Link To)", string.Empty));
-                destinationList.Add(new GUIContent("(Another Conversation)", string.Empty));
-                destinationList.Add(new GUIContent("(New Entry)", string.Empty));
-                for (int i = 0; i < currentConversation.dialogueEntries.Count; i++)
+#if UNITY_EDITOR_OSX
+                linkToDebug = EditorGUILayout.Toggle(new GUIContent("Hide Link Text", "In Unity 2019.2-2019.3, a bug in Unity for Mac can hang the editor when link text contains characters that the editor handles improperly. If Unity hangs when opening the Links To dropdown, tick this."), linkToDebug);
+#endif
+                if (EditorGUI.EndChangeCheck() || linkToDestinationsFromEntry != entry)
                 {
-                    var destinationEntry = currentConversation.dialogueEntries[i];
-                    if (destinationEntry != entry) destinationList.Add(new GUIContent(Tools.StripRichTextCodes(GetDialogueEntryText(destinationEntry)), string.Empty));
+                    PrepareLinkToDestinations(entry);
                 }
-                int destinationIndex = EditorGUILayout.Popup(new GUIContent("Links To:", "Add a link to another entry. Select (New Entry) to create and link to a new entry."), 0, destinationList.ToArray());
+
+                EditorGUI.BeginChangeCheck();
+
+                int destinationIndex = EditorGUILayout.Popup(new GUIContent("Links To:", "Add a link to another entry. Select (New Entry) to create and link to a new entry."), 0, linkToDestinations);
                 if (destinationIndex > 0)
                 {
                     entryToLinkFrom = entry;
@@ -1061,7 +1092,7 @@ namespace PixelCrushers.DialogueSystem.DialogueEditor
                     }
                     else
                     {
-                        int destinationID = AssetListIndexToID(destinationIndex, destinationList.ToArray());
+                        int destinationID = AssetListIndexToID(destinationIndex, linkToDestinations);
                         entryToLinkTo = currentConversation.dialogueEntries.Find(e => e.id == destinationID);
                         if (entryToLinkTo == null)
                         {

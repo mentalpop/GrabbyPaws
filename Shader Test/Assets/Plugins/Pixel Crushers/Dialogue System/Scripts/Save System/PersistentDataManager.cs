@@ -74,7 +74,7 @@ namespace PixelCrushers.DialogueSystem
         public static bool includeRelationshipAndStatusData = true;
 
         /// <summary>
-        /// Initialize variables that were added to database after saved game.")]
+        /// Initialize variables and quests that were added to database after saved game.")]
         /// </summary>
         public static bool initializeNewVariables = true;
 
@@ -112,6 +112,15 @@ namespace PixelCrushers.DialogueSystem
         public static RecordPersistentDataOn recordPersistentDataOn = RecordPersistentDataOn.AllGameObjects;
 
         private static HashSet<GameObject> listeners = new HashSet<GameObject>();
+
+#if UNITY_2019_3_OR_NEWER
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void InitStaticVariables()
+        {
+            GetCustomSaveData = null;
+            listeners = new HashSet<GameObject>();
+        }
+#endif
 
         #endregion
 
@@ -233,14 +242,17 @@ namespace PixelCrushers.DialogueSystem
             if (DialogueDebug.LogInfo) Debug.Log(string.Format("{0}: Resetting Lua environment.", new System.Object[] { DialogueDebug.Prefix }));
             DialogueManager.ResetDatabase(databaseResetOptions);
             if (DialogueDebug.LogInfo) Debug.Log(string.Format("{0}: Updating Lua environment with saved data.", new System.Object[] { DialogueDebug.Prefix }));
-            Lua.Run(saveData, DialogueDebug.LogInfo);
-            ExpandCompressedSimStatusData();
-            RefreshRelationshipAndStatusTablesFromLua();
-            if (initializeNewVariables)
+            if (!string.IsNullOrEmpty(saveData))
             {
-                InitializeNewVariablesFromDatabase();
-                InitializeNewQuestEntriesFromDatabase();
-                InitializeNewSimStatusFromDatabase();
+                Lua.Run(saveData, DialogueDebug.LogInfo);
+                ExpandCompressedSimStatusData();
+                RefreshRelationshipAndStatusTablesFromLua();
+                if (initializeNewVariables)
+                {
+                    InitializeNewVariablesFromDatabase();
+                    InitializeNewQuestEntriesFromDatabase();
+                    InitializeNewSimStatusFromDatabase();
+                }
             }
             Apply();
         }
@@ -1113,7 +1125,7 @@ namespace PixelCrushers.DialogueSystem
         }
 
         /// <summary>
-        /// Instructs the Dialogue System to add any missing quest entries that are in the master 
+        /// Instructs the Dialogue System to add any missing quests and entries that are in the master 
         /// database but not in Lua.
         /// </summary>
         public static void InitializeNewQuestEntriesFromDatabase()
@@ -1128,17 +1140,35 @@ namespace PixelCrushers.DialogueSystem
                     if (database.items[i].IsItem) continue;
                     var dbQuest = database.items[i];
                     var questName = dbQuest.Name;
+                    var questNameTableIndex = DialogueLua.StringToTableIndex(questName);
+
+                    // Add any missing quests:
+                    if (!DialogueLua.DoesTableElementExist("Item", questName))
+                    {
+                        var questCode = string.Empty;
+                        questCode = "Item[\"" + DialogueLua.StringToTableIndex(questName) + "\"] = {{";
+                        for (int j = 0; j < dbQuest.fields.Count; j++)
+                        {
+                            var field = dbQuest.fields[j];
+                            questCode += DialogueLua.StringToTableIndex(field.title) + "=" +
+                                DialogueLua.ValueAsString(field.type, field.value) + ", ";
+                        }
+                        questCode += "}}; ";
+                        luaCode += questCode;
+                    }
+
+                    // Add any missing entries:
                     var dbEntryCount = dbQuest.LookupInt("Entry Count");
                     var luaEntryCount = DialogueLua.GetQuestField(questName, "Entry Count").AsInt;
                     if (luaEntryCount < dbEntryCount)
                     {
-                        luaCode += "Item[\"" + DialogueLua.StringToTableIndex(questName) + "\"].Entry_Count=" + dbEntryCount + "; ";
+                        luaCode += "Item[\"" + questNameTableIndex + "\"].Entry_Count=" + dbEntryCount + "; ";
                         for (int j = 0; j < dbQuest.fields.Count; j++)
                         {
                             var field = dbQuest.fields[j];
                             if (field.title.StartsWith("Entry ") && !field.title.EndsWith(" Count"))
                             {
-                                luaCode += "Item[\"" + DialogueLua.StringToTableIndex(questName) + "\"]." +
+                                luaCode += "Item[\"" + questNameTableIndex + "\"]." +
                                     DialogueLua.StringToTableIndex(field.title) + " = " +
                                     DialogueLua.ValueAsString(field.type, field.value) + "; ";
                             }

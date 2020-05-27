@@ -125,7 +125,24 @@ namespace PixelCrushers.DialogueSystem
 
         public Sprite GetPortraitSprite()
         {
-            return UITools.GetSprite(portrait, spritePortrait);
+            //--- Was: return UITools.GetSprite(portrait, spritePortrait);
+            //--- Instead, check for override set by SetPortrait():
+            var originalDebugLevel = DialogueDebug.level; // Suppress logging for Lua return Actor[].Current_Portrait.
+            DialogueDebug.level = DialogueDebug.DebugLevel.Warning;
+            string imageName = DialogueLua.GetActorField(Name, DialogueSystemFields.CurrentPortrait).asString;
+            DialogueDebug.level = originalDebugLevel;
+            if (string.IsNullOrEmpty(imageName))
+            {
+                return GetPortraitSprite(1);
+            }
+            else if (imageName.StartsWith("pic="))
+            {
+                return GetPortraitSprite(Tools.StringToInt(imageName.Substring("pic=".Length)));
+            }
+            else
+            {
+                return UITools.CreateSprite(DialogueManager.LoadAsset(imageName) as Texture2D);
+            }
         }
 
         private string LookupTextureName()

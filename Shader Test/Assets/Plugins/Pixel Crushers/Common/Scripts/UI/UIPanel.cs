@@ -39,6 +39,15 @@ namespace PixelCrushers
         [Tooltip("Normally the panel considers itself open at start if the GameObject starts active (GameObjectState). To explicitly specify whether the panel should start open or closed, select Open or Closed from the dropdown.")]
         public StartState startState = StartState.GameObjectState;
 
+        [Tooltip("Deactivate panel GameObject when panel is closed.")]
+        [SerializeField]
+        protected bool m_deactivateOnHidden = true;
+        public bool deactivateOnHidden
+        {
+            get { return m_deactivateOnHidden; }
+            set { m_deactivateOnHidden = value; }
+        }
+
         public UnityEvent onOpen = new UnityEvent();
         public UnityEvent onClose = new UnityEvent();
         public UnityEvent onBackButtonDown = new UnityEvent();
@@ -228,7 +237,7 @@ namespace PixelCrushers
         protected virtual void OnHidden()
         {
             panelState = PanelState.Closed;
-            gameObject.SetActive(false);
+            if (deactivateOnHidden) gameObject.SetActive(false);
         }
 
         protected virtual void Update()

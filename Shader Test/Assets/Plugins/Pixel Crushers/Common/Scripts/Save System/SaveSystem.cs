@@ -56,6 +56,24 @@ namespace PixelCrushers
 
         private static bool m_isQuitting = false;
 
+#if UNITY_2019_3_OR_NEWER
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void InitStaticVariables()
+        {
+            m_instance = null;
+            m_savers = new List<Saver>();
+            m_savedGameData = new SavedGameData();
+            m_serializer = null;
+            m_storer = null;
+            m_sceneTransitionManager = null;
+            m_playerSpawnpoint = null;
+            m_currentSceneIndex = NoSceneIndex;
+            m_addedScenes = new List<string>();
+            m_currentAsyncOperation = null;
+            m_isQuitting = false;
+        }
+#endif
+
         /// <summary>
         /// When loading a game, load the scene that the game was saved in.
         /// </summary>
@@ -380,12 +398,12 @@ namespace PixelCrushers
         }
 #endif
 
-            /// <summary>
-            /// Saves a game into a slot using the storage provider on the 
-            /// Save System GameObject.
-            /// </summary>
-            /// <param name="slotNumber">Slot in which to store saved game data.</param>
-            public void SaveGameToSlot(int slotNumber)
+        /// <summary>
+        /// Saves a game into a slot using the storage provider on the 
+        /// Save System GameObject.
+        /// </summary>
+        /// <param name="slotNumber">Slot in which to store saved game data.</param>
+        public void SaveGameToSlot(int slotNumber)
         {
             SaveToSlot(slotNumber);
         }
@@ -436,28 +454,16 @@ namespace PixelCrushers
         /// </summary>
         public static void SaveToSlot(int slotNumber)
         {
-            if (saveStarted.GetInvocationList().Length > 1)
-            {
-                instance.StartCoroutine(SaveToSlotCoroutine(slotNumber));
-            }
-            else
-            {
-                SaveToSlotNow(slotNumber);
-            }
+            instance.StartCoroutine(SaveToSlotCoroutine(slotNumber));
         }
 
         private static IEnumerator SaveToSlotCoroutine(int slotNumber)
         {
             saveStarted();
             yield return null;
-            SaveToSlotNow(slotNumber);
-            saveEnded();
-        }
-
-        private static void SaveToSlotNow(int slotNumber)
-        {
-            storer.StoreSavedGameData(slotNumber, RecordSavedGameData());
             PlayerPrefs.SetInt(LastSavedGameSlotPlayerPrefsKey, slotNumber);
+            yield return storer.StoreSavedGameDataAsync(slotNumber, RecordSavedGameData());
+            saveEnded();
         }
 
         /// <summary>
@@ -751,8 +757,10 @@ namespace PixelCrushers
             instance.StartCoroutine(LoadSceneInternal(startingSceneName));
         }
 
-        // Calls OnRestartGame on all savers.
-        private static void SaversRestartGame()
+        /// <summary>
+        /// Calls OnRestartGame on all savers.
+        /// </summary>
+        public static void SaversRestartGame()
         {
             if (m_savers.Count <= 0) return;
             for (int i = m_savers.Count - 1; i >= 0; i--) // A saver may remove itself from list during restart.

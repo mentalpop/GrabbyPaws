@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -58,6 +59,9 @@ namespace PixelCrushers.DialogueSystem
 
         public UIAutonumberSettings autonumber = new UIAutonumberSettings();
 
+        [Tooltip("If non-zero, prevent input for this duration in seconds when opening menu.")]
+        public float blockInputDuration = 0;
+
         public UnityEvent onContentChanged = new UnityEvent();
 
         [Tooltip("When focusing panel, set this animator trigger.")]
@@ -107,6 +111,7 @@ namespace PixelCrushers.DialogueSystem
 
         protected StandardUITimer m_timer = null;
         protected System.Action m_timeoutHandler = null;
+        protected CanvasGroup m_mainCanvasGroup = null;
 
         #endregion
 
@@ -149,6 +154,11 @@ namespace PixelCrushers.DialogueSystem
             ActivateUIElements();
             Open();
             Focus();
+            if (blockInputDuration > 0)
+            {
+                DisableInput();
+                Invoke("EnableInput", blockInputDuration);
+            }
         }
 
         public virtual void HideResponses()
@@ -166,7 +176,7 @@ namespace PixelCrushers.DialogueSystem
         public virtual void Focus()
         {
             if (hasFocus) return;
-            if (panelState == PanelState.Opening)
+            if (panelState == PanelState.Opening && enabled && gameObject.activeInHierarchy)
             {
                 StartCoroutine(FocusWhenOpen());
             }
@@ -229,7 +239,7 @@ namespace PixelCrushers.DialogueSystem
         protected virtual void SetUIElementsActive(bool value)
         {
             Tools.SetGameObjectActive(panel, value);
-            Tools.SetGameObjectActive(pcImage, value);
+            Tools.SetGameObjectActive(pcImage, value && pcImage != null && pcImage.sprite != null);
             pcName.SetActive(value);
             Tools.SetGameObjectActive(timerSlider, false); // Let StartTimer activate if needed.
             if (value == false) ClearResponseButtons();
@@ -488,6 +498,30 @@ namespace PixelCrushers.DialogueSystem
             onContentChanged.Invoke();
         }
 
+        protected void DisableInput()
+        {
+            SetInput(false);
+        }
+
+        protected void EnableInput()
+        {
+            SetInput(true);
+        }
+
+        protected void SetInput(bool value)
+        {
+            if (m_mainCanvasGroup == null)
+            {
+                var ui = GetComponentInParent<StandardDialogueUI>();
+                if (ui == null) return;
+                var mainPanel = ui.conversationUIElements.mainPanel;
+                if (mainPanel == null) return;
+                m_mainCanvasGroup = mainPanel.GetComponent<CanvasGroup>() ?? mainPanel.gameObject.AddComponent<CanvasGroup>();
+            }
+            m_mainCanvasGroup.interactable = value;
+            EventSystem.current.GetComponent<StandaloneInputModule>().enabled = value;
+            UIButtonKeyTrigger.monitorInput = value;
+        }
         #endregion
 
         #region Timer

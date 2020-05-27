@@ -72,11 +72,11 @@ namespace PixelCrushers.DialogueSystem
         {
             if (m_isAwaitingInput && !DialogueManager.IsDialogueSystemInputDisabled())
             {
-                if (Input.GetKeyDown(acceptKey))
+                if (InputDeviceManager.IsKeyDown(acceptKey))
                 {
                     AcceptTextInput();
                 }
-                else if (Input.GetKeyDown(cancelKey))
+                else if (InputDeviceManager.IsKeyDown(cancelKey))
                 {
                     CancelTextInput();
                 }

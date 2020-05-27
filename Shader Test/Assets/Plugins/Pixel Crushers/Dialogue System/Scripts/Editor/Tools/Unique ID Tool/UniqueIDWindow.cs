@@ -34,7 +34,11 @@ namespace PixelCrushers.DialogueSystem
         void OnEnable()
         {
             minSize = new Vector2(340, 128);
-            if (prefs == null) prefs = UniqueIDWindowPrefs.Load();
+            if (prefs == null)
+            {
+                prefs = UniqueIDWindowPrefs.Load();
+                prefs.RelinkDatabases();
+            }
         }
 
         void OnDisable()
@@ -107,6 +111,7 @@ namespace PixelCrushers.DialogueSystem
 
         private void DrawDatabaseList()
         {
+            EditorGUI.BeginChangeCheck();
             EditorWindowTools.StartIndentedSection();
             DialogueDatabase databaseToDelete = null;
             for (int i = 0; i < prefs.databases.Count; i++)
@@ -119,12 +124,14 @@ namespace PixelCrushers.DialogueSystem
             }
             if (databaseToDelete != null) prefs.databases.Remove(databaseToDelete);
             EditorWindowTools.EndIndentedSection();
+            if (EditorGUI.EndChangeCheck()) prefs.Save();
         }
 
         private void AddAllDatabasesInProject()
         {
             prefs.databases.Clear();
             AddAllDatabasesInFolder("Assets", true);
+            prefs.Save();
         }
 
         private void AddAllDatabasesInFolder(string folderPath, bool recursive)
@@ -139,6 +146,7 @@ namespace PixelCrushers.DialogueSystem
                     prefs.databases.Add(database);
                 }
             }
+            prefs.Save();
         }
 
         private void DrawButtonSection()
