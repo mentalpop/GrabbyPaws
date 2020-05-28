@@ -62,19 +62,17 @@ public class SneakDiary : MonoBehaviour
 		timelineStick.transform.position = new Vector2(timelineStickOrigin.x + ScreenSpace.Convert(timelineSegmentWidth) * timeInterval, timelineStickOrigin.y);
 	}
 
-	public GameObject TooltipOpenSmall(string text, Vector2 position, bool faceLeft) {
+	public TooltipSmall TooltipOpenSmall(string text, bool faceLeft) {
 		GameObject newTooltip = Instantiate(toolTipPrefab, transform, false);
-		newTooltip.transform.position = position;
 		TooltipSmall ttS = newTooltip.GetComponent<TooltipSmall>();
 		ttS.Unpack(text, faceLeft);
-		return newTooltip;
+		return ttS;
 	}
 
-	public GameObject TooltipOpenLarge(TimeIntervalData timeIntervalData, Vector2 position, bool faceLeft) {
+	public TooltipTextContainer TooltipOpenLarge(TimeIntervalData timeIntervalData, bool faceLeft) {
 		GameObject newTooltip = Instantiate(toolTipExpandedPrefab, transform, false);
-		newTooltip.transform.position = position;
 		TooltipTextContainer ttC = newTooltip.GetComponent<TooltipTextContainer>();
 		ttC.Unpack(timeIntervalData, faceLeft);
-		return newTooltip;
+		return ttC;
 	}
 }

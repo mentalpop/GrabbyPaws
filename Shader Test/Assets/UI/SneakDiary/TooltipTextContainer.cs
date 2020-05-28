@@ -5,6 +5,8 @@ using TMPro;
 
 public class TooltipTextContainer : MonoBehaviour
 {
+    public RectTransform myRect;
+
     public GameObject bubbleLeft;
     public TextMeshProUGUI titleLeft;
     public TextMeshProUGUI descriptionLeft;

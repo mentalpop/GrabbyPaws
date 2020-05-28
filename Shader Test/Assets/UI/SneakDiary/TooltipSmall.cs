@@ -6,6 +6,8 @@ using TMPro;
 public class TooltipSmall : MonoBehaviour
 {
     public float padding = 16f;
+    public RectTransform myRect;
+
     public GameObject bubbleLeft;
     public TextMeshProUGUI titleLeft;
     

@@ -10,12 +10,13 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public Sprite xLarge;
     public Image xImage;
     public Vector2 tooltipOffset;
+    public RectTransform myRect;
 
     private bool faceLeft = true;
     private SneakDiary sneakDiaryRef;
     private TimeIntervalData timeIntervalData;
-    private GameObject tooltip;
-    private GameObject tooltipLarge;
+    private TooltipSmall tooltip;
+    private TooltipTextContainer tooltipLarge;
 
     public void Unpack(TimeIntervalData _timeIntervalData, SneakDiary _sneakDiaryRef, bool _faceLeft) {
         faceLeft = _faceLeft;
@@ -24,28 +25,30 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         xImage.sprite = timeIntervalData.isMajorEvent ? xLarge : xSmall; //Set size of X sprite
         xImage.SetNativeSize();
     }
-
+    /*
+    
     private void Awake() {
 //Convert offset to screen space
         tooltipOffset = new Vector2(ScreenSpace.Convert(tooltipOffset.x), ScreenSpace.Convert(tooltipOffset.y));
     }
+    //*/
 
-    private void Update() {
+    private void FixedUpdate() {
 //Match position of Tooltips
         if (tooltip != null) {
-            tooltip.transform.position = new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y);
+            CorrectTransformPosition(tooltip.transform, tooltip.myRect);
         }
         if (tooltipLarge != null) {
-            tooltipLarge.transform.position = new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y);
+            CorrectTransformPosition(tooltipLarge.transform, tooltipLarge.myRect);
         }
     }
 
     public void OnPointerClick(PointerEventData eventData) {
         if (tooltipLarge == null) {
-            Vector2 positionVector = new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y);
-            tooltipLarge = sneakDiaryRef.TooltipOpenLarge(timeIntervalData, positionVector, faceLeft);
+            tooltipLarge = sneakDiaryRef.TooltipOpenLarge(timeIntervalData, faceLeft);
+            CorrectTransformPosition(tooltipLarge.transform, tooltipLarge.myRect);
             if (tooltip != null) {
-                Destroy(tooltip);
+                Destroy(tooltip.gameObject);
                 tooltip = null;
             }
         }
@@ -53,19 +56,25 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (tooltipLarge == null && tooltip == null) {
-            Vector2 positionVector = new Vector2(transform.position.x + tooltipOffset.x, transform.position.y + tooltipOffset.y);
-            tooltip = sneakDiaryRef.TooltipOpenSmall(timeIntervalData.title, positionVector, faceLeft);
+            tooltip = sneakDiaryRef.TooltipOpenSmall(timeIntervalData.title, faceLeft);
+            CorrectTransformPosition(tooltip.transform, tooltip.myRect);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         if (tooltipLarge != null) {
-            Destroy(tooltipLarge);
+            Destroy(tooltipLarge.gameObject);
             tooltipLarge = null;
         }
         if (tooltip != null) {
-            Destroy(tooltip);
+            Destroy(tooltip.gameObject);
             tooltip = null;
         }
+    }
+
+    private void CorrectTransformPosition(Transform _tooltip, RectTransform _tRect) {
+        _tooltip.SetParent(transform);
+        _tRect.anchoredPosition = tooltipOffset;
+        _tooltip.SetParent(sneakDiaryRef.transform);
     }
 }
