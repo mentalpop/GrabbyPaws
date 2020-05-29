@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class LappyMenu : MonoBehaviour
 {
+    public AnimatedUIContainer container;
     public SneakDiary sneakDiary;
     public NotSecrets notSecrets;
     public OptionsMenu optionsMenu;
@@ -35,12 +36,22 @@ public class LappyMenu : MonoBehaviour
         startTabsSortMenu.OnTabSelected += SelectStartMenuItem;
         clickToClose.OnClick += Close;
         startButton.OnClick += OnClickStart;
+        container.OnEffectComplete += Container_OnEffectComplete;
+    }
+
+    private void Container_OnEffectComplete(bool reverse) {
+        if (reverse) {
+            gameObject.SetActive(false); //For now, just close instantly
+        } else {
+
+        }
     }
 
     private void OnDisable() {
         startTabsSortMenu.OnTabSelected -= SelectStartMenuItem;
         clickToClose.OnClick -= Close;
 		startButton.OnClick -= OnClickStart;
+        container.OnEffectComplete -= Container_OnEffectComplete;
 		if (awaitingConfirmation) {
 			awaitingConfirmation = false;
 			confirmationWindow.OnChoiceMade -= OnConfirm;
@@ -110,7 +121,8 @@ public class LappyMenu : MonoBehaviour
     }
 
     public void Close() {
-        gameObject.SetActive(false); //For now, just close instantly
+        if (!container.gTween.doReverse)
+            container.gTween.Reverse();
     }
 
     public void SetBackground(int _bgIndex) {

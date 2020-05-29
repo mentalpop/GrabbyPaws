@@ -109,7 +109,12 @@ public class UI : MonoBehaviour
     private void ShowLappyMenu() {
     //Show / Hide the HUD
         bool menuIsActive = !lappy.gameObject.activeSelf;
-        lappy.gameObject.SetActive(menuIsActive);
+        Debug.Log("menuIsActive: "+menuIsActive);
+        if (menuIsActive)
+            lappy.gameObject.SetActive(true);
+        else {
+            lappy.Close();
+        }
         SetMouseState(menuIsActive, lappy.gameObject);
     }
 
@@ -140,7 +145,7 @@ public class UI : MonoBehaviour
     //Using Cinemachine Freelook?
             if (Instance.cBrain != null) {
                 CinemachineFreeLook currentCamera = Instance.cBrain.ActiveVirtualCamera as CinemachineFreeLook;
-                Debug.Log("currentCamera: "+currentCamera);
+                //Debug.Log("currentCamera: "+currentCamera);
                 if (currentCamera != null) {
                     if (suppressCamera) {
                         currentCamera.m_XAxis.m_InputAxisName = "";
