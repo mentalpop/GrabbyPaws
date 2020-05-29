@@ -9,6 +9,7 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public Sprite xSmall;
     public Sprite xLarge;
     public Image xImage;
+    public Sine xImageSine;
     public Vector2 tooltipOffset;
     public RectTransform myRect;
 
@@ -32,6 +33,18 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         tooltipOffset = new Vector2(ScreenSpace.Convert(tooltipOffset.x), ScreenSpace.Convert(tooltipOffset.y));
     }
     //*/
+
+    private void Update() {
+        if (!xImageSine.durationElapsed) {
+            xImageSine.Increment();
+            if (xImageSine.durationElapsed) {
+                xImage.rectTransform.localScale = Vector2.one;
+            } else {
+                float _val = 1f + xImageSine.GetSineDuration();
+                xImage.rectTransform.localScale = new Vector2(_val, _val);
+            }
+        }
+    }
 
     private void FixedUpdate() {
 //Match position of Tooltips
@@ -58,6 +71,7 @@ public class TimeInterval : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         if (tooltipLarge == null && tooltip == null) {
             tooltip = sneakDiaryRef.TooltipOpenSmall(timeIntervalData.title, faceLeft);
             CorrectTransformPosition(tooltip.transform, tooltip.myRect);
+            xImageSine.Reset();
         }
     }
 

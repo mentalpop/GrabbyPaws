@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SneakDiary : MonoBehaviour
 {
     public ButtonGeneric closeButton;
     public ClickToClose clickToClose;
+
+	public DropDownMenu timeSelector;
+	public Image timeOfNightIndicator;
+	public List<Sprite> nightPhaseSprites = new List<Sprite>();
 	
     public GameObject toolTipPrefab;
     public GameObject toolTipExpandedPrefab;
@@ -26,11 +31,19 @@ public class SneakDiary : MonoBehaviour
 	private void OnEnable() {
         clickToClose.OnClick += Close;
 		closeButton.OnClick += Close;
+		timeSelector.OnChoiceMade += TimeSelector_OnChoiceMade;
+	}
+
+	private void TimeSelector_OnChoiceMade(int choiceMade) {
+		timeOfNightIndicator.sprite = nightPhaseSprites[choiceMade];
+		nightPhase = (NightPhases)choiceMade;
+		Unpack();
 	}
 
 	private void OnDisable() {
         clickToClose.OnClick -= Close;
 		closeButton.OnClick -= Close;
+		timeSelector.OnChoiceMade -= TimeSelector_OnChoiceMade;
 	}
 
 	private void Close() {
@@ -39,15 +52,8 @@ public class SneakDiary : MonoBehaviour
 
 	private void Start() {
 	//Debug
-		FlagRepository.WriteQuestKey(QuestNames.q001TwilightCottonCandyEndFlag.ToString(), true);
-	//Spawn list of NPCs
-		foreach (var npc in npcList.npcList) {
-			GameObject npcProfile = Instantiate(npcProfilePrefab, profileListTransform, false);
-			SneakDiaryProfile sneakDiaryProfile = npcProfile.GetComponent<SneakDiaryProfile>();
-			sneakDiaryProfile.Unpack(npc, this);
-		}
-	//Timeline Stick
-		timelineStickOrigin = timelineStick.transform.position;
+		//FlagRepository.WriteQuestKey(QuestNames.q001TwilightCottonCandyEndFlag.ToString(), true);
+		Unpack();
 	//Profiles will need access to the list of Quests, so collect them here for cached reference
         /*
         quests = QuestLog.GetAllQuests(QuestState.Abandoned | QuestState.Active | QuestState.Failure | QuestState.Success | QuestState.Unassigned, false);
@@ -56,6 +62,20 @@ public class SneakDiary : MonoBehaviour
             Debug.Log("quest: "+quest);
         }
 		//*/
+	}
+
+	public void Unpack() {
+		foreach (Transform child in profileListTransform) {
+			Destroy(child.gameObject);
+		}
+	//Spawn list of NPCs
+		foreach (var npc in npcList.npcList) {
+			GameObject npcProfile = Instantiate(npcProfilePrefab, profileListTransform, false);
+			SneakDiaryProfile sneakDiaryProfile = npcProfile.GetComponent<SneakDiaryProfile>();
+			sneakDiaryProfile.Unpack(npc, this);
+		}
+	//Timeline Stick
+		timelineStickOrigin = timelineStick.transform.position;
 	}
 
 	private void Update() {
