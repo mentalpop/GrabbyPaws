@@ -96,6 +96,7 @@ public class UI : MonoBehaviour
     public void DisplayReadable(ReadableData rData) {
         if (rData.isBook) {
             book.gameObject.SetActive(true);
+            SetMouseState(true, book.gameObject);
             book.Unpack(rData);
         } else {
             Debug.Log("Readable PC not yet implemented!");
@@ -141,6 +142,8 @@ public class UI : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
+        Debug.Log("Instance.thirdPersonCamera: "+Instance.thirdPersonCamera);
+        Debug.Log("Instance.cBrain: "+Instance.cBrain);
         if (Instance.thirdPersonCamera == null) {
     //Using Cinemachine Freelook?
             if (Instance.cBrain != null) {

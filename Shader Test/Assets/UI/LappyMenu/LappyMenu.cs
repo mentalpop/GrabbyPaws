@@ -39,15 +39,6 @@ public class LappyMenu : MonoBehaviour
         container.OnEffectComplete += Container_OnEffectComplete;
     }
 
-    private void Container_OnEffectComplete(bool reverse) {
-        if (reverse) {
-            UI.SetMouseState(false, gameObject); //De-register from UI
-            gameObject.SetActive(false); //For now, just close instantly
-        } else {
-
-        }
-    }
-
     private void OnDisable() {
         startTabsSortMenu.OnTabSelected -= SelectStartMenuItem;
         clickToClose.OnClick -= Close;
@@ -57,6 +48,20 @@ public class LappyMenu : MonoBehaviour
 			awaitingConfirmation = false;
 			confirmationWindow.OnChoiceMade -= OnConfirm;
 		}
+    }
+
+    private void Container_OnEffectComplete(bool reverse) {
+        if (reverse) {
+            UI.SetMouseState(false, gameObject); //De-register from UI
+            gameObject.SetActive(false); //For now, just close instantly
+        } else {
+
+        }
+    }
+
+    public void Close() {
+        if (!container.gTween.doReverse)
+            container.gTween.Reverse();
     }
     
 	private void OnConfirm(bool _choice) {
@@ -119,11 +124,6 @@ public class LappyMenu : MonoBehaviour
 			    awaitingConfirmation = true;
                 break;
         }
-    }
-
-    public void Close() {
-        if (!container.gTween.doReverse)
-            container.gTween.Reverse();
     }
 
     public void SetBackground(int _bgIndex) {
