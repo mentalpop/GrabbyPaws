@@ -108,14 +108,13 @@ public class UI : MonoBehaviour
 
     private void ShowLappyMenu() {
     //Show / Hide the HUD
-        bool menuIsActive = !lappy.gameObject.activeSelf;
-        Debug.Log("menuIsActive: "+menuIsActive);
-        if (menuIsActive)
+        bool menuIsActive = !lappy.gameObject.activeSelf;//InHierarchy;
+        if (menuIsActive) {
+            SetMouseState(true, lappy.gameObject);
             lappy.gameObject.SetActive(true);
-        else {
+        } else {
             lappy.Close();
         }
-        SetMouseState(menuIsActive, lappy.gameObject);
     }
 
     private void ShowInventoryDisplay() {
@@ -133,6 +132,7 @@ public class UI : MonoBehaviour
             Instance.mouseCursorUsers.Remove(gameObject);
         }
         bool suppressCamera = false;
+        //Debug.Log("Instance.mouseCursorUsers.Count: "+Instance.mouseCursorUsers.Count);
         if (Instance.mouseCursorUsers.Count > 0) {
             suppressCamera = true;
             Cursor.visible = true;
