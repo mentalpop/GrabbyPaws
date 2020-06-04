@@ -53,7 +53,6 @@ public class UI : MonoBehaviour
     [Header("Readables")]
     public Readable book;
     [Header("Currency")]
-    public float timeShowCurrency = 3f;
     public Currency currency;
     public CurrencyDisplay currencyDisplay;
     //[Header("Settings")]
@@ -69,9 +68,8 @@ public class UI : MonoBehaviour
     public event FileIOEvent OnSave = delegate { };
     public event FileIOEvent OnLoad = delegate { };
 
-    private bool doShowCurrencyDisplay = false;
+    //private bool doShowCurrencyDisplay = false;
     private GameObject lockUI = null;
-    private Coroutine currencyDisplayRoutine;
 
     private List<GameObject> mouseCursorUsers = new List<GameObject>();
 
@@ -103,15 +101,6 @@ public class UI : MonoBehaviour
         }
     }
 
-    private void ShowHideCurrencyDisplay() {
-        bool showDisplay = doShowCurrencyDisplay || InventoryDisplay.gameObject.activeSelf;
-        if (showDisplay) {
-            currencyDisplay.gameObject.SetActive(true);
-        } else {
-            currencyDisplay.Close();
-        }
-    }
-
     private void ShowLappyMenu() {
     //Show / Hide the HUD
         bool menuIsActive = !lappy.gameObject.activeSelf;//InHierarchy;
@@ -128,13 +117,16 @@ public class UI : MonoBehaviour
         bool menuIsActive = !InventoryDisplay.gameObject.activeSelf;
         if (menuIsActive) {
             InventoryDisplay.gameObject.SetActive(true);
-            currencyDisplay.gameObject.SetActive(true);
+            if (currencyDisplay.gameObject.activeSelf) {
+                currencyDisplay.Open();
+            } else {
+                currencyDisplay.gameObject.SetActive(true);
+            }
         } else {
             InventoryDisplay.Close();
             currencyDisplay.Close();
         }
         SetMouseState(menuIsActive, InventoryDisplay.gameObject);
-        //ShowHideCurrencyDisplay();
     }
 
     public static void SetMouseState(bool lockMouse, GameObject gameObject) {
@@ -185,19 +177,17 @@ public class UI : MonoBehaviour
     }
 
     private void OnCurrencyChanged() {
-        doShowCurrencyDisplay = true;
+        //doShowCurrencyDisplay = true;
         currencyDisplay.UpdateCashDisplay();
-        ShowHideCurrencyDisplay();
-        if (currencyDisplayRoutine != null)
-            StopCoroutine(currencyDisplayRoutine); //Stop before starting another
-        currencyDisplayRoutine = StartCoroutine(DelayHideCurrencyDisplay());
-    }
-
-    IEnumerator DelayHideCurrencyDisplay() {
-        yield return new WaitForSeconds(timeShowCurrency);
-        doShowCurrencyDisplay = false;
-        ShowHideCurrencyDisplay();
-        currencyDisplayRoutine = null;
+        currencyDisplay.gameObject.SetActive(true);
+        /*
+        bool showDisplay = doShowCurrencyDisplay || InventoryDisplay.gameObject.activeSelf;
+        if (showDisplay) {
+            currencyDisplay.gameObject.SetActive(true);
+        } else {
+            currencyDisplay.Close();
+        }
+        //*/
     }
 
     public static void LockUI(GameObject _gameObject) {
