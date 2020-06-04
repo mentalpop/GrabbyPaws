@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InventoryDisplay : MonoBehaviour
 {
+    public AnimatedUIContainer container;
     public Inventory inventory;
     
     public TabSortMenu inventoryTabMenu;
@@ -19,11 +20,24 @@ public class InventoryDisplay : MonoBehaviour
     private void OnEnable() {
         inventoryTabMenu.OnTabSelected += SetActiveTab;
         inventory.OnItemChanged += UpdateDisplay;
+        container.OnEffectComplete += Container_OnEffectComplete;
     }
 
     private void OnDisable() {
         inventoryTabMenu.OnTabSelected -= SetActiveTab;
         inventory.OnItemChanged -= UpdateDisplay;
+        container.OnEffectComplete -= Container_OnEffectComplete;
+    }
+
+    private void Container_OnEffectComplete(bool reverse) {
+        if (reverse) {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void Close() {
+        if (!container.gTween.doReverse)
+            container.gTween.Reverse();
     }
 
     void Start() {

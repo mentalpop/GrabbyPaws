@@ -58,7 +58,7 @@ public class UI : MonoBehaviour
     public CurrencyDisplay currencyDisplay;
     //[Header("Settings")]
     [Header("Inventory")]
-    public GameObject InventoryDisplay;
+    public InventoryDisplay InventoryDisplay;
     public Inventory inventory;
     public CinemachineBrain cBrain;
     [HideInInspector] public vThirdPersonCamera thirdPersonCamera;
@@ -104,7 +104,12 @@ public class UI : MonoBehaviour
     }
 
     private void ShowHideCurrencyDisplay() {
-        currencyDisplay.gameObject.SetActive(doShowCurrencyDisplay || InventoryDisplay.activeSelf);
+        bool showDisplay = doShowCurrencyDisplay || InventoryDisplay.gameObject.activeSelf;
+        if (showDisplay) {
+            currencyDisplay.gameObject.SetActive(true);
+        } else {
+            currencyDisplay.Close();
+        }
     }
 
     private void ShowLappyMenu() {
@@ -120,10 +125,16 @@ public class UI : MonoBehaviour
 
     private void ShowInventoryDisplay() {
     //Show / Hide the HUD
-        bool menuIsActive = !InventoryDisplay.activeSelf;
-        InventoryDisplay.SetActive(menuIsActive);
-        SetMouseState(menuIsActive, InventoryDisplay);
-        ShowHideCurrencyDisplay();
+        bool menuIsActive = !InventoryDisplay.gameObject.activeSelf;
+        if (menuIsActive) {
+            InventoryDisplay.gameObject.SetActive(true);
+            currencyDisplay.gameObject.SetActive(true);
+        } else {
+            InventoryDisplay.Close();
+            currencyDisplay.Close();
+        }
+        SetMouseState(menuIsActive, InventoryDisplay.gameObject);
+        //ShowHideCurrencyDisplay();
     }
 
     public static void SetMouseState(bool lockMouse, GameObject gameObject) {
@@ -142,8 +153,10 @@ public class UI : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
+        /*
         Debug.Log("Instance.thirdPersonCamera: "+Instance.thirdPersonCamera);
         Debug.Log("Instance.cBrain: "+Instance.cBrain);
+        //*/
         if (Instance.thirdPersonCamera == null) {
     //Using Cinemachine Freelook?
             if (Instance.cBrain != null) {
