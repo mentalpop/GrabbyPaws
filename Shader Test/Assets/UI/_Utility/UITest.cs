@@ -6,6 +6,11 @@ public class UITest : MonoBehaviour
 {
     public ReadableData sampleBook;
 
+    private void Start() {
+//Debug; open Lappy menu instantly to test
+        UI.Instance.ShowLappyMenu(true); 
+    }
+
     void Update() {
         if (Input.GetKeyDown(KeyCode.B)) { //B for Book
             UI.Instance.DisplayReadable(sampleBook);

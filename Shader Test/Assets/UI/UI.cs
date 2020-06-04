@@ -55,12 +55,14 @@ public class UI : MonoBehaviour
     [Header("Currency")]
     public Currency currency;
     public CurrencyDisplay currencyDisplay;
-    //[Header("Settings")]
     [Header("Inventory")]
     public InventoryDisplay InventoryDisplay;
     public Inventory inventory;
     public CinemachineBrain cBrain;
     [HideInInspector] public vThirdPersonCamera thirdPersonCamera;
+
+//Control settings
+    [HideInInspector] public float mouseSensitivity;
 
     public static UI Instance { get; private set; }
 
@@ -101,9 +103,9 @@ public class UI : MonoBehaviour
         }
     }
 
-    private void ShowLappyMenu() {
+    public void ShowLappyMenu(bool _override) { //TODO: Make private
     //Show / Hide the HUD
-        bool menuIsActive = !lappy.gameObject.activeSelf;//InHierarchy;
+        bool menuIsActive = _override || !lappy.gameObject.activeSelf;//InHierarchy;
         if (menuIsActive) {
             SetMouseState(true, lappy.gameObject);
             lappy.gameObject.SetActive(true);
@@ -205,7 +207,7 @@ public class UI : MonoBehaviour
                 ShowInventoryDisplay();
             }
             if (Input.GetButtonDown("Kwit")) { //
-                ShowLappyMenu();
+                ShowLappyMenu(false);
             }
         }
     }
