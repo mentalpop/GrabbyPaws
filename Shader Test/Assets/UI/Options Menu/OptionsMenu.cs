@@ -1,17 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
 {
     public LappyMenu lappyMenu;
 	public ButtonGeneric closeButton;
     public ClickToClose clickToClose;
-
+    [Header("Video Tab")]
 	public DropDownMenu screenMode;
 	public DropDownMenu resolution;
 	public DropDownMenu quality;
-	public DropDownMenu lappyBG;
+    [Header("Misc Tab")]
+    public DropDownMenu lappyBG;
+    public Slider mouseSensitivity;
+
+    //[Header("Controls Tab")]
 
 	private void OnEnable() {
         clickToClose.OnClick += Close;
@@ -42,6 +47,19 @@ public class OptionsMenu : MonoBehaviour
 		lappyBG.chosenIndex = lappyMenu.chosenBGIndex;
 		lappyBG.SetHeader(lappyBG.chosenIndex);
 		lappyBG.OnChoiceMade += LappyBG_OnChoiceMade;
+	//mouseSensitivity
+        mouseSensitivity.value = UI.Instance.mouseSensitivity;
+        mouseSensitivity.onValueChanged.AddListener (delegate {mouseSensitivity_onValueChanged ();});
+	}
+
+	private void OnDisable() {
+        clickToClose.OnClick -= Close;
+		closeButton.OnClick -= Close;
+		screenMode.OnChoiceMade -= ScreenMode_OnChoiceMade;
+		resolution.OnChoiceMade -= Resolution_OnChoiceMade;
+		quality.OnChoiceMade -= Quality_OnChoiceMade;
+		lappyBG.OnChoiceMade -= LappyBG_OnChoiceMade;
+        mouseSensitivity.onValueChanged.RemoveListener (delegate {mouseSensitivity_onValueChanged ();});
 	}
 
 	private void LappyBG_OnChoiceMade(int choiceMade) {
@@ -68,15 +86,10 @@ public class OptionsMenu : MonoBehaviour
 			case 1: Screen.fullScreen = true; break;
 		}
 	}
-
-	private void OnDisable() {
-        clickToClose.OnClick -= Close;
-		closeButton.OnClick -= Close;
-		screenMode.OnChoiceMade -= ScreenMode_OnChoiceMade;
-		resolution.OnChoiceMade -= Resolution_OnChoiceMade;
-		quality.OnChoiceMade -= Quality_OnChoiceMade;
-		lappyBG.OnChoiceMade -= LappyBG_OnChoiceMade;
-	}
+	
+    public void mouseSensitivity_onValueChanged() {
+        UI.Instance.mouseSensitivity = mouseSensitivity.value;
+    }
 
 	private void Close() {
 		gameObject.SetActive(false);

@@ -16,6 +16,8 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     //public GameObject scrollBar; //Hide the Bar graphic while opening / closing
     public GameObject background;
     public Transform contentTransform;
+    public Transform parentTransform;
+    public Transform masterContainer;
     public GameObject ddOptionPrefab;
     public GameObject ddSeparatorPrefab;
     public Sine mySine;
@@ -167,6 +169,9 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
             }
             SetDeltaHeight();
             buttonState.SetActiveState(true);
+            if (masterContainer != null) {
+                transform.SetParent(masterContainer);
+            }
         } else {
     //OnClose
             mySine.Max();
@@ -176,6 +181,9 @@ public class DropDownMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 SetHeader(chosenIndex);
             }
             buttonState.SetActiveState(false);
+            if (parentTransform != null) {
+                transform.SetParent(parentTransform);
+            }
         }
     }
 
