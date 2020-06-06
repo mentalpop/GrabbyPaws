@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
             tpCamera.SetTarget(player.transform);
     //Set the camera on the UI
             UI.Instance.cBrain = newGO.GetComponent<CinemachineBrain>();
-            UI.Instance.thirdPersonCamera = tpCamera;
+            //UI.Instance.thirdPersonCamera = tpCamera;
         } else {
             Debug.Log("Failed to fing SpawnPoint: "+point);
         }
