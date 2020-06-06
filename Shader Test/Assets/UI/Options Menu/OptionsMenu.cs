@@ -13,6 +13,7 @@ public class OptionsMenu : MonoBehaviour
 	public DropDownMenu resolution;
 	public DropDownMenu quality;
     [Header("Misc Tab")]
+    public DropDownMenu uiScale;
     public DropDownMenu lappyBG;
     public Slider mouseSensitivity;
 
@@ -43,6 +44,8 @@ public class OptionsMenu : MonoBehaviour
 		resolution.OnChoiceMade += Resolution_OnChoiceMade;
 	//Quality
 		quality.OnChoiceMade += Quality_OnChoiceMade;
+    //UI Scale
+        uiScale.OnChoiceMade += UiScale_OnChoiceMade;
 	//Lappy BG
 		lappyBG.chosenIndex = lappyMenu.chosenBGIndex;
 		lappyBG.SetHeader(lappyBG.chosenIndex);
@@ -52,15 +55,26 @@ public class OptionsMenu : MonoBehaviour
         mouseSensitivity.onValueChanged.AddListener (delegate {mouseSensitivity_onValueChanged ();});
 	}
 
-	private void OnDisable() {
+    private void OnDisable() {
         clickToClose.OnClick -= Close;
 		closeButton.OnClick -= Close;
 		screenMode.OnChoiceMade -= ScreenMode_OnChoiceMade;
 		resolution.OnChoiceMade -= Resolution_OnChoiceMade;
 		quality.OnChoiceMade -= Quality_OnChoiceMade;
+		uiScale.OnChoiceMade -= UiScale_OnChoiceMade;
 		lappyBG.OnChoiceMade -= LappyBG_OnChoiceMade;
         mouseSensitivity.onValueChanged.RemoveListener (delegate {mouseSensitivity_onValueChanged ();});
 	}
+
+    private void UiScale_OnChoiceMade(int choiceMade) {
+        float _uiScale = 1f;
+		switch (choiceMade) {
+            case 0: _uiScale = 1f; break;
+            case 1: _uiScale = 1.125f; break;
+            case 2: _uiScale = 1.25f; break;
+        }
+		UI.SetUIScale(_uiScale);
+    }
 
 	private void LappyBG_OnChoiceMade(int choiceMade) {
 		lappyMenu.SetBackground(choiceMade);

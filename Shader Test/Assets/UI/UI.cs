@@ -50,18 +50,18 @@ public class UI : MonoBehaviour
     public LappyMenu lappy;
     public ConfirmationWindow confirmationWindow;
     //public FlagRepository flagRepository;
-    [Header("Readables")]
+[Header("Readables")]
     public Readable book;
-    [Header("Currency")]
+[Header("Currency")]
     public Currency currency;
     public CurrencyDisplay currencyDisplay;
-    [Header("Inventory")]
+[Header("Inventory")]
     public InventoryDisplay InventoryDisplay;
     public Inventory inventory;
     public CinemachineBrain cBrain;
-    [HideInInspector] public vThirdPersonCamera thirdPersonCamera;
-
-//Control settings
+    //[HideInInspector] public vThirdPersonCamera thirdPersonCamera;
+[Header("Options")]
+    public float uiScale = 1f;
     [HideInInspector] public float mouseSensitivity;
 
     public static UI Instance { get; private set; }
@@ -131,6 +131,11 @@ public class UI : MonoBehaviour
         SetMouseState(menuIsActive, InventoryDisplay.gameObject);
     }
 
+    public static void SetUIScale(float scale) {
+        Instance.uiScale = scale;
+        Instance.lappy.transform.localScale = new Vector2(scale, scale);
+    }
+
     public static void SetMouseState(bool lockMouse, GameObject gameObject) {
         if (lockMouse) {
             Instance.mouseCursorUsers.Add(gameObject);
@@ -151,6 +156,7 @@ public class UI : MonoBehaviour
         Debug.Log("Instance.thirdPersonCamera: "+Instance.thirdPersonCamera);
         Debug.Log("Instance.cBrain: "+Instance.cBrain);
         //*/
+        /*
         if (Instance.thirdPersonCamera == null) {
     //Using Cinemachine Freelook?
             if (Instance.cBrain != null) {
@@ -170,6 +176,7 @@ public class UI : MonoBehaviour
     //Using thirdPersonCamera
             Instance.thirdPersonCamera.enabled = !suppressCamera;
         }
+        //*/
     }
 
     public static ConfirmationWindow RequestConfirmation(ConfirmationPromptData _data) {

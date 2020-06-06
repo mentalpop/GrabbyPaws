@@ -30,11 +30,14 @@ public class ItemTooltip : MonoBehaviour
             value.text = string.Format("{0:n0}", _value);
         }
     //Keep on screen
+        float _scale = UI.Instance.uiScale;
+        transform.localScale = new Vector2(_scale, _scale); //Set scale first!
+        tooltipOffset = new Vector2(tooltipOffset.x, tooltipOffset.y * _scale);
+        offset *= _scale;
         Vector2 correctedPosition = Camera.main.WorldToScreenPoint(_position);
         correctedPosition = new Vector2(ScreenSpace.Inverse(correctedPosition.x), ScreenSpace.Inverse(correctedPosition.y));
         float yMax = (canvasSize.y - myRect.rect.height - offset) / 2f;
         myRect.anchoredPosition = new Vector3(Mathf.Clamp(correctedPosition.x + tooltipOffset.x, 0f, canvasSize.x - myRect.rect.width - offset),
             Mathf.Clamp(correctedPosition.y + tooltipOffset.y - canvasSize.y / 2f, -yMax, yMax), transform.position.z);
-
     }
 }
